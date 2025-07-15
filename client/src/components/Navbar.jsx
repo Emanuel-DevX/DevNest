@@ -22,22 +22,24 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-50 flex justify-between items-center px-6 py-4 transition-all duration-300 border-b border-teal-500/10">
+    <nav className="sticky backdrop-blur-xl top-0 z-50 flex justify-between items-center px-6 py-4 transition-all duration-300 border-b border-teal-500/10">
       {/* Logo with Google Fonts */}
       <div className="flex items-center">
-        <div className="text-2xl flex items-center">
-          <span
-            className={`${orbitron.className} font-bold text-teal-400 tracking-wide`}
-          >
-            Dev
-          </span>
-          <span
-            className={`${jetbrainsMono.className} font-extrabold text-white ml-0.5 tracking-tight`}
-          >
-            Nest
-          </span>
-          <div className="w-1.5 h-1.5 bg-teal-400 rounded-full ml-1 animate-pulse"></div>
-        </div>
+        <a href="/">
+          <div className="text-2xl flex items-center">
+            <span
+              className={`${orbitron.className} font-bold text-teal-400 tracking-wide`}
+            >
+              Dev
+            </span>
+            <span
+              className={`${jetbrainsMono.className} font-extrabold text-white ml-0.5 tracking-tight`}
+            >
+              Nest
+            </span>
+            <div className="w-1.5 h-1.5 bg-teal-400 rounded-full ml-1 animate-pulse"></div>
+          </div>
+        </a>
       </div>
 
       {/* Navigation Actions */}

@@ -26,4 +26,6 @@ body {
 code, pre {
   font-family: var(--font-mono);
 }
-
+html {
+  scroll-behavior: smooth;
+}

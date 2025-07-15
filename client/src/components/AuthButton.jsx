@@ -73,11 +73,11 @@ export default function AuthButton() {
 
           {/* Menu Items */}
           <div className="py-2">
-            <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-slate-700 hover:text-white transition-colors duration-150 flex items-center gap-3">
+            <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-teal-900 hover:text-white transition-colors duration-150 flex items-center gap-3">
               <User className="w-4 h-4" />
               Profile
             </button>
-            <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-slate-700 hover:text-white transition-colors duration-150 flex items-center gap-3">
+            <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-teal-900 hover:text-white transition-colors duration-150 flex items-center gap-3">
               <Settings className="w-4 h-4" />
               Settings
             </button>
@@ -87,7 +87,7 @@ export default function AuthButton() {
           <div className="py-2 border-t border-slate-700">
             <button
               onClick={logout}
-              className="w-full px-4 py-2 text-left text-red-400 hover:bg-slate-700 hover:text-red-300 transition-colors duration-150 flex items-center gap-3"
+              className="w-full px-4 py-2 text-left text-red-400  hover:font-bold hover:text-red-600 transition-colors duration-150 flex items-center gap-3"
             >
               <LogOut className="w-4 h-4" />
               Logout

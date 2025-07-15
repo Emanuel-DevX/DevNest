@@ -120,7 +120,10 @@ export default function HeroSection() {
               <div className="absolute inset-0 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg blur opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
             </button>
 
-            <button className="group px-8 py-4 border-2 border-teal-500/50 hover:border-teal-400 text-teal-400 hover:text-teal-300 font-semibold rounded-lg transition-all duration-300 hover:bg-teal-500/10 backdrop-blur-sm flex items-center gap-3">
+            <a
+              href="#features"
+              className="group px-8 py-4 border-2 border-teal-500/50 hover:border-teal-400 text-teal-400 hover:text-teal-300 font-semibold rounded-lg transition-all duration-300 hover:bg-teal-500/10 backdrop-blur-sm flex items-center gap-3"
+            >
               <svg
                 className="w-5 h-5"
                 viewBox="0 0 24 24"
@@ -130,8 +133,8 @@ export default function HeroSection() {
               >
                 <polygon points="5,3 19,12 5,21 5,3"></polygon>
               </svg>
-              Watch Demo
-            </button>
+              Explore Features
+            </a>
           </div>
         </div>
       </div>
