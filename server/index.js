@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const passport = require("passport");
 require("./auth/google"); // Load Google Strategy
-
+const authRoutes = require("./routes/auth");
 
 const app = express();
 dotenv.config();
@@ -12,9 +12,6 @@ const API_URL = process.env.API_URL;
 
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(passport.initialize());
-
-
-const authRoutes = require("./routes/auth");
 
 app.use("/auth", authRoutes);
 
