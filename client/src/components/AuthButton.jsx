@@ -1,35 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, User, Settings, LogOut } from "lucide-react";
+import { login, logout, isAuthenticated, getCurrentUser } from "@/lib/auth";
 
 export default function AuthButton() {
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const handleLogin = () => {
-    // TEMP: Simulate login with Google profile
-    setUser({
-      name: "Kiya",
-      email: "kiya@example.com",
-      image:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face&auto=format",
-    });
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    setIsDropdownOpen(false);
-  };
+  useEffect(() => {
+    if (isAuthenticated()) {
+      setUser(getCurrentUser());
+    }
+  }, []);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  if (!user) {
+  if (!isAuthenticated()) {
     return (
       <button
-        onClick={handleLogin}
+        onClick={login}
         className="group relative px-6 py-2.5 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 flex items-center gap-2"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -54,6 +46,7 @@ export default function AuthButton() {
       </button>
     );
   }
+  if (!user) return null; // Wait until user loads
 
   return (
     <div className="relative">
@@ -106,7 +99,7 @@ export default function AuthButton() {
           {/* Logout */}
           <div className="py-2 border-t border-slate-700">
             <button
-              onClick={handleLogout}
+              onClick={logout}
               className="w-full px-4 py-2 text-left text-red-400 hover:bg-slate-700 hover:text-red-300 transition-colors duration-150 flex items-center gap-3"
             >
               <LogOut className="w-4 h-4" />
