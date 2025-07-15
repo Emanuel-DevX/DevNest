@@ -11,6 +11,7 @@ export function logout() {
   window.location.href = "/";
 }
 
+// Handle auth callback (when backend redirects after OAuth)
 export function handleAuthCallbackFromURL() {
   const url = new URL(window.location.href);
   const token = url.searchParams.get("token");
@@ -23,4 +24,20 @@ export function handleAuthCallbackFromURL() {
     alert("Login failed.");
     window.location.href = "/";
   }
+}
+
+// Check if user is authenticated
+export function isAuthenticated() {
+  return !!localStorage.getItem("devnest_token");
+}
+
+// Get current user (parsed JSON)
+export function getCurrentUser() {
+  const user = localStorage.getItem("devnest_user");
+  return user ? JSON.parse(user) : null;
+}
+
+// Get token
+export function getToken() {
+  return localStorage.getItem("devnest_token");
 }
