@@ -4,12 +4,16 @@ const cors = require("cors");
 const passport = require("passport");
 require("./auth/google"); // Load Google Strategy
 const authRoutes = require("./routes/auth");
+const connectDB = require("./db/connect");
 
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
 const API_URL = process.env.API_URL;
 
+connectDB();
+
+app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(passport.initialize());
 

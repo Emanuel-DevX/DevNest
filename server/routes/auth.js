@@ -16,27 +16,31 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { session: false, failureRedirect: "/" }),
   (req, res) => {
-    const user = {
-      id: req.user.id,
-      name: req.user.displayName,
-      email: req.user.emails[0].value,
-      image: req.user.photos[0].value,
-    };
+    const user = req.user;
 
-    // Generate JWT
-    const token = jwt.sign(user, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    // Generate token
+    const token = jwt.sign(
+      {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     // Redirect to frontend with token + user
-    const query = new URLSearchParams({
-      token,
-      user: JSON.stringify(user),
-    });
+    const frontendURL = `${
+      process.env.FRONTEND_URL
+    }/auth/callback?token=${token}&user=${encodeURIComponent(
+      JSON.stringify({
+        name: user.name,
+        email: user.email,
+        image: user.image,
+      })
+    )}`;
 
-    res.redirect(
-      `${process.env.FRONTEND_URL}/auth/callback?${query.toString()}`
-    );
+    res.redirect(frontendURL);
   }
 );
 
