@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
+import { isAuthenticated, login } from "@/lib/auth";
 
 export default function HeroSection() {
   const router = useRouter();
@@ -80,7 +81,14 @@ export default function HeroSection() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={() => {
+                if (isAuthenticated()) {
+                  router.push("/dashboard");
+                }
+                else{
+                  login()
+                }
+              }}
               className="group relative px-8 py-4 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-3 shadow-lg hover:shadow-teal-500/25"
             >
               <span className="relative z-10">Start Building</span>
