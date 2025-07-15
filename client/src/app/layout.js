@@ -1,6 +1,7 @@
 import { Manrope } from "next/font/google";
 import { JetBrains_Mono } from "next/font/google";
-
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -26,7 +27,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${manrope.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        {children}
+        <Navbar />
+        <main className="min-h-screen">{children}</main>
+        <Footer />
       </body>
     </html>
   );
