@@ -54,27 +54,52 @@ export default function HeroSection() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Manage all your projects, notes, and ideas in one powerful
+          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+            Manage all your projects, notes, and ideas in one intelligent
             workspace.
-            <span className="text-teal-400 font-semibold"> DevNest</span> keeps
-            your development workflow organized and your creativity flowing.
+            <span className="text-teal-400 font-semibold">DevNest</span> boosts
+            your productivity with
+            <span className="text-emerald-400 font-semibold">
+              {" "}
+              AI-powered task generation
+            </span>{" "}
+            and seamless workflow organization.
           </p>
 
           {/* Feature Pills */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-full text-gray-300 backdrop-blur-sm">
-              <FolderOpen className="w-4 h-4 text-teal-400" />
-              Project Management
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-full text-gray-300 backdrop-blur-sm">
-              <StickyNote className="w-4 h-4 text-emerald-400" />
-              Smart Notes
-            </div>
-
-            <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-full text-gray-300 backdrop-blur-sm">
-              <Code className="w-4 h-4 text-teal-400" />
-              Code Snippets
+          <div className="flex flex-wrap justify-center gap-4 text-sm mb-12">
+            {/* Feature Pills */}
+            <div className="flex flex-wrap justify-center gap-2 text-xs mb-10">
+              {[
+                {
+                  label: "Project Management",
+                  icon: <FolderOpen className="w-3.5 h-3.5 text-teal-400" />,
+                },
+                {
+                  label: "Smart Notes",
+                  icon: <StickyNote className="w-3.5 h-3.5 text-emerald-400" />,
+                },
+                {
+                  label: "Code Snippets",
+                  icon: <Code className="w-3.5 h-3.5 text-teal-400" />,
+                },
+                {
+                  label: "AI Task Generator",
+                  icon: <Zap className="w-3.5 h-3.5 text-cyan-400" />,
+                },
+                {
+                  label: "Daily Task Planner",
+                  icon: <GitBranch className="w-3.5 h-3.5 text-amber-400" />,
+                },
+              ].map(({ label, icon }, idx) => (
+                <div
+                  key={idx}
+                  className="hover:scale-105 transition-transform duration-200 flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/50 border border-slate-700 rounded-full text-gray-300 backdrop-blur-sm"
+                >
+                  {icon}
+                  <span>{label}</span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -84,9 +109,8 @@ export default function HeroSection() {
               onClick={() => {
                 if (isAuthenticated()) {
                   router.push("/dashboard");
-                }
-                else{
-                  login()
+                } else {
+                  login();
                 }
               }}
               className="group relative px-8 py-4 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-3 shadow-lg hover:shadow-teal-500/25"
