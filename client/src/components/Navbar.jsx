@@ -1,27 +1,57 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { Orbitron } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import AuthButton from "./AuthButton";
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
 
 export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-50 flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-gray-950">
-      <div className="text-xl font-bold text-white">
-        <span className="text-blue-400">Dev</span>Nest
+    <nav className="sticky top-0 z-50 flex justify-between items-center px-6 py-4 transition-all duration-300 border-b border-teal-500/10">
+      {/* Logo with Google Fonts */}
+      <div className="flex items-center">
+        <div className="text-2xl flex items-center">
+          <span
+            className={`${orbitron.className} font-bold text-teal-400 tracking-wide`}
+          >
+            Dev
+          </span>
+          <span
+            className={`${jetbrainsMono.className} font-extrabold text-white ml-0.5 tracking-tight`}
+          >
+            Nest
+          </span>
+          <div className="w-1.5 h-1.5 bg-teal-400 rounded-full ml-1 animate-pulse"></div>
+        </div>
       </div>
 
-      {pathname === "/" ? (
-        <a
-          href="/dashboard"
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-        >
-          Get Started
-        </a>
-      ) : (
-        <AuthButton />
-      )}
+      {/* Navigation Actions */}
+      <div className="flex items-center space-x-4">
+        {pathname === "/" ? (
+          <a
+            href="/dashboard"
+            className="group relative px-6 py-2.5 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105"
+          >
+            <span className="relative z-10">Get Started</span>
+          </a>
+        ) : (
+          <AuthButton />
+        )}
+      </div>
     </nav>
   );
 }

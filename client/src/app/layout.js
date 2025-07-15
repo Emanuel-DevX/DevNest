@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${manrope.variable} ${jetbrainsMono.variable} antialiased`}
+        className={`${manrope.variable} ${jetbrainsMono.variable} antialiased max-w-[90rem] mx-auto`}
       >
         <Navbar />
         <main className="min-h-screen">{children}</main>
