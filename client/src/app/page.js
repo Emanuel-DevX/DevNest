@@ -1,5 +1,10 @@
-import Image from "next/image";
+"use client"
+import HeroSection from "./HeroSection";
 
 export default function Home() {
-  return <></>;
+  return (
+    <>
+      <HeroSection />
+    </>
+  );
 }

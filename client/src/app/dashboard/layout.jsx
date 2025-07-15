@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
 
-export default function DashboardPage() {
+export default function DashboardPage({ children }) {
   const router = useRouter();
 
   useEffect(() => {
@@ -12,5 +12,5 @@ export default function DashboardPage() {
     }
   }, []);
 
-  return <div>{/* Protected content here */}</div>;
+  return <div>{children}</div>;
 }
