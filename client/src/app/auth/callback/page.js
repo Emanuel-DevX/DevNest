@@ -1,21 +1,15 @@
 "use client";
 import { useEffect } from "react";
-import { handleAuthCallback } from "@/lib/auth";
-import { useSearchParams } from "next/navigation";
+import { handleAuthCallbackFromURL } from "@/lib/auth";
 
-export default function AuthCallback() {
-  const params = useSearchParams();
-
+export default function AuthCallbackPage() {
   useEffect(() => {
-    const code = params.get("code");
-    if (code) {
-      handleAuthCallback(code);
-    }
-  }, [params]);
+    handleAuthCallbackFromURL();
+  }, []);
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <p className="text-lg">Signing you in...</p>
+      <p className="text-white text-lg">Signing you in...</p>
     </div>
   );
 }

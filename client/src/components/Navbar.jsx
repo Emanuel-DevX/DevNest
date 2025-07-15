@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Orbitron } from "next/font/google";
 import { JetBrains_Mono } from "next/font/google";
 import AuthButton from "./AuthButton";
+import {login} from "../lib/auth"
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -42,12 +43,15 @@ export default function Navbar() {
       {/* Navigation Actions */}
       <div className="flex items-center space-x-4">
         {pathname === "/" ? (
-          <a
-            href="/dashboard"
+          <button
+            onClick={() => {
+              console.log("Homepage login clicked");
+              login();
+            }}
             className="group relative px-6 py-2.5 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105"
           >
             <span className="relative z-10">Get Started</span>
-          </a>
+          </button>
         ) : (
           <AuthButton />
         )}

@@ -1,6 +1,7 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 // Login: redirect to backend OAuth
 export function login() {
+    console.log(API_BASE)
   window.location.href = `${API_BASE}/auth/google`;
 }
 
