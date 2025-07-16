@@ -8,8 +8,14 @@ export default function AuthCallback() {
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <p className="text-white text-lg">Signing you in...</p>
+    <div className="flex flex-col justify-center items-center min-h-screen bg-black text-white">
+      {/* Spinner */}
+      <div className="w-16 h-16 mb-6 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+
+      {/* Message */}
+      <p className="text-3xl font-semibold tracking-wide text-teal-200 animate-pulse">
+        Signing you in...
+      </p>
     </div>
   );
 }
