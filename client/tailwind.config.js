@@ -6,8 +6,7 @@ export default {
       fontFamily: {
         sans: ["Manrope", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
-        orbitron: ["'Orbitron'", "sans-serif"],
-        mono: ["'JetBrains Mono'", "monospace"],
+        orbitron: ["Orbitron", "sans-serif"],
       },
     },
   },

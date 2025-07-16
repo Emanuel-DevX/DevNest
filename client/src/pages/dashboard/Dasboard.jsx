@@ -13,7 +13,8 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="">welcome to dashboard</div>
+      <div className="h-screen">welcome to dashboard</div>
+      <div className="h-screen">what</div>
     </>
   );
 }
