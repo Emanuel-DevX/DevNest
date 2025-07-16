@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint src --ext .js,.jsx"
   },
   "dependencies": {
     "lucide-react": "^0.525.0",
