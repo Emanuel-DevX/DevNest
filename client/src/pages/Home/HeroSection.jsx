@@ -8,12 +8,11 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-import { useRouter } from "next/navigation";
-import { isAuthenticated, login } from "@/lib/auth";
+import { useNavigate } from "react-router-dom";
+import { isAuthenticated, login } from "../../lib/auth";
 
 export default function HeroSection() {
-  const router = useRouter();
-
+  const navigate = useNavigate();
   return (
     <div className="relative h-[90vh]  overflow-hidden">
       {/* Animated Background Elements */}
@@ -108,7 +107,7 @@ export default function HeroSection() {
             <button
               onClick={() => {
                 if (isAuthenticated()) {
-                  router.push("/dashboard");
+                  navigate("/dashboard");
                 } else {
                   login();
                 }

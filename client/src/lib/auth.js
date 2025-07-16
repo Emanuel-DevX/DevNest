@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE =import.meta.env.VITE_PUBLIC_API_URL;
 // Login: redirect to backend OAuth
 export function login() {
   if (isAuthenticated()) {
