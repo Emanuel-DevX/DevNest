@@ -1,14 +1,12 @@
-"use client";
-
-import { usePathname } from "next/navigation";
+import { useLocation } from "react-router-dom";
 
 export default function Footer() {
-  const pathname = usePathname();
+  const location = useLocation();
 
-  if (pathname !== "/") return null;
+  if (location.pathname !== "/") return null;
 
   return (
-    <footer className="text-center py-8 border-t border-gray-700 text-gray-400">
+    <footer className="text-center py-8 border-t border-gray-700 text-gray-400 ">
       © {new Date().getFullYear()} DevNest. All rights reserved.
       <div>
         Built by{" "}

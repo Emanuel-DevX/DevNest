@@ -5,11 +5,8 @@ import "@fontsource/jetbrains-mono/800.css";
 import AuthButton from "./AuthButton";
 import { login } from "../lib/auth";
 
-
-
 export default function Navbar() {
   const location = useLocation();
-  console.log("In navbar")
 
   return (
     <nav className="sticky backdrop-blur-xl top-0 z-50 flex justify-between items-center px-6 py-4 transition-all duration-300 border-b border-teal-500/10">
@@ -33,7 +30,7 @@ export default function Navbar() {
       </div>
 
       {/* Navigation Actions */}
-      
+
       <div className="flex items-center space-x-4">
         {location.pathname === "/" ? (
           <button

@@ -1,8 +1,8 @@
 "use client";
 import { useEffect } from "react";
-import { handleAuthCallbackFromURL } from "@/lib/auth";
+import { handleAuthCallbackFromURL } from "../lib/auth";
 
-export default function AuthCallbackPage() {
+export default function AuthCallback() {
   useEffect(() => {
     handleAuthCallbackFromURL();
   }, []);
