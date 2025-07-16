@@ -8,7 +8,7 @@ export default function AuthCallback() {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-black text-white">
+    <div className="flex flex-col justify-center items-center min-h-screen text-white w-full">
       {/* Spinner */}
       <div className="w-16 h-16 mb-6 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
 

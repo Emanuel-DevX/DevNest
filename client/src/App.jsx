@@ -8,21 +8,26 @@ import AuthCallback from "./pages/AuthCallback";
 import SideNavbar from "./components/SideNavbar";
 function App() {
   const location = useLocation();
-  const [expand, setExpand] = useState(false)
+  const [expand, setExpand] = useState(false);
+  const publicPaths = ["/", "/auth/callback"];
+  const isPublic = publicPaths.includes(location.pathname);
 
   return (
     <>
       <div className={` antialiased max-w-[90rem] mx-auto`}>
         <Navbar />
-        {location.pathname === "/" ? (
-          <Home />
+        {isPublic ? (
+          location.pathname === "/" ? (
+            <Home />
+          ) : (
+            <AuthCallback />
+          )
         ) : (
           <main className=" flex overflow-hidden">
             <SideNavbar setExpand={setExpand} />
-            <div className={`p-2 ${expand ? "ml-16" :"ml-48"}`}>
+            <div className={`p-2 min-w-[80rem] ${expand ? "ml-16" : "ml-48"}`}>
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
               </Routes>
             </div>
           </main>
