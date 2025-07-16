@@ -1,25 +1,15 @@
-"use client";
+import { useLocation } from "react-router-dom";
+import "@fontsource/orbitron/600.css"; // or any weights you need
+import "@fontsource/jetbrains-mono/800.css";
 
-import { usePathname } from "next/navigation";
-import { Orbitron } from "next/font/google";
-import { JetBrains_Mono } from "next/font/google";
 import AuthButton from "./AuthButton";
-import {login} from "../lib/auth"
+import { login } from "../lib/auth";
 
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  display: "swap",
-});
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
 
 export default function Navbar() {
-  const pathname = usePathname();
+  const location = useLocation();
+  console.log("In navbar")
 
   return (
     <nav className="sticky backdrop-blur-xl top-0 z-50 flex justify-between items-center px-6 py-4 transition-all duration-300 border-b border-teal-500/10">
@@ -28,12 +18,12 @@ export default function Navbar() {
         <a href="/">
           <div className="text-2xl flex items-center">
             <span
-              className={`${orbitron.className} font-bold text-teal-400 tracking-wide`}
+              className={`font-orbitron font-bold text-teal-400 tracking-wide`}
             >
               Dev
             </span>
             <span
-              className={`${jetbrainsMono.className} font-extrabold text-white ml-0.5 tracking-tight`}
+              className={`font-mono font-extrabold text-white ml-0.5 tracking-tight`}
             >
               Nest
             </span>
@@ -43,8 +33,9 @@ export default function Navbar() {
       </div>
 
       {/* Navigation Actions */}
+      
       <div className="flex items-center space-x-4">
-        {pathname === "/" ? (
+        {location.pathname === "/" ? (
           <button
             onClick={() => {
               console.log("Homepage login clicked");

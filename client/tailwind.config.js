@@ -2,7 +2,14 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ["Manrope", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
+        orbitron: ["'Orbitron'", "sans-serif"],
+        mono: ["'JetBrains Mono'", "monospace"],
+      },
+    },
   },
   plugins: [],
 };

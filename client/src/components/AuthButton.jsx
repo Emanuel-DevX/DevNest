@@ -1,8 +1,6 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { ChevronDown, User, Settings, LogOut } from "lucide-react";
-import { login, logout, isAuthenticated, getCurrentUser } from "@/lib/auth";
+import { login, logout, isAuthenticated, getCurrentUser } from "../lib/auth";
 
 export default function AuthButton() {
   const [user, setUser] = useState(null);
