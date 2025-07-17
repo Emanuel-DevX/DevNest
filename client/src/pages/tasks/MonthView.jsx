@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const MonthView = function () {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   // Sample tasks data
   const tasks = [
@@ -32,7 +32,7 @@ const MonthView = function () {
 
     // Get day of week (0 = Sunday, 1 = Monday, etc.)
     // Convert to our format where Monday = 0
-    const startDay = (firstDay.getDay() + 6) % 7;
+    const startDay = (firstDay.getDay() ) % 7;
 
     const daysInMonth = lastDay.getDate();
     const calendarDays = [];
@@ -132,7 +132,7 @@ const MonthView = function () {
       </header>
 
       {/* Calendar Grid */}
-      <main className="grid grid-cols-7 border gap-px w-full">
+      <main className="grid grid-cols-7  gap-px w-full">
         {calendarDays.map((day, index) => {
           const dayTasks = getTasksForDate(day);
           const isCurrentDay = isToday(day);
@@ -140,16 +140,16 @@ const MonthView = function () {
           return (
             <div
               key={index}
-              className={`ring h-32 md:h-36 p-[1px] overflow-hidden relative
-                ${day ? "hover:bg-zinc-900/70" : "bg-zinc-900/50"}
-                ${isCurrentDay ? "bg-teal-200/7" : ""}
+              className={`ring ring-emerald-300/10 h-32 md:h-36 p-[1px] overflow-hidden relative hover:text-white text-teal-400
+                ${day ? "hover:bg-teal-500/10 hover:text-white" : "bg-zinc-900/50"}
+                ${isCurrentDay ? "bg-emerald-500/10" : ""}
               `}
             >
               {day && (
                 <>
                   {/* Day number */}
                   <div
-                    className={`text-xs sm:text-sm font-medium mb-1 
+                    className={`text-xs sm:text-sm font-medium mb-1  
                     ${isCurrentDay ? "text-teal-300" : "text-white"}
                   `}
                   >
@@ -157,11 +157,11 @@ const MonthView = function () {
                   </div>
 
                   {/* Tasks */}
-                  <div className="space-y-px">
+                  <div className="space-y-px ">
                     {dayTasks.map((task, taskIndex) => (
                       <div
                         key={task.id}
-                        className="text-xs bg- text-teal-400 px-1 py-0.5 rounded truncate leading-tight"
+                        className="text-xs  px-1 py-0.5 rounded truncate leading-tight"
                         title={task.title}
                       >
                         {task.title}
