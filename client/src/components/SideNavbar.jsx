@@ -36,6 +36,7 @@ const SideNavbar = function ({ setExpand }) {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
       setCollapsed(mobile);
+      setExpand(!mobile)
     };
 
     handleResize(); // run once on mount
@@ -108,6 +109,12 @@ const SideNavbar = function ({ setExpand }) {
           </div>
         </div>
       </nav>
+      {isMobile && !collapsed && (
+        <div
+          onClick={() => setCollapsed(true)}
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"
+        />
+      )}
     </>
   );
 };
