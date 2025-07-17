@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AuthCallback from "./pages/AuthCallback";
 import SideNavbar from "./components/SideNavbar";
+import Tasks from "./pages/tasks/Tasks";
 function App() {
   const location = useLocation();
   const [expand, setExpand] = useState(false);
@@ -25,9 +26,12 @@ function App() {
         ) : (
           <main className=" flex overflow-hidden">
             <SideNavbar setExpand={setExpand} />
-            <div className={`p-2 min-w-[80rem] ${expand ? "ml-16" : "md:ml-48 ml-16"}`}>
+            <div
+              className={`p-2 w-full ${expand ? "ml-16" : "md:ml-48 ml-16"}`}
+            >
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/tasks" element={<Tasks />} />
               </Routes>
             </div>
           </main>
