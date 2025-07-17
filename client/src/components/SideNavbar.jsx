@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   Notebook,
@@ -27,8 +27,25 @@ const menuItems = [
 
 const SideNavbar = function ({ setExpand }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
   const isActive = (path) => location.pathname.startsWith(path);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      setCollapsed(mobile);
+    };
+
+    handleResize(); // run once on mount
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize); // clean up
+    };
+  }, []);
 
   return (
     <>
@@ -55,27 +72,35 @@ const SideNavbar = function ({ setExpand }) {
           </div>
 
           {/* Menu Items */}
-          <ul className=" px-2 space-y-1 ">
-            {menuItems.map((item) => (
-              <li key={item.name}>
-                <Link
-                  to={item.path}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 
+          <button
+            onClick={() => {
+              if (isMobile) {
+                setCollapsed(true);
+              }
+            }}
+          >
+            <ul className=" px-2 space-y-1 ">
+              {menuItems.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    to={item.path}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 
                   text-white hover:bg-zinc-800 ${
                     isActive(item.path)
                       ? "bg-zinc-800 text-teal-400"
                       : "text-gray-300"
                   }`}
-                >
-                  <span>{item.icon}</span>
-                  {!collapsed && (
-                    <span className="text-sm font-medium">{item.name}</span>
-                  )}
-                </Link>
-              </li>
-            ))}
-            <hr className="h-[0.2px]  bg-gray-700 mx-3 my-1 border-none" />
-          </ul>
+                  >
+                    <span>{item.icon}</span>
+                    {!collapsed && (
+                      <span className="text-sm font-medium">{item.name}</span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+              <hr className="h-[0.2px]  bg-gray-700 mx-3 my-1 border-none" />
+            </ul>
+          </button>
 
           {/* Optional: Footer Actions */}
           <div className="px-2 pb-4">
