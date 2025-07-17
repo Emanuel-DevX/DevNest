@@ -58,11 +58,11 @@ export default function AuthButton() {
           alt={user.name}
           className="w-6 h-6 rounded-full ring-2 ring-teal-500/50"
         />
-        <span className="text-white font-bold text-lg">
+        <span className="text-white font-bold text-lg hidden md:block">
           {user.name.split(" ")[0]}
         </span>
         <ChevronDown
-          className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+          className={`w-4 h-4 hidden md:block text-gray-400 transition-transform duration-200 ${
             isDropdownOpen ? "rotate-180" : ""
           }`}
         />

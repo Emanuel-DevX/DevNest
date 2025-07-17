@@ -7,7 +7,7 @@ export default function Navbar() {
   const location = useLocation();
 
   return (
-    <nav className="sticky backdrop-blur-xl top-0 z-50 flex justify-between items-center  py-4 transition-all duration-300 border-b border-teal-500/10">
+    <nav className="sticky backdrop-blur-xl top-0 z-50 flex justify-between items-center px-2 py-4 transition-all duration-300 border-b border-teal-500/10">
       {/* Logo with Google Fonts */}
       <div className="flex items-center">
         <a href="/">

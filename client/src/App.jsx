@@ -25,7 +25,7 @@ function App() {
         ) : (
           <main className=" flex overflow-hidden">
             <SideNavbar setExpand={setExpand} />
-            <div className={`p-2 min-w-[80rem] ${expand ? "ml-16" : "ml-48"}`}>
+            <div className={`p-2 min-w-[80rem] ${expand ? "ml-16" : "md:ml-48 ml-16"}`}>
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
               </Routes>

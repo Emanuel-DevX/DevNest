@@ -33,13 +33,15 @@ const SideNavbar = function ({ setExpand }) {
   return (
     <>
       <nav
-        className={`h-screen bg-zinc-950 border-r border-teal-300/50 transition-all duration-300
+        className={`h-screen md:bg-zinc-950/10 bg-[#0e0d0d] border-r border-teal-300/10 transition-all duration-300
         ${collapsed ? "w-16" : "w-48"} fixed z-50`}
       >
         {/* Top Section */}
         <div className="h-full flex flex-col overflow-hidden">
           {/* Toggle Button */}
-          <div className={`flex  p-2 ${collapsed ? "justify-center" : "justify-start pl-5"}`}>
+          <div
+            className={`flex  p-2 ${collapsed ? "justify-center" : "justify-start pl-5"}`}
+          >
             <button
               onClick={() => {
                 setCollapsed((prev) => !prev);
@@ -53,7 +55,7 @@ const SideNavbar = function ({ setExpand }) {
           </div>
 
           {/* Menu Items */}
-          <ul className="flex-1 px-2 space-y-1">
+          <ul className=" px-2 space-y-1 ">
             {menuItems.map((item) => (
               <li key={item.name}>
                 <Link
@@ -72,6 +74,7 @@ const SideNavbar = function ({ setExpand }) {
                 </Link>
               </li>
             ))}
+            <hr className="h-[0.2px]  bg-gray-700 mx-3 my-1 border-none" />
           </ul>
 
           {/* Optional: Footer Actions */}
