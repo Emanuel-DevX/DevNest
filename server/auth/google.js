@@ -23,6 +23,11 @@ passport.use(
             email: profile.emails[0].value,
             image: profile.photos[0].value,
           });
+          await Project.create({
+            title: "General",
+            owner: newUser._id,
+            protected:true
+          });
         }
 
         done(null, user); // pass user to session

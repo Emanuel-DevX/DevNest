@@ -23,6 +23,10 @@ const projectSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    protected: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
