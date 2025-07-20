@@ -34,12 +34,7 @@ const taskSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",
     },
-    sprintId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Sprint",
-      required: true,
-      default: null,
-    },
+
   },
   { timestamps: true }
 );

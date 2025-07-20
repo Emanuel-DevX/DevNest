@@ -16,6 +16,7 @@ const sprintSchema = new mongoose.Schema(
       ref: "Project",
       required: true,
     },
+    features: [String],
   },
   { timestamps: true }
 );
