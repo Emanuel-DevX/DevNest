@@ -17,7 +17,7 @@ const taskSchema = new mongoose.Schema(
       default: 30,
       required: true,
     },
-    date: {
+    dueDate: {
       type: Date,
       required: true,
     },
@@ -25,16 +25,25 @@ const taskSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    userId: {
+    creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     projectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",
     },
-
+    startTime: {
+      type: Date,
+      default: null,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "completed"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );
