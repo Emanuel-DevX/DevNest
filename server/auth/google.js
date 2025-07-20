@@ -25,7 +25,7 @@ passport.use(
           });
           await Project.create({
             title: "General",
-            owner: newUser._id,
+            owner: user._id,
             protected:true
           });
         }

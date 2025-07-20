@@ -7,7 +7,9 @@ const createProject = async (req, res) => {
       .json({ error: "Project names are required to be 3 or more charactes" });
   }
   try {
+    console.log(req.user)
     await Project.create({
+    
       name: name.trim(),
       description: description,
       owner: req.user._id,

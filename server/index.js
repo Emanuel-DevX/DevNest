@@ -3,8 +3,11 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const passport = require("passport");
 require("./auth/google"); // Load Google Strategy
-const authRoutes = require("./routes/auth");
 const connectDB = require("./db/connect");
+
+const verifyToken = require("./middlewares/verifyToken");
+const authRoutes = require("./routes/auth");
+const projectRoutes = require("./routes/project");
 
 const app = express();
 dotenv.config();
@@ -22,6 +25,9 @@ app.use("/auth", authRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome to DevNest");
 });
+app.use(verifyToken);
+
+app.use("/projects", projectRoutes);
 
 app.listen(PORT, () => {
   console.log(`All good server is running on ${API_URL}`);

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const projectSchema = new mongoose.Schema(
   {
-    title: {
+    name: {
       type: String,
       minlength: 3,
       maxlength: 20,
