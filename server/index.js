@@ -25,7 +25,7 @@ app.use("/auth", authRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome to DevNest");
 });
-app.use(verifyToken);
+// app.use(verifyToken);
 
 app.use("/projects", projectRoutes);
 

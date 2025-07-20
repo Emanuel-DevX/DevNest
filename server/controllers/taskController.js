@@ -68,4 +68,22 @@ const addTask = async (req, res) => {
   }
 };
 
-module.exports = { addTask, addToCalendar };
+const getTasksByProject = async (req, res) => {
+  const projectId = req.params.projectId;
+  if (!projectId) {
+    return res
+      .status(401)
+      .json({ message: "Project Id required to get tasks" });
+  }
+  try {
+    const tasks = await Task.find({projectId});
+    return res.status(200).json(tasks);
+  } catch (err) {
+    return res.status(500).json({
+      message: `Could not fetch tasks with the project id ${projectId}`,
+      error: err.message,
+    });
+  }
+};
+
+module.exports = { addTask, addToCalendar, getTasksByProject };
