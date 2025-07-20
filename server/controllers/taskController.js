@@ -38,28 +38,26 @@ const addTask = async (req, res) => {
       .status(401)
       .json({ message: "Project id and task title are required" });
   }
-  const participantObjects = participants.map((uid) => {
-    return {
-      user: uid,
-    }
-  });
+  const participantObjects = participants.map((uid) => ({
+    user: uid,
+  }));
   try {
     const newTask = await Task.create({
       title,
       description,
       duration,
       dueDate,
-      participants :participantObjects,
+      participants: participantObjects,
       creator: userId,
     });
     const isCreatorInParticipants = participants.some(
-      (p) => p.user === userId || p.user.toString() === userId.toString()
+      (pid) => pid === userId || pid.toString() === userId.toString()
     );
 
-    let calendarResult = { success: false, message: "Not attempted" };
+    let calendarStatus = { success: false, message: "Not attempted" };
 
     if (isCreatorInParticipants && startTime) {
-      calendarResult = await addToCalendar({
+      calendarStatus = await addToCalendar({
         taskId: newTask._id,
         userId,
         startTime,
@@ -68,9 +66,15 @@ const addTask = async (req, res) => {
     return res.status(201).json({
       message: "Task created successfully",
       task: newTask,
-      calendarStatus: calendarResult,
+      calendarStatus,
     });
-  } catch (err) {}
+  } catch (err) {
+    console.error("Task creation error:", err);
+    return res.status(500).json({
+      message: "Server error while creating task",
+      error: err.message,
+    });
+  }
 };
 
 module.exports = { addTask };
