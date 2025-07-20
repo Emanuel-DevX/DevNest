@@ -1,38 +1,42 @@
 const Task = require("../models/Task");
 
-const addToCalendar = async ({ taskId, userId, startTime }) => {
-  if (!startTime) return { success: false, message: "Start time required" };
+// PATCH /tasks/:taskId/calendar
+const addToCalendar = async (req, res) => {
+  const { taskId } = req.params;
+  const userId = req.user.id;
+  const { startTime } = req.body;
+
+  if (!startTime) {
+    return res.status(400).json({ message: "Start time is required" });
+  }
 
   try {
     const task = await Task.findById(taskId);
-    if (!task) return { success: false, message: "Task not found" };
+    if (!task) return res.status(404).json({ message: "Task not found" });
 
     const participant = task.participants.find(
-      (p) => p.user.toString() === userId.toString()
+      (p) => p.user.toString() === userId
     );
+
     if (!participant)
-      return { success: false, message: "User not a participant" };
+      return res.status(403).json({ message: "You are not a participant" });
 
     participant.addedToCalendar = true;
     participant.startTime = new Date(startTime);
-
     await task.save();
-    return { success: true };
+
+    res.status(200).json({ message: "Task added to calendar", task });
   } catch (err) {
     console.error("Calendar error:", err);
-    return {
-      success: false,
-      message: "Error saving to calendar",
-      error: err.message,
-    };
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
+//POST /projects/:projectId/tasks
 const addTask = async (req, res) => {
   const projectId = req.params.projectId;
   const userId = req.user.id;
-  const { title, description, duration, dueDate, participants, startTime } =
-    req.body;
+  const { title, description, duration, dueDate, participants } = req.body;
   if (!projectId || title.trim().length < 3) {
     return res
       .status(401)
@@ -50,23 +54,10 @@ const addTask = async (req, res) => {
       participants: participantObjects,
       creator: userId,
     });
-    const isCreatorInParticipants = participants.some(
-      (pid) => pid === userId || pid.toString() === userId.toString()
-    );
 
-    let calendarStatus = { success: false, message: "Not attempted" };
-
-    if (isCreatorInParticipants && startTime) {
-      calendarStatus = await addToCalendar({
-        taskId: newTask._id,
-        userId,
-        startTime,
-      });
-    }
     return res.status(201).json({
       message: "Task created successfully",
-      task: newTask,
-      calendarStatus,
+      taskId: newTask._id,
     });
   } catch (err) {
     console.error("Task creation error:", err);
@@ -77,4 +68,4 @@ const addTask = async (req, res) => {
   }
 };
 
-module.exports = { addTask };
+module.exports = { addTask, addToCalendar };
