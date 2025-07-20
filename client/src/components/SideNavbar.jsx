@@ -36,7 +36,7 @@ const SideNavbar = function ({ setExpand }) {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
       setCollapsed(mobile);
-      setExpand(!mobile)
+      setExpand(mobile)
     };
 
     handleResize(); // run once on mount
