@@ -30,15 +30,28 @@ const taskSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    participants: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        addedToCalendar: {
+          type: Boolean,
+          default: false,
+        },
+        startTime: {
+          type: Date,
+          default: null,
+        },
+      },
+    ],
     projectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",
     },
-    startTime: {
-      type: Date,
-      default: null,
-    },
+
     status: {
       type: String,
       enum: ["pending", "completed"],
