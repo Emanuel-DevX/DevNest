@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import AuthCallback from "./pages/AuthCallback";
 import SideNavbar from "./components/SideNavbar";
 import Tasks from "./pages/tasks/Tasks";
+import Project from "./pages/project/Project";
 function App() {
   const location = useLocation();
   const [expand, setExpand] = useState(false);
@@ -32,6 +33,7 @@ function App() {
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tasks" element={<Tasks />} />
+                <Route path="/project/:id" element={<Project />}/>
               </Routes>
             </div>
           </main>
