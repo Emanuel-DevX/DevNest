@@ -1,7 +1,9 @@
 const Project = require("../models/Project");
 const Sprint = require("../models/Sprint");
 const Membership = require("../models/Membership");
+
 const createProject = async (req, res) => {
+  const userId = req.user.id;
   const { name, description } = req.body;
   if (!name.trim() || name.trim().length < 3) {
     return res
@@ -9,10 +11,16 @@ const createProject = async (req, res) => {
       .json({ error: "Project names are required to be 3 or more charactes" });
   }
   try {
-    await Project.create({
+    const newProject = await Project.create({
       name: name.trim(),
       description: description,
       owner: req.user.id,
+    });
+
+    await Membership.create({
+      projectId: newProject._id,
+      userId,
+      role: "owner",
     });
     return res.status(201).json({ message: "Project created successfully!" });
   } catch (err) {
@@ -25,7 +33,9 @@ const createProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
   const userId = req.user.id;
   try {
-    const projects = await Project.find({ owner: userId });
+    const memberships = await Membership.find({ userId }).lean();
+    const projectIds = memberships.map((m) => m.projectId);
+    const projects = await Project.find({ _id: { $in: projectIds } });
     return res.status(200).json(projects);
   } catch (err) {
     return res.status(500).json({
@@ -45,8 +55,8 @@ const getProjectInfo = async (req, res) => {
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
-    const members = await Membership.find(projectId);
-    const sprints = await Sprint.find(projectId);
+    const members = await Membership.find({ projectId });
+    const sprints = await Sprint.find({ projectId });
     const today = new Date();
     const sprintData = sprints.map((sprint) => ({
       ...sprint.toObject(),
@@ -57,9 +67,10 @@ const getProjectInfo = async (req, res) => {
 
     return res.status(200).json({ ...project, members, sprints: sprintData });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Failed to fetch project information" });
+    return res.status(500).json({
+      message: "Failed to fetch project information",
+      erorr: err.message,
+    });
   }
 };
 
