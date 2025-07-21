@@ -98,6 +98,41 @@ const deleteProject = async (req, res) => {
   }
 };
 
+const updateProject = async (req, res) => {
+  const userId = req.user.id;
+  const projectId = req.params.projectId;
+  if (!projectId) {
+    return res
+      .status(401)
+      .json({ message: "Project ID required to perform this operation" });
+  }
+  try {
+    const { pinned, name, description } = req.body;
+    const updates = {};
+    if (pinned !== undefined && pinned !== null) {
+      updates.pinned = pinned;
+    }
+    if (name.trim().length > 3) {
+      updates.name = name.trim();
+    }
+    if (description.trim()) {
+      updates.description = description.trim();
+    }
+    const member = await Membership.findOne({ projectId, userId });
+    if (member.role !== "owner" && member.role !== "admin") {
+      return res.status(403).json({
+        message: "You don't have proper authorization to update this project",
+      });
+    }
+    await Project.updateOne({ _id: projectId }, updates);
+    return res.status(200).json({ message: "Project info updated" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Failed to update project", error: err.message });
+  }
+};
+
 module.exports = {
   createProject,
   getAllProjects,
