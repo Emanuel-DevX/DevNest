@@ -20,4 +20,17 @@ const createProject = async (req, res) => {
   }
 };
 
-module.exports = { createProject };
+const getAllProjects = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const projects = await Project.find({ owner: userId });
+    return res.status(200).json(projects);
+  } catch (err) {
+    return res.status(500).json({
+      message: `Failed to fetch projects for user: ${userId}`,
+      error: err.message,
+    });
+  }
+};
+
+module.exports = { createProject, getAllProjects };

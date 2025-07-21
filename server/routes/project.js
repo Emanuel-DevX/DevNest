@@ -1,11 +1,15 @@
 const express = require("express");
-const { createProject } = require("../controllers/projectController");
+const {
+  createProject,
+  getAllProjects,
+} = require("../controllers/projectController");
 const { addSprint } = require("../controllers/sprintController");
 const { addTask, getTasksByProject } = require("../controllers/taskController");
 
 const router = express.Router();
 
 router.post("/", createProject);
+router.get("/", getAllProjects);
 
 //Sprint Routes
 router.post("/:projectId/sprints", addSprint);
