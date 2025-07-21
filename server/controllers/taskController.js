@@ -53,6 +53,7 @@ const addTask = async (req, res) => {
       dueDate,
       participants: participantObjects,
       creator: userId,
+      projectId,
     });
 
     return res.status(201).json({
@@ -76,7 +77,7 @@ const getTasksByProject = async (req, res) => {
       .json({ message: "Project Id required to get tasks" });
   }
   try {
-    const tasks = await Task.find({projectId});
+    const tasks = await Task.find({ projectId });
     return res.status(200).json(tasks);
   } catch (err) {
     return res.status(500).json({
