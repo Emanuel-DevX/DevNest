@@ -1,4 +1,6 @@
 const Project = require("../models/Project");
+const Sprint = require("../models/Sprint");
+const Membership = require("../models/Membership");
 const createProject = async (req, res) => {
   const { name, description } = req.body;
   if (!name.trim() || name.trim().length < 3) {
@@ -33,4 +35,32 @@ const getAllProjects = async (req, res) => {
   }
 };
 
-module.exports = { createProject, getAllProjects };
+const getProjectInfo = async (req, res) => {
+  const projectId = req.params.projectId;
+  if (!projectId) {
+    return res.status(401).json({ message: "Project Id is required" });
+  }
+  try {
+    const project = await Project.findById(projectId).lean();
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    const members = await Membership.find(projectId);
+    const sprints = await Sprint.find(projectId);
+    const today = new Date();
+    const sprintData = sprints.map((sprint) => ({
+      ...sprint.toObject(),
+      isCurrent:
+        new Date(sprint.startDate) <= today &&
+        today <= new Date(sprint.endDate),
+    }));
+
+    return res.status(200).json({ ...project, members, sprints: sprintData });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch project information" });
+  }
+};
+
+module.exports = { createProject, getAllProjects, getProjectInfo };
