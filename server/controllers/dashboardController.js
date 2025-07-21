@@ -2,7 +2,7 @@ const Project = require("../models/Project");
 const Sprint = require("../models/Sprint");
 const Membership = require("../models/Membership");
 const Task = require("../models/Task");
-const Note = require("../models/Note"); // Only if you have it
+// const Note = require("../models/Note"); 
 
 const getOverview = async (req, res) => {
   try {
@@ -23,7 +23,7 @@ const getOverview = async (req, res) => {
       completedTasks,
       tasksDueToday,
       tasksDueThisWeek,
-      totalNotes,
+    //   totalNotes,
     ] = await Promise.all([
       Membership.countDocuments({ userId }),
       Task.countDocuments({ creator: userId }),
@@ -36,7 +36,7 @@ const getOverview = async (req, res) => {
         creator: userId,
         dueDate: { $gt: endOfToday, $lte: oneWeekFromNow },
       }),
-      Note.countDocuments({ creator: userId }), // optional
+    //   Note.countDocuments({ creator: userId }),
     ]);
 
     const overview = {
@@ -45,7 +45,7 @@ const getOverview = async (req, res) => {
       completedTasks,
       tasksDueToday,
       tasksDueThisWeek,
-      totalNotes,
+    //   totalNotes,
     };
 
     return res.status(200).json(overview);
