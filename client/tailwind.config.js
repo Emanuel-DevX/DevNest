@@ -7,6 +7,8 @@ export default {
         sans: ["Manrope", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
         orbitron: ["Orbitron", "sans-serif"],
+        space: ['"Space Grotesk"', "sans-serif"],
+        jetbrains: ['"JetBrains Mono"', "monospace"],
       },
     },
   },

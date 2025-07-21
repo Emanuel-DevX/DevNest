@@ -30,14 +30,21 @@ html {
 }
 
 /* Custom font utilities for Tailwind v4 */
-@utility font-orbitron {
-  font-family: "Orbitron", sans-serif;
-}
 
-@utility font-jetbrains {
-  font-family: "JetBrains Mono", monospace;
-}
+@layer utilities {
+  .font-jetbrains {
+    font-family: "JetBrains Mono", monospace;
+  }
 
-@utility font-manrope {
-  font-family: "Manrope", sans-serif;
+  .font-manrope {
+    font-family: "Manrope", sans-serif;
+  }
+
+  .font-orbitron {
+    font-family: "Orbitron", sans-serif;
+  }
+
+  .font-space {
+    font-family: "Space Grotesk", sans-serif;
+  }
 }
