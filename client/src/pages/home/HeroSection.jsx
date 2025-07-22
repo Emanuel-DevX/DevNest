@@ -53,7 +53,7 @@ export default function HeroSection() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-md md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
             Manage all your projects, notes, and ideas in one intelligent
             workspace.
             <span className="text-teal-400 font-semibold">DevNest</span> boosts
@@ -121,7 +121,7 @@ export default function HeroSection() {
 
             <a
               href="#features"
-              className="group px-8 py-4 border-2 border-teal-500/50 hover:border-teal-400 text-teal-400 hover:text-teal-300 font-semibold rounded-lg transition-all duration-300 hover:bg-teal-500/10 backdrop-blur-sm flex items-center gap-3"
+              className="hidden group px-8 py-4 border-2 border-teal-500/50 hover:border-teal-400 text-teal-400 hover:text-teal-300 font-semibold rounded-lg transition-all duration-300 hover:bg-teal-500/10 backdrop-blur-sm md:flex items-center gap-3"
             >
               <svg
                 className="w-5 h-5"

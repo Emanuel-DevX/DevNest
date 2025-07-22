@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, User, Settings, LogOut } from "lucide-react";
 import { login, logout, isAuthenticated, getCurrentUser } from "../lib/auth";
 
@@ -6,6 +6,7 @@ export default function AuthButton() {
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true); // add loading
+  const dropdownRef = useRef(null); // 👈 reference for the dropdown
 
   useEffect(() => {
     if (typeof window !== "undefined" && isAuthenticated()) {
@@ -15,9 +16,22 @@ export default function AuthButton() {
     setLoading(false);
   }, []);
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    }
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isDropdownOpen]);
+
   if (loading) return null;
   if (!user) {
     return (
@@ -34,9 +48,9 @@ export default function AuthButton() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
-        onClick={toggleDropdown}
+        onClick={() => setIsDropdownOpen((prev) => !prev)}
         className="flex items-center gap-3 px-4 py-2 hover:bg-slate-800/50 rounded-lg transition-all duration-200 group"
       >
         <img
@@ -44,9 +58,11 @@ export default function AuthButton() {
           alt={user.name}
           className="w-6 h-6 rounded-full ring-2 ring-teal-500/50"
         />
-        <span className="text-white font-bold text-lg">{user.name.split(" ")[0]}</span>
+        <span className="text-white font-bold text-lg hidden md:block">
+          {user.name.split(" ")[0]}
+        </span>
         <ChevronDown
-          className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+          className={`w-4 h-4 hidden md:block text-gray-400 transition-transform duration-200 ${
             isDropdownOpen ? "rotate-180" : ""
           }`}
         />
