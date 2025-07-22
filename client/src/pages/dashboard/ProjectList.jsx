@@ -1,29 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LetterIcon from "../../components/LetterIcon";
 import { Link } from "react-router-dom";
 import { Pin } from "lucide-react";
 import fetcher from "../../lib/api";
 
 const ProjectList = function ({ projectList }) {
-  const sorted = [...projectList].sort((a, b) => {
-    // Sort by pinned first (true before false)
-    if (a.pinned !== b.pinned) {
-      return b.pinned - a.pinned; // pinned=true comes first
-    }
-    // Then sort by creation date
-    return new Date(b.createdAt) - new Date(a.createdAt);
-  });
+  const [projects, setProjects] = useState([]);
+  useEffect(() => {
+    const sorted = [...projectList].sort((a, b) => {
+      // Sort by pinned first (true before false)
+      if (a.pinned !== b.pinned) {
+        return b.pinned - a.pinned; // pinned=true comes first
+      }
+      // Then sort by creation date
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    setProjects(sorted);
+  }, [projectList]);
   const handlePinToggle = (id, newPinnedValue) => {
-    const updated = projects.map((p) =>
+    const updated = [...projects].map((p) =>
       p._id === id ? { ...p, pinned: newPinnedValue } : p
     );
-    setProjects(updated);
+
+    // Re-sort after pin change
+    const reSorted = updated.sort((a, b) => {
+      if (a.pinned !== b.pinned) return b.pinned - a.pinned;
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    setProjects(reSorted);
   };
 
   return (
     <>
       <div className="flex flex-col md:flex-row w-full flex-wrap justify-around gap-4">
-        {sorted.map((project) => (
+        {projects.map((project) => (
           <ProjectCard
             key={project._id}
             projectInfo={project}
@@ -43,7 +54,6 @@ const ProjectCard = function ({ projectInfo, onPinToggle }) {
     const options = {
       body: JSON.stringify({ pinned: !pinned }),
       method: "PUT",
-  
     };
 
     try {
@@ -119,10 +129,7 @@ const ProjectCard = function ({ projectInfo, onPinToggle }) {
           </div>
 
           {/* Project Name */}
-          <h2 className="text-xl font-bold text- mb-2">
-            {projectInfo.name}
-          </h2>
-
+          <h2 className="text-xl font-bold text- mb-2">{projectInfo.name}</h2>
 
           {/* Creation Date */}
           <div className="mt-auto pt-2 border-t border-white/10 w-full">
@@ -130,8 +137,6 @@ const ProjectCard = function ({ projectInfo, onPinToggle }) {
               Created {formatDate(projectInfo.createdAt)}
             </span>
           </div>
-
-     
         </div>
       </Link>
     </div>
