@@ -3,11 +3,11 @@ import { getToken } from "./auth";
 
 const fetcher = async (endpoint, options = {}) => {
   const token = getToken();
+  console.log(token)
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     headers: {
       "Content-Type": "application/json",
       authorization: "Bearer " + token,
-      ...options.headers,
     },
     ...options,
   });

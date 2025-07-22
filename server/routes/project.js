@@ -4,6 +4,7 @@ const {
   getAllProjects,
   getProjectInfo,
   deleteProject,
+  updateProject,
 } = require("../controllers/projectController");
 const { addSprint } = require("../controllers/sprintController");
 const { addTask, getTasksByProject } = require("../controllers/taskController");
@@ -14,6 +15,7 @@ router.post("/", createProject);
 router.get("/", getAllProjects);
 router.get("/:projectId", getProjectInfo);
 router.delete("/:projectId", deleteProject);
+router.put("/:projectId", updateProject);
 
 //Sprint Routes
 router.post("/:projectId/sprints", addSprint);

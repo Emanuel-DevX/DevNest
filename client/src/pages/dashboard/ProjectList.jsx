@@ -39,13 +39,11 @@ const ProjectCard = function ({ projectInfo, onPinToggle }) {
   const [pinned, setPinned] = useState(projectInfo.pinned);
 
   const handlePin = async function (id) {
-    const endpoint = `/project/${id}`;
+    const endpoint = `/projects/${id}`;
     const options = {
       body: JSON.stringify({ pinned: !pinned }),
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  
     };
 
     try {

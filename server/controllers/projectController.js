@@ -112,10 +112,10 @@ const updateProject = async (req, res) => {
     if (pinned !== undefined && pinned !== null) {
       updates.pinned = pinned;
     }
-    if (name.trim().length > 3) {
+    if (name && name.trim().length > 3) {
       updates.name = name.trim();
     }
-    if (description.trim()) {
+    if (description && description.trim().length > 3) {
       updates.description = description.trim();
     }
     const member = await Membership.findOne({ projectId, userId });
@@ -127,6 +127,7 @@ const updateProject = async (req, res) => {
     await Project.updateOne({ _id: projectId }, updates);
     return res.status(200).json({ message: "Project info updated" });
   } catch (err) {
+    console.log(err.message);
     return res
       .status(500)
       .json({ message: "Failed to update project", error: err.message });
@@ -138,4 +139,5 @@ module.exports = {
   getAllProjects,
   getProjectInfo,
   deleteProject,
+  updateProject,
 };
