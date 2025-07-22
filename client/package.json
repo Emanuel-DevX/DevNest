@@ -21,6 +21,7 @@
     "react-dom": "19.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.7.0",
+    "reselect": "^5.1.1",
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {

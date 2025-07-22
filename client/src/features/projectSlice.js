@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { createSelector } from "reselect";
 const initialState = {
   projectList: [],
 };
@@ -34,12 +35,13 @@ const projectSlice = createSlice({
   },
 });
 
-export const getSortedProjects = (state) => {
-  return [...state.project.projectList].sort((a, b) => {
+const selectProjects = (state) => state.project.projectList;
+export const getSortedProjects = createSelector([selectProjects], (projectList) => {
+  return [...projectList].sort((a, b) => {
     if (a.pinned !== b.pinned) return b.pinned - a.pinned;
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
-};
+});
 
 
 export const {
