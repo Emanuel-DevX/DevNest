@@ -1,44 +1,31 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import LetterIcon from "../../components/LetterIcon";
 import { Link } from "react-router-dom";
 import { Pin } from "lucide-react";
 import fetcher from "../../lib/api";
 
-const ProjectList = function ({ projectList }) {
-  const [projects, setProjects] = useState([]);
-  useEffect(() => {
-    const sorted = [...projectList].sort((a, b) => {
-      // Sort by pinned first (true before false)
-      if (a.pinned !== b.pinned) {
-        return b.pinned - a.pinned; // pinned=true comes first
-      }
-      // Then sort by creation date
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    });
-    setProjects(sorted);
-  }, [projectList]);
-  const handlePinToggle = (id, newPinnedValue) => {
-    const updated = [...projects].map((p) =>
-      p._id === id ? { ...p, pinned: newPinnedValue } : p
-    );
+import { useSelector, useDispatch } from "react-redux";
+import { updateProject } from "../../features/projectSlice";
 
-    // Re-sort after pin change
-    const reSorted = updated.sort((a, b) => {
+const ProjectList = function () {
+  const projectList = useSelector((state) => state.project.projectList);
+  const dispatch = useDispatch();
+
+  const sortedProjects = useMemo(() => {
+    return [...projectList].sort((a, b) => {
       if (a.pinned !== b.pinned) return b.pinned - a.pinned;
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
-
-    setProjects(reSorted);
-  };
+  }, [projectList]);
 
   return (
     <>
       <div className="flex flex-col md:flex-row w-full flex-wrap justify-around gap-4">
-        {projects.map((project) => (
+        {sortedProjects.map((project) => (
           <ProjectCard
             key={project._id}
             projectInfo={project}
-            onPinToggle={handlePinToggle}
+            dispatch={dispatch}
           />
         ))}
       </div>
@@ -46,10 +33,8 @@ const ProjectList = function ({ projectList }) {
   );
 };
 
-const ProjectCard = function ({ projectInfo, onPinToggle }) {
-  const [pinned, setPinned] = useState(projectInfo.pinned);
-
-  const handlePin = async function (id) {
+const ProjectCard = function ({ projectInfo, dispatch }) {
+  const handlePin = async function (id, pinned) {
     const endpoint = `/projects/${id}`;
     const options = {
       body: JSON.stringify({ pinned: !pinned }),
@@ -58,9 +43,8 @@ const ProjectCard = function ({ projectInfo, onPinToggle }) {
 
     try {
       await fetcher(endpoint, options);
-      const newPinState = !pinned;
-      setPinned(newPinState);
-      onPinToggle(id, newPinState);
+      const updated = { ...projectInfo, pinned: !pinned };
+      dispatch(updateProject(updated));
     } catch (error) {
       console.error("Failed to toggle pin:", error);
     }
@@ -76,6 +60,7 @@ const ProjectCard = function ({ projectInfo, onPinToggle }) {
   };
 
   const firstLetter = projectInfo.name[0];
+  const pinned = projectInfo.pinned;
 
   return (
     <div className="group relative lg:w-[32%] md:w[48%] mx-2 md:mx-0 ">
@@ -83,7 +68,7 @@ const ProjectCard = function ({ projectInfo, onPinToggle }) {
       <button
         onClick={(e) => {
           e.preventDefault();
-          handlePin(projectInfo._id);
+          handlePin(projectInfo._id, pinned);
         }}
         className={`
           absolute -top-2 -right-2 z-10 

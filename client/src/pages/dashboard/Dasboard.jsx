@@ -7,7 +7,7 @@ import Overview from "./Overview";
 import ProjectList from "./ProjectList";
 
 import { useSelector, useDispatch } from "react-redux";
-import { updateProject } from "../../features/projectSlice";
+import { setProjects } from "../../features/projectSlice";
 
 export default function Dashboard() {
   const [overview, setOverview] = useState({});
