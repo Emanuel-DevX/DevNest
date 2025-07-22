@@ -7,28 +7,16 @@ import {
   Settings,
   ChevronsLeft,
   ChevronsRight,
+  Bell,
+  BellDot,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import ProjectBar from "./ProjectBar";
 
-const menuItems = [
-  {
-    name: "Dashboard",
-    icon: <LayoutDashboard size={20} />,
-    path: "/dashboard",
-  },
-  { name: "Notes", icon: <Notebook size={20} />, path: "/notes" },
-  { name: "Tasks", icon: <CheckSquare size={20} />, path: "/tasks" },
-  {
-    name: "Settings",
-    icon: <Settings size={20} />,
-    path: "/settings",
-  },
-];
-
 const SideNavbar = function ({ setExpand }) {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [hasUnread, setHasUnread] = useState(true);
   const location = useLocation();
   const isActive = (path) => location.pathname.startsWith(path);
 
@@ -48,6 +36,32 @@ const SideNavbar = function ({ setExpand }) {
       window.removeEventListener("resize", handleResize); // clean up
     };
   }, []);
+  const menuItems = [
+    {
+      name: "Dashboard",
+      icon: <LayoutDashboard size={20} />,
+      path: "/dashboard",
+    },
+    { name: "Notes", icon: <Notebook size={20} />, path: "/notes" },
+    { name: "Tasks", icon: <CheckSquare size={20} />, path: "/tasks" },
+    {
+      name: "Settings",
+      icon: <Settings size={20} />,
+      path: "/settings",
+    },
+    {
+      name: "Notifications",
+      icon: hasUnread ? (
+        <div className="relative" >
+          <Bell size={20} />
+          <span className="absolute w-2 h-2 bg-red-500 rounded-full -top-1 -right-1"></span>
+        </div>
+      ) : (
+        <Bell size={20} />
+      ),
+      path: "/notifications",
+    },
+  ];
 
   return (
     <>
@@ -104,7 +118,7 @@ const SideNavbar = function ({ setExpand }) {
             </ul>
           </button>
           <h2
-            className={`font-bold ml-2 mb-2  text-teal-400 ${collapsed?"text-xs" : "text-lg"}`}
+            className={`font-bold ml-2 mb-2  text-teal-400 ${collapsed ? "text-xs" : "text-lg"}`}
           >
             Projects
           </h2>
