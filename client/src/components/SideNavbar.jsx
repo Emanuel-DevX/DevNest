@@ -9,6 +9,7 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import ProjectBar from "./ProjectBar";
 
 const menuItems = [
   {
@@ -36,7 +37,7 @@ const SideNavbar = function ({ setExpand }) {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
       setCollapsed(mobile);
-      setExpand(mobile)
+      setExpand(mobile);
     };
 
     handleResize(); // run once on mount
@@ -102,10 +103,9 @@ const SideNavbar = function ({ setExpand }) {
               <hr className="h-[0.2px]  bg-gray-700 mx-3 my-1 border-none" />
             </ul>
           </button>
-
-          {/* Optional: Footer Actions */}
-          <div className="px-2 pb-4">
-            {/* Add more options like logout or profile here if needed */}
+          <h2 className="font-bold ml-2">Projects</h2>
+          <div className="px-4 pb-4">
+            <ProjectBar isCollapsed={collapsed} />
           </div>
         </div>
       </nav>
