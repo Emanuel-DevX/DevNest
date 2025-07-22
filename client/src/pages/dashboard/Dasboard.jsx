@@ -5,10 +5,16 @@ import fetcher from "../../lib/api";
 import { useState } from "react";
 import Overview from "./Overview";
 import ProjectList from "./ProjectList";
+
+import { useSelector, useDispatch } from "react-redux";
+import { updateProject } from "../../features/projectSlice";
+
 export default function Dashboard() {
   const [overview, setOverview] = useState({});
-  const [projectList, setProjectList] = useState([]);
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+  const projectList = useSelector((state) => state.project.projectList);
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -24,7 +30,7 @@ export default function Dashboard() {
       setOverview(res);
 
       const projects = await fetcher("/projects");
-      setProjectList(projects);
+      dispatch(setProjects(projects));
     };
     fetchData();
   }, []);
