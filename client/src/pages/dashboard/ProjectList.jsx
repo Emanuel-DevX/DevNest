@@ -91,7 +91,7 @@ const ProjectCard = function ({ projectInfo, onPinToggle }) {
           flex items-center justify-center
           transition-all duration-200
           hover:scale-110 
-          shadow-lg hover:shadow-xl
+          shadow-lg hover:shadow-xl cursor-pointer
           ${
             pinned
               ? "bg-yellow-400 text-yellow-900 hover:bg-yellow-300"
