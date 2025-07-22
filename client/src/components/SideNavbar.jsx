@@ -103,9 +103,13 @@ const SideNavbar = function ({ setExpand }) {
               <hr className="h-[0.2px]  bg-gray-700 mx-3 my-1 border-none" />
             </ul>
           </button>
-          <h2 className="font-bold ml-2">Projects</h2>
-          <div className="px-4 pb-4">
-            <ProjectBar isCollapsed={collapsed} />
+          <h2
+            className={`font-bold ml-2 mb-2  text-teal-400 ${collapsed?"text-xs" : "text-lg"}`}
+          >
+            Projects
+          </h2>
+          <div className="px-4 pb-4 max-h-80 overflow-auto hide-scrollbar">
+            <ProjectBar collapsed={collapsed} />
           </div>
         </div>
       </nav>

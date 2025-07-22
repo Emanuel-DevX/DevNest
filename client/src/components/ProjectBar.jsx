@@ -1,14 +1,22 @@
-import { useState } from "react";
 import { useSelector } from "react-redux";
 import { getSortedProjects } from "../features/projectSlice";
+import LetterIcon from "./LetterIcon";
 
-const ProjectBar = function ({ isCollapsed }) {
-  const [collapsed, setCollapsed] = useState(isCollapsed);
+const ProjectBar = function ({ collapsed }) {
   const sortedProjects = useSelector(getSortedProjects);
   return (
     <>
       {sortedProjects.map((project) => (
-        <div>{project.name}</div>
+        <div className="flex gap-2 max-h-8 overflow-hidden my-2 items-center">
+          <LetterIcon letter={project.name[0]} size="sm" />
+          {!collapsed ? (
+            <div className="text-sm max-h-6 overflow-hidden">
+              {project.name}
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
       ))}
     </>
   );
