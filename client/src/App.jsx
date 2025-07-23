@@ -8,6 +8,9 @@ import AuthCallback from "./pages/AuthCallback";
 import SideNavbar from "./components/SideNavbar";
 import Tasks from "./pages/tasks/Tasks";
 import Project from "./pages/project/Project";
+import SprintView from "./pages/tasks/SprintView";
+import NotesList from "./pages/notes/NotesList";
+import ProjectSettings from "./pages/project/ProjectSettings";
 function App() {
   const location = useLocation();
   const [expand, setExpand] = useState(false);
@@ -33,7 +36,11 @@ function App() {
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tasks" element={<Tasks />} />
-                <Route path="/project/:id/*" element={<Project />}/>
+                <Route path="/project/:id" element={<Project />}>
+                  <Route path="tasks" element={<SprintView />} />
+                  <Route path="notes" element={<NotesList />} />
+                  <Route path="settings" element={<ProjectSettings />} />
+                </Route>
               </Routes>
             </div>
           </main>
