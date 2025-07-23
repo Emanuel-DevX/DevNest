@@ -1,31 +1,74 @@
-import { useParams, Route, Routes } from "react-router-dom";
-import ProjectMeta from "./ProjectMeta";
+import { useParams, Routes, Route, NavLink, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import fetcher from "../../lib/api";
 
-const Project = function () {
+import ProjectMeta from "./ProjectMeta";
+import SprintView from "../tasks/SprintView";
+// import NotesView from "../notes/NotesView";
+// import ProjectSettings from "../settings/ProjectSettings";
+
+const ProjectLayout = () => {
   const { id } = useParams();
-  const [project, setProject] = useState({});
+  const [project, setProject] = useState(null);
+
   useEffect(() => {
     async function fetchProject() {
       const res = await fetcher(`/projects/${id}`);
       setProject(res);
     }
-    fetchProject()
+    fetchProject();
   }, [id]);
 
-  return (
-    <>
-      <div className="min-h-screen">
-        <ProjectMeta project={project} />
-        <div></div>
+  if (!project) return <div className="text-white">Loading...</div>;
 
-        <Routes>
-          <Route path="/task" element={null}></Route>
-        </Routes>
+  return (
+    <div className="min-h-screen px-6">
+      <ProjectMeta project={project} />
+
+      {/* Nav Tabs */}
+      <div className="flex gap-4 mb-4 border-b border-gray-700 text-sm font-medium">
+        <NavLink
+          to="tasks"
+          className={({ isActive }) =>
+            `pb-2 px-2 ${
+              isActive
+                ? "border-b-2 border-teal-400 text-teal-300"
+                : "text-gray-400"
+            }`
+          }
+        >
+          Tasks
+        </NavLink>
+        <NavLink
+          to="notes"
+          className={({ isActive }) =>
+            `pb-2 px-2 ${
+              isActive
+                ? "border-b-2 border-blue-400 text-blue-300"
+                : "text-gray-400"
+            }`
+          }
+        >
+          Notes
+        </NavLink>
+        <NavLink
+          to="settings"
+          className={({ isActive }) =>
+            `pb-2 px-2 ${
+              isActive
+                ? "border-b-2 border-purple-400 text-purple-300"
+                : "text-gray-400"
+            }`
+          }
+        >
+          Settings
+        </NavLink>
       </div>
-    </>
+
+      {/* Render tab content */}
+      <Outlet context={{ project }} />
+    </div>
   );
 };
 
-export default Project;
+export default ProjectLayout;
