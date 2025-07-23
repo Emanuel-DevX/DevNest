@@ -17,13 +17,9 @@ const ProjectMeta = function ({ project }) {
     <div className="bg-gradient-to-br from-black via-teal-900/14 to-black border border-teal-500/20 rounded-xl p-6 mb-6 shadow-md shadow-teal-500/10">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-start gap-3">
-          {project.pinned && (
-            <div className="mt-1">
-              <Pin className="w-4 h-4 text-teal-400 fill-current" />
-            </div>
-          )}
+     
           <div>
-            <h1 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-white  flex items-center gap-2">
               {project.name}
               {project.protected && (
                 <span className="text-xs bg-black/40 text-teal-300 px-2 py-1 rounded-full border border-teal-500/30">
@@ -31,8 +27,13 @@ const ProjectMeta = function ({ project }) {
                 </span>
               )}
             </h1>
+        <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+          <Calendar className="w-2 h-2" />
+          <span>Updated {formatDate(project.updatedAt)}</span>
+        </div>
             <p className="text-gray-300 leading-relaxed max-w-2xl">
               {project.description}
+
             </p>
           </div>
         </div>
@@ -62,7 +63,7 @@ const ProjectMeta = function ({ project }) {
               <div className="absolute right-0 mt-2 w-64 bg-black/60 backdrop-blur-xl border border-teal-500/30 rounded-lg shadow-xl z-20 overflow-hidden">
                 <div className="p-4 border-b border-teal-500/20">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-teal-300">
+                    <span className="text-sm font-medium text-white">
                       Project Members
                     </span>
                     <span className="text-xs bg-teal-500/20 text-teal-400 px-2 py-1 rounded-full">
@@ -71,8 +72,8 @@ const ProjectMeta = function ({ project }) {
                   </div>
                   <div className="flex items-center gap-2">
                     {/* Current user avatar */}
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-sm font-medium border-2 border-teal-500/30">
-                      U
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-black  text-sm font-extrabold border-2 border-teal-500/30">
+                      You
                     </div>
                     {/* +X more */}
                     {project.members?.length > 1 && (
@@ -89,7 +90,7 @@ const ProjectMeta = function ({ project }) {
                       window.location.href = `/project/${project._id}/settings/members`;
                       setIsDropdownOpen(false);
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-teal-300 hover:bg-teal-500/10 rounded-md transition-colors duration-200"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm font-bold hover:bg-teal-500/10 rounded-md transition-colors duration-200"
                   >
                     <Settings className="w-4 h-4" />
                     Manage Members
@@ -100,7 +101,6 @@ const ProjectMeta = function ({ project }) {
           )}
         </div>
       </div>
-
       {/* Stats Row */}
       <div className="flex items-center gap-6 text-sm">
         <div className="flex items-center gap-2">
@@ -115,10 +115,6 @@ const ProjectMeta = function ({ project }) {
           <span className="text-gray-400">Notes</span>
         </div>
 
-        <div className="flex items-center gap-2 text-gray-500">
-          <Calendar className="w-4 h-4" />
-          <span>Updated {formatDate(project.updatedAt)}</span>
-        </div>
 
         {project.sprints?.length > 0 && (
           <div className="flex items-center gap-2">
