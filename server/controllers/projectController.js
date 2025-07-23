@@ -1,6 +1,7 @@
 const Project = require("../models/Project");
 const Sprint = require("../models/Sprint");
 const Membership = require("../models/Membership");
+const Task = require("../models/Task");
 
 const createProject = async (req, res) => {
   const userId = req.user.id;
@@ -64,8 +65,17 @@ const getProjectInfo = async (req, res) => {
         new Date(sprint.startDate) <= today &&
         today <= new Date(sprint.endDate),
     }));
+    const taskCount = await Task.countDocuments(projectId);
 
-    return res.status(200).json({ ...project, members, sprints: sprintData });
+    return res
+      .status(200)
+      .json({
+        ...project,
+        members,
+        sprints: sprintData,
+        taskCount: taskCount,
+        noteCount: 0,
+      });
   } catch (err) {
     return res.status(500).json({
       message: "Failed to fetch project information",
