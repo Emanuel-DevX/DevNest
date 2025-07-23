@@ -118,7 +118,7 @@ const SideNavbar = function ({ setExpand }) {
             </ul>
           </button>
           <h2
-            className={`font-bold ml-2 mb-2  text-teal-400 ${collapsed ? "text-xs" : "text-lg"}`}
+            className={`font-bold ml-2 mt-2 pb-2  text-teal-400 ${collapsed ? "text-xs" : "text-lg"}`}
           >
             Projects
           </h2>
