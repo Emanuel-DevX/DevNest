@@ -3,9 +3,6 @@ import { useEffect, useState } from "react";
 import fetcher from "../../lib/api";
 
 import ProjectMeta from "./ProjectMeta";
-import SprintView from "../tasks/SprintView";
-// import NotesView from "../notes/NotesView";
-// import ProjectSettings from "../settings/ProjectSettings";
 
 const ProjectLayout = () => {
   const { id } = useParams();

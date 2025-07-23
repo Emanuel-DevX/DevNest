@@ -1,5 +1,10 @@
 const ProjectSettings = function () {
-  return <>Project customization settings</>;
+  return <>
+  <div className="w-full border">
+
+  Project customization settings
+  </div>
+  </>
 };
 
 export default ProjectSettings;

@@ -4,7 +4,6 @@ import { ChevronDown, Users, Settings, Calendar, Pin } from "lucide-react";
 const ProjectMeta = function ({ project }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
@@ -15,11 +14,10 @@ const ProjectMeta = function ({ project }) {
 
   return (
     <div className="bg-gradient-to-br from-black via-teal-900/14 to-black border border-teal-500/20 rounded-xl p-6 mb-6 shadow-md shadow-teal-500/10">
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between ">
         <div className="flex items-start gap-3">
-     
           <div>
-            <h1 className="text-2xl font-bold text-white  flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-white  flex flex-col justify-center gap-2">
               {project.name}
               {project.protected && (
                 <span className="text-xs bg-black/40 text-teal-300 px-2 py-1 rounded-full border border-teal-500/30">
@@ -27,14 +25,10 @@ const ProjectMeta = function ({ project }) {
                 </span>
               )}
             </h1>
-        <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
-          <Calendar className="w-2 h-2" />
-          <span>Updated {formatDate(project.updatedAt)}</span>
-        </div>
-            <p className="text-gray-300 leading-relaxed max-w-2xl">
-              {project.description}
-
-            </p>
+            <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+              <Calendar className="w-2 h-2" />
+              <span>Updated {formatDate(project.updatedAt)}</span>
+            </div>
           </div>
         </div>
 
@@ -101,6 +95,9 @@ const ProjectMeta = function ({ project }) {
           )}
         </div>
       </div>
+      <p className="text-gray-300 leading-relaxed max-w-2xl mb-4">
+        {project.description}
+      </p>
       {/* Stats Row */}
       <div className="flex items-center gap-6 text-sm">
         <div className="flex items-center gap-2">
@@ -114,7 +111,6 @@ const ProjectMeta = function ({ project }) {
           <span className="text-white font-medium">{project.noteCount}</span>
           <span className="text-gray-400">Notes</span>
         </div>
-
 
         {project.sprints?.length > 0 && (
           <div className="flex items-center gap-2">

@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation,Navigate } from "react-router-dom";
 import { useState } from "react";
 import Home from "./pages/home/Home";
 import Dashboard from "./pages/dashboard/Dasboard";
@@ -37,6 +37,8 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tasks" element={<Tasks />} />
                 <Route path="/project/:id" element={<Project />}>
+                  <Route index element={<Navigate to="tasks" replace />} />
+
                   <Route path="tasks" element={<SprintView />} />
                   <Route path="notes" element={<NotesList />} />
                   <Route path="settings" element={<ProjectSettings />} />
