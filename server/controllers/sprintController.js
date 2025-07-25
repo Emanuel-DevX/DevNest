@@ -35,7 +35,7 @@ const addSprint = async (req, res) => {
 
 const updateSprint = async (req, res) => {
   const sprintId = req.params.sprintId;
-  const sprint = await Sprint.findById({ sprintId });
+  const sprint = await Sprint.findById(sprintId);
   if (!sprintId || !sprint) {
     return res.status(400).json({ message: "Invalid sprint ID" });
   }
