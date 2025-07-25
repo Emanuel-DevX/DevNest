@@ -15,6 +15,10 @@ const ProjectLayout = () => {
     }
     fetchProject();
   }, [id]);
+  const refreshProject = async () => {
+    const res = await fetcher(`/projects/${id}`);
+    setProject(res);
+  };
 
   if (!project) return <div className="text-white">Loading...</div>;
 
@@ -75,7 +79,10 @@ const ProjectLayout = () => {
       </div>
 
       {/* Render tab content */}
-      <Outlet context={{ project }} />
+      <Outlet
+        key={project._id + project.sprints?.length}
+        context={{ project, refreshProject }}
+      />
     </div>
   );
 };

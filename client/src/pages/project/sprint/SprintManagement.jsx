@@ -1,11 +1,11 @@
 // SprintManagement.jsx - Dedicated sprint management page
 import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { CreateSprint, ViewSprint, EditSprint } from "./SprintMeta";
 import fetcher from "../../../lib/api";
 
 const SprintManagement = () => {
-  const { project } = useOutletContext();
+  const { project, refreshProject } = useOutletContext();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingSprintId, setEditingSprintId] = useState(null);
 
@@ -24,7 +24,7 @@ const SprintManagement = () => {
       });
 
       setShowCreateForm(false);
-      window.location.reload();
+      await refreshProject();
     } catch (error) {
       console.error("Error creating sprint:", error);
       // TODO: Show error toast
