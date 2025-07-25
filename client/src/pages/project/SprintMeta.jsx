@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { Calendar, Edit3, Save, X, Plus, Target } from "lucide-react";
+
 // View Sprint Component
 const ViewSprint = ({ sprintData, onEdit }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -229,3 +232,137 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
     </div>
   );
 };
+
+// Create New Sprint Component
+const CreateSprint = ({ onSave, onCancel }) => {
+  const [title, setTitle] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [description, setDescription] = useState("");
+  const [features, setFeatures] = useState([""]);
+
+  const addFeature = () => setFeatures([...features, ""]);
+
+  const updateFeature = (index, value) => {
+    const updated = [...features];
+    updated[index] = value;
+    setFeatures(updated);
+  };
+
+  const removeFeature = (index) => {
+    setFeatures(features.filter((_, i) => i !== index));
+  };
+
+  const handleSave = () => {
+    const sprintData = {
+      title,
+      startDate,
+      endDate,
+      description,
+      features: features.filter((f) => f.trim()),
+    };
+    onSave(sprintData);
+  };
+
+  return (
+    <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 bg-slate-900/20">
+      <div className="flex items-center gap-2 mb-4">
+        <Plus className="w-5 h-5 text-teal-400" />
+        <h3 className="text-lg font-semibold text-white">Create New Sprint</h3>
+      </div>
+
+      <div className="space-y-4">
+        <input
+          placeholder="Sprint title..."
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-colors"
+        />
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">
+              Start Date
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              min={new Date().toISOString().split("T")[0]}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">
+              End Date
+            </label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              min={startDate}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
+
+        <textarea
+          placeholder="Sprint description (optional)..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={2}
+          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-colors resize-none"
+        />
+
+        <div>
+          <label className="block text-xs text-slate-400 mb-2">
+            Features & Goals
+          </label>
+          {features.map((feature, index) => (
+            <div key={index} className="flex gap-2 mb-2">
+              <input
+                placeholder="Add a feature or goal..."
+                value={feature}
+                onChange={(e) => updateFeature(index, e.target.value)}
+                className="flex-1 bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-colors"
+              />
+              {features.length > 1 && (
+                <button
+                  onClick={() => removeFeature(index)}
+                  className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            onClick={addFeature}
+            className="text-sm text-teal-400 hover:text-teal-300 transition-colors"
+          >
+            + Add another feature
+          </button>
+        </div>
+      </div>
+
+      <div className="flex gap-3 mt-6 pt-4 border-t border-slate-700">
+        <button
+          onClick={handleSave}
+          disabled={!title || !startDate || !endDate}
+          className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+        >
+          <Save className="w-4 h-4" />
+          Create Sprint
+        </button>
+        <button
+          onClick={onCancel}
+          className="px-4 py-2 border border-slate-600 hover:bg-slate-800 text-slate-300 rounded-lg transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export { CreateSprint, ViewSprint, EditSprint };
