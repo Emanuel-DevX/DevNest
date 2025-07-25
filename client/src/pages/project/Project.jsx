@@ -37,6 +37,18 @@ const ProjectLayout = () => {
           Tasks
         </NavLink>
         <NavLink
+          to="sprints"
+          className={({ isActive }) =>
+            `pb-2 px-2 ${
+              isActive
+                ? "border-b-2 border-teal-400 text-teal-300"
+                : "text-gray-400"
+            }`
+          }
+        >
+          Sprints
+        </NavLink>
+        <NavLink
           to="notes"
           className={({ isActive }) =>
             `pb-2 px-2 ${
