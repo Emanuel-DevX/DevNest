@@ -19,7 +19,7 @@ const ProjectLayout = () => {
   if (!project) return <div className="text-white">Loading...</div>;
 
   return (
-    <div className="min-h-screen px-6">
+    <div className="min-h-screen md:px-6">
       <ProjectMeta project={project} />
 
       {/* Nav Tabs */}

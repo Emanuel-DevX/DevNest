@@ -8,7 +8,7 @@ import AuthCallback from "./pages/AuthCallback";
 import SideNavbar from "./components/SideNavbar";
 import Tasks from "./pages/tasks/Tasks";
 import Project from "./pages/project/Project";
-import SprintView from "./pages/tasks/SprintView";
+import ProjectTaskView from "./pages/project/ProjectTaskView";
 import NotesList from "./pages/notes/NotesList";
 import ProjectSettings from "./pages/project/ProjectSettings";
 function App() {
@@ -39,7 +39,7 @@ function App() {
                 <Route path="/project/:id" element={<Project />}>
                   <Route index element={<Navigate to="tasks" replace />} />
 
-                  <Route path="tasks" element={<SprintView />} />
+                  <Route path="tasks" element={<ProjectTaskView />} />
                   <Route path="notes" element={<NotesList />} />
                   <Route path="settings" element={<ProjectSettings />} />
                 </Route>

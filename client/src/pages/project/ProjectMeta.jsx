@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Users, Settings, Calendar, Pin } from "lucide-react";
+import { ChevronDown, Users, Settings, Calendar, Lock } from "lucide-react";
 
 const ProjectMeta = function ({ project }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -17,12 +17,11 @@ const ProjectMeta = function ({ project }) {
       <div className="flex items-start justify-between ">
         <div className="flex items-start gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-white  flex flex-col justify-center gap-2">
+            <h1 className="text-2xl font-bold text-white  flex items-center  ">
               {project.name}
               {project.protected && (
-                <span className="text-xs bg-black/40 text-teal-300 px-2 py-1 rounded-full border border-teal-500/30">
-                  Protected
-                </span>
+                <Lock className=" text-teal-300 max-h-4  border-teal-500/30" />
+                 
               )}
             </h1>
             <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
