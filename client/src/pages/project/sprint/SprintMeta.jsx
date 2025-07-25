@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   Calendar,
   Edit3,
@@ -18,6 +18,26 @@ import {
 const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef()
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    }
+
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
+
 
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("en-US", {
@@ -102,26 +122,26 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
             </div>
           )}
         </div>
-        <div className="relative">
-          <button
+        <div className="relative" ref={menuRef}>
+          <button className="cursor-pointer "
             onClick={() => {
               setShowMenu((prev) => !prev);
             }}
           >
-            <EllipsisVertical />
+            <EllipsisVertical className="w-4"/>
           </button>
           {showMenu && (
-            <div className="flex flex-col bg-black gap-2  border p-3 rounded-2xl rounded-tr-none absolute -bottom-19 -left-17">
+            <div className="flex flex-col bg-black/80  w-24 gap-1 border p-1 rounded-2xl rounded-tr-none absolute -bottom-17 -left-21">
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1 text-sm"
+                className="flex items-center gap-1 text-sm hover:bg-white/5 p-1 hover:text-teal-300"
               >
                 <Edit2 className="w-3 h-3 text-teal-300" />
                 Edit
               </button>
               <button
                 onClick={onDelete}
-                className="flex items-center gap-1 text-sm"
+                className="flex items-center gap-1 text-sm hover:bg-white/5 p-1 hover:text-red-500"
               >
                 <Trash className="w-3 h-3 text-red-500" />
                 Delete
