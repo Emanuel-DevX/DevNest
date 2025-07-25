@@ -1,4 +1,5 @@
 const Task = require("../models/Task");
+const Sprint = require("../models/Sprint");
 
 // PATCH /tasks/:taskId/calendar
 const addToCalendar = async (req, res) => {
@@ -71,13 +72,40 @@ const addTask = async (req, res) => {
 
 const getTasksByProject = async (req, res) => {
   const projectId = req.params.projectId;
+
   if (!projectId) {
     return res
       .status(401)
       .json({ message: "Project Id required to get tasks" });
   }
+  const { sprintId } = req.query;
+  let filters = { projectId };
+
+  // If sprintId is provided, add sprint date filtering
+  if (sprintId) {
+    const sprint = await Sprint.findById(sprintId);
+
+    if (sprint) {
+      const startDate = new Date(sprint.startDate);
+      const endDate = new Date(sprint.endDate);
+
+      // Add sprint date filtering to the base filter
+      filters = {
+        ...filters,
+        dueDate: {
+          $gte: startDate, // Tasks due on or after sprint start
+          $lte: endDate, // Tasks due on or before sprint end
+        },
+      };
+    }
+  }
+
   try {
-    const tasks = await Task.find({ projectId });
+    console.log(JSON.stringify(filters, null, 2));
+
+    const tasks = await Task.find(filters);
+    const found = tasks.map((task) => task.dueDate);
+    console.log(found);
     return res.status(200).json(tasks);
   } catch (err) {
     return res.status(500).json({
