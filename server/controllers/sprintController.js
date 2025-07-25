@@ -86,4 +86,4 @@ const deleteSprint = async (req, res) => {
   }
 };
 
-module.exports = { addSprint, updateSprint };
+module.exports = { addSprint, updateSprint, deleteSprint };
