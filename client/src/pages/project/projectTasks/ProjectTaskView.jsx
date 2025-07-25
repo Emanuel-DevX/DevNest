@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { ViewSprint } from "./SprintMeta";
+import { ViewSprint } from "../sprint/SprintMeta";
 
 const ProjectTaskView = function () {
   const [currentSprint, setCurrentSprint] = useState({});

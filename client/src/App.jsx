@@ -8,9 +8,10 @@ import AuthCallback from "./pages/AuthCallback";
 import SideNavbar from "./components/SideNavbar";
 import Tasks from "./pages/tasks/Tasks";
 import Project from "./pages/project/Project";
-import ProjectTaskView from "./pages/project/ProjectTaskView";
+import ProjectTaskView from "./pages/project/projectTasks/ProjectTaskView";
 import NotesList from "./pages/notes/NotesList";
 import ProjectSettings from "./pages/project/ProjectSettings";
+import SprintManagement from "./pages/project/sprint/SprintManagement";
 function App() {
   const location = useLocation();
   const [expand, setExpand] = useState(false);
@@ -40,6 +41,7 @@ function App() {
                   <Route index element={<Navigate to="tasks" replace />} />
 
                   <Route path="tasks" element={<ProjectTaskView />} />
+                  <Route path="sprints" element={<SprintManagement/>}/>
                   <Route path="notes" element={<NotesList />} />
                   <Route path="settings" element={<ProjectSettings />} />
                 </Route>
