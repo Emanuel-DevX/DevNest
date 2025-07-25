@@ -1,9 +1,23 @@
 import { useState } from "react";
-import { Calendar, Edit3, Save, X, Plus, Target } from "lucide-react";
+import {
+  Calendar,
+  Edit3,
+  Save,
+  X,
+  Plus,
+  Target,
+  Cross,
+  Delete,
+  Trash,
+  EllipsisVertical,
+  TrashIcon,
+  Edit2,
+} from "lucide-react";
 
 // View Sprint Component
-const ViewSprint = ({ sprintData, onEdit }) => {
+const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("en-US", {
@@ -50,6 +64,12 @@ const ViewSprint = ({ sprintData, onEdit }) => {
               </div>
             )}
           </div>
+          <button
+            onClick={() => setShowDetails(!showDetails)}
+            className="text-xs text-teal-400 hover:text-teal-300 transition-colors"
+          >
+            {showDetails ? "Less" : "Details"}
+          </button>
 
           {showDetails && (
             <div className="space-y-3 mt-4 pl-4 border-l-2 border-teal-500/30">
@@ -82,22 +102,31 @@ const ViewSprint = ({ sprintData, onEdit }) => {
             </div>
           )}
         </div>
-
-        <div className="flex items-center gap-2 ml-4">
+        <div className="relative">
           <button
-            onClick={() => setShowDetails(!showDetails)}
-            className="text-xs text-teal-400 hover:text-teal-300 transition-colors"
+            onClick={() => {
+              setShowMenu((prev) => !prev);
+            }}
           >
-            {showDetails ? "Less" : "Details"}
+            <EllipsisVertical />
           </button>
-          {showDetails && (
-            <button
-              onClick={onEdit}
-              className="flex items-center gap-1 text-xs text-yellow-400 hover:text-yellow-300 transition-colors"
-            >
-              <Edit3 className="w-3 h-3" />
-              Edit
-            </button>
+          {showMenu && (
+            <div className="flex flex-col bg-black gap-2  border p-3 rounded-2xl rounded-tr-none absolute -bottom-19 -left-17">
+              <button
+                onClick={onEdit}
+                className="flex items-center gap-1 text-sm"
+              >
+                <Edit2 className="w-3 h-3 text-teal-300" />
+                Edit
+              </button>
+              <button
+                onClick={onDelete}
+                className="flex items-center gap-1 text-sm"
+              >
+                <Trash className="w-3 h-3 text-red-500" />
+                Delete
+              </button>
+            </div>
           )}
         </div>
       </div>

@@ -80,9 +80,9 @@ const SprintManagement = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Sprint Management</h1>
+      <div className="flex flex-col gap-4 justify-center items-center md:justify-between">
+        <div className="text-center md:text-start">
+          <h1 className="text-2xl font-bold text-white ">Sprint Management</h1>
           <p className="text-slate-400 text-sm mt-1">
             Organize your project work into focused sprints
           </p>
@@ -90,7 +90,7 @@ const SprintManagement = () => {
         {!showCreateForm && (
           <button
             onClick={() => setShowCreateForm(true)}
-            className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors"
+            className="px-4 py-2 w-36 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors"
           >
             Create Sprint
           </button>
@@ -147,22 +147,6 @@ const SprintManagement = () => {
                         sprintData={sprint}
                         onEdit={() => setEditingSprintId(sprint._id)}
                       />
-                    </div>
-                    <div className="flex items-center gap-2 ml-4">
-                      {!sprint.isCurrent && (
-                        <button
-                          onClick={() => handleSetCurrentSprint(sprint._id)}
-                          className="px-3 py-1 text-xs bg-teal-600/20 text-teal-400 hover:bg-teal-600/30 rounded border border-teal-600/30 transition-colors"
-                        >
-                          Set Active
-                        </button>
-                      )}
-                      <button
-                        onClick={() => handleDeleteSprint(sprint._id)}
-                        className="px-3 py-1 text-xs bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded border border-red-600/30 transition-colors"
-                      >
-                        Delete
-                      </button>
                     </div>
                   </div>
                 )}
