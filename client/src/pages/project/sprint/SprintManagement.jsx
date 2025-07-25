@@ -5,7 +5,7 @@ import { CreateSprint, ViewSprint, EditSprint } from "./SprintMeta";
 import fetcher from "../../../lib/api";
 
 const SprintManagement = () => {
-  const { project, refreshProject } = useOutletContext();
+  const { project } = useOutletContext();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingSprintId, setEditingSprintId] = useState(null);
 
@@ -24,7 +24,7 @@ const SprintManagement = () => {
       });
 
       setShowCreateForm(false);
-      await refreshProject(); // Refresh project data
+      window.location.reload();
     } catch (error) {
       console.error("Error creating sprint:", error);
       // TODO: Show error toast
