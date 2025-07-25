@@ -17,6 +17,19 @@ const addSprint = async (req, res) => {
         .status(400)
         .json({ message: "Sprint end date must be in future of start date" });
     }
+    // Check for overlapping sprints in the same project
+    const overlapping = await Sprint.findOne({
+      projectId,
+      $or: [
+        { startDate: { $lte: enDate }, endDate: { $gte: stDate } }, // overlaps
+      ],
+    });
+
+    if (overlapping) {
+      return res.status(400).json({
+        message: "Sprint dates overlap with another sprint in this project",
+      });
+    }
     await Sprint.create({
       projectId: projectId,
       title: title,
@@ -46,6 +59,18 @@ const updateSprint = async (req, res) => {
     if (enDate - stDate < 1) {
       return res.status(400).json({
         message: "Sprint end date must be in future of start date",
+      });
+    }
+    // Check for overlapping sprints in the same project (excluding self)
+    const overlapping = await Sprint.findOne({
+      _id: { $ne: sprintId },
+      projectId: sprint.projectId,
+      $or: [{ startDate: { $lte: enDate }, endDate: { $gte: stDate } }],
+    });
+
+    if (overlapping) {
+      return res.status(400).json({
+        message: "Sprint dates overlap with another sprint in this project",
       });
     }
     await Sprint.findByIdAndUpdate(
