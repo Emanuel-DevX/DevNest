@@ -24,18 +24,18 @@ const SprintManagement = () => {
           projectId: project._id,
         }),
       });
-      
+
       setShowCreateForm(false);
-      
+
       setToast({ message: "Successfully created a sprint" });
       await new Promise((r) => setTimeout(r, 1000));
-      
+
       await refreshProject();
     } catch (error) {
       console.error("Error creating sprint:", error);
       setToast({
         message: error.message ? error.message : "Unable to create a sprint",
-        type:"error"
+        type: "error",
       });
     }
   };
@@ -49,10 +49,15 @@ const SprintManagement = () => {
       });
 
       setEditingSprintId(null);
+      setToast({ message: "Update successfull!" });
+      await new Promise((r) => setTimeout(r, 1000));
       await refreshProject();
     } catch (error) {
       console.error("Error updating sprint:", error);
-      // TODO: Show error toast
+      setToast({
+        type: error,
+        message: error.message ? error.message : "Unable to update sprint",
+      });
     }
   };
 
@@ -64,25 +69,15 @@ const SprintManagement = () => {
       await fetcher(`/sprints/${sprintId}`, {
         method: "DELETE",
       });
-
+      setToast({ message: "Successfully deleted sprint" });
+      await new Promise((r) => setTimeout(r, 1000));
       await refreshProject();
     } catch (error) {
       console.error("Error deleting sprint:", error);
-      // TODO: Show error toast
-    }
-  };
-
-  // Handler for setting current sprint
-  const handleSetCurrentSprint = async (sprintId) => {
-    try {
-      await fetcher(`/sprints/${sprintId}/set-current`, {
-        method: "PATCH",
+      setToast({
+        type: error,
+        message: error.message ? error.message : "Unable to delete sprint!",
       });
-
-      await refreshProject();
-    } catch (error) {
-      console.error("Error setting current sprint:", error);
-      // TODO: Show error toast
     }
   };
 
