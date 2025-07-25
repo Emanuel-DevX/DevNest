@@ -17,6 +17,6 @@ const ProjectTaskView = function () {
     filterCurrent();
   }, [currentSprintId]);
 
-  return <>{currentSprintId && <ViewSprint sprintData={currentSprint} />}</>;
+  return <>{currentSprintId && <ViewSprint sprintData={currentSprint} viewOnly={true} />}</>;
 };
 export default ProjectTaskView;

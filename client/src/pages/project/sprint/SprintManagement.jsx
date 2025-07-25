@@ -80,7 +80,7 @@ const SprintManagement = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-4 justify-center items-center md:justify-between">
+      <div className="flex flex-col md:flex-row gap-4 justify-center items-center md:justify-between">
         <div className="text-center md:text-start">
           <h1 className="text-2xl font-bold text-white ">Sprint Management</h1>
           <p className="text-slate-400 text-sm mt-1">
@@ -141,11 +141,12 @@ const SprintManagement = () => {
                     onCancel={() => setEditingSprintId(null)}
                   />
                 ) : (
-                  <div className="flex items-center justify-between p-4 bg-slate-800/30 rounded-lg border border-slate-700">
+                  <div className="flex items-center justify-between px-4 rounded-lg border border-slate-700">
                     <div className="flex-1">
                       <ViewSprint
                         sprintData={sprint}
                         onEdit={() => setEditingSprintId(sprint._id)}
+                        onDelete={() => handleDeleteSprint(sprint._id)}
                       />
                     </div>
                   </div>

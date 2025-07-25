@@ -18,7 +18,7 @@ import {
 const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const menuRef = useRef()
+  const menuRef = useRef();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -37,7 +37,6 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu]);
-
 
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("en-US", {
@@ -122,33 +121,36 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
             </div>
           )}
         </div>
-        <div className="relative" ref={menuRef}>
-          <button className="cursor-pointer "
-            onClick={() => {
-              setShowMenu((prev) => !prev);
-            }}
-          >
-            <EllipsisVertical className="w-4"/>
-          </button>
-          {showMenu && (
-            <div className="flex flex-col bg-black/80  w-24 gap-1 border p-1 rounded-2xl rounded-tr-none absolute -bottom-17 -left-21">
-              <button
-                onClick={onEdit}
-                className="flex items-center gap-1 text-sm hover:bg-white/5 p-1 hover:text-teal-300"
-              >
-                <Edit2 className="w-3 h-3 text-teal-300" />
-                Edit
-              </button>
-              <button
-                onClick={onDelete}
-                className="flex items-center gap-1 text-sm hover:bg-white/5 p-1 hover:text-red-500"
-              >
-                <Trash className="w-3 h-3 text-red-500" />
-                Delete
-              </button>
-            </div>
-          )}
-        </div>
+        {!viewOnly === true && (
+          <div className="relative" ref={menuRef}>
+            <button
+              className="cursor-pointer "
+              onClick={() => {
+                setShowMenu((prev) => !prev);
+              }}
+            >
+              <EllipsisVertical className="w-4" />
+            </button>
+            {showMenu && (
+              <div className="flex flex-col bg-black/80  w-24 gap-1 border p-1 rounded-2xl rounded-tr-none absolute -bottom-17 -left-21">
+                <button
+                  onClick={onEdit}
+                  className="flex items-center gap-1 text-sm hover:bg-white/5 p-1 hover:text-teal-300"
+                >
+                  <Edit2 className="w-3 h-3 text-teal-300" />
+                  Edit
+                </button>
+                <button
+                  onClick={onDelete}
+                  className="flex items-center gap-1 text-sm hover:bg-white/5 p-1 hover:text-red-500"
+                >
+                  <Trash className="w-3 h-3 text-red-500" />
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
