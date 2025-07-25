@@ -3,11 +3,13 @@ import { useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import { CreateSprint, ViewSprint, EditSprint } from "./SprintMeta";
 import fetcher from "../../../lib/api";
+import Toast from "../../../components/Toast";
 
 const SprintManagement = () => {
   const { project, refreshProject } = useOutletContext();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingSprintId, setEditingSprintId] = useState(null);
+  const [toast, setToast] = useState(null);
 
   // Get current sprint
   const currentSprint = project.sprints?.find((sprint) => sprint.isCurrent);
@@ -22,12 +24,19 @@ const SprintManagement = () => {
           projectId: project._id,
         }),
       });
-
+      
       setShowCreateForm(false);
+      
+      setToast({ message: "Successfully created a sprint" });
+      await new Promise((r) => setTimeout(r, 1000));
+      
       await refreshProject();
     } catch (error) {
       console.error("Error creating sprint:", error);
-      // TODO: Show error toast
+      setToast({
+        message: error.message ? error.message : "Unable to create a sprint",
+        type:"error"
+      });
     }
   };
 
@@ -164,6 +173,13 @@ const SprintManagement = () => {
           </div>
         )}
       </div>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 };
