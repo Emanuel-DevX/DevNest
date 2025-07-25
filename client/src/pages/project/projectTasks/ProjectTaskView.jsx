@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import { ViewSprint } from "../sprint/SprintMeta";
+import fetcher from "../../../lib/api";
 
 const ProjectTaskView = function () {
   const [currentSprint, setCurrentSprint] = useState({});
@@ -9,7 +10,6 @@ const ProjectTaskView = function () {
   const [tasks, setTasks] = useState([]);
   const { project, refreshProject } = useOutletContext();
 
-  const { id } = useParams;
   useEffect(() => {
     async function filterCurrent() {
       const currSp = project.sprints.filter((sp) => sp.isCurrent)[0];
@@ -19,16 +19,48 @@ const ProjectTaskView = function () {
       }
     }
     filterCurrent();
-  }, [currentSprintId]);
+  }, []);
+
   useEffect(() => {
-    refreshProject();
-  }, [id]);
+    const fetchSprintTasks = async () => {
+      try {
+        let url = `/projects/${project._id}/tasks`;
+        if (currentSprintId) {
+          url += `?sprintId=${currentSprintId}`;
+        }
+        const res = await fetcher(url);
+        setTasks(res);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    if (project && (currentSprintId || project.sprints?.length === 0)) {
+      fetchSprintTasks();
+    }
+  }, [currentSprintId, project]);
 
   return (
     <>
-      {currentSprintId && (
-        <ViewSprint sprintData={currentSprint} viewOnly={true} />
-      )}
+      <div>
+        {currentSprintId && (
+          <ViewSprint sprintData={currentSprint} viewOnly={true} />
+        )}
+
+        <div>
+          {tasks.map((task) => (
+            <li className="py-1">
+              {task.title}
+              <div className="text-xs text-end text-teal-400">
+                {new Date(task.dueDate).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </div>
+            </li>
+          ))}
+        </div>
+      </div>
     </>
   );
 };
