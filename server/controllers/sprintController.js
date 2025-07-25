@@ -58,10 +58,31 @@ const updateSprint = async (req, res) => {
         description: description ? description.trim() : "",
       }
     );
+    return res.status(200).json({ message: "Sprint updated successfully" });
   } catch (err) {
     return res
       .status(500)
       .json({ message: "Unable to update sprint data", error: err.message });
+  }
+};
+
+const deleteSprint = async (req, res) => {
+  const sprintId = req.params.sprintId;
+  if (!sprintId) {
+    return res
+      .status(400)
+      .json({ message: "Sprint ID is required to delete a sprint" });
+  }
+  try {
+    const sprint = await Sprint.deleteOne({ _id: sprintId });
+    if (sprint.deletedCount === 0) {
+      return res.status(404).json({ message: "Sprint not found" });
+    }
+    return res.status(200).json({ message: "Sprint deleted successfully!" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Could not delete sprint", error: err.message });
   }
 };
 
