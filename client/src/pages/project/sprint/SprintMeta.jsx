@@ -54,7 +54,7 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
   };
 
   return (
-    <div className="py-4 border-b border-slate-700/50 last:border-b-0">
+    <div className="py-4 ">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
