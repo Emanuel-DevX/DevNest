@@ -44,16 +44,14 @@ const addTask = async (req, res) => {
       .status(401)
       .json({ message: "Project id and task title are required" });
   }
-  const participantObjects = participants.map((uid) => ({
-    user: uid,
-  }));
+
   try {
     const newTask = await Task.create({
       title,
       description,
       duration,
       dueDate,
-      participants: participantObjects,
+      participants,
       creator: userId,
       projectId,
     });
@@ -159,6 +157,49 @@ const updateTaskCompletion = async (req, res) => {
       error: err.message,
     });
   }
+};
+
+const cleanUpTasks = async () => {
+  const projectId = "687d4d3ec1d78e3d967d16af";
+  const userId = "6875f615067e200fca4d7f4e";
+
+  // Step 1: Get all tasks
+  const tasks = await Task.find();
+
+  // Step 2: Filter unique ones by title
+  const seen = new Set();
+  const uniqueTasks = [];
+
+  for (const task of tasks) {
+    if (!seen.has(task.title)) {
+      seen.add(task.title);
+      uniqueTasks.push(task);
+    }
+  }
+
+  // Step 3: Delete all tasks
+  await Task.deleteMany({});
+  console.log("🗑️ Deleted all tasks.");
+
+  // Step 4: Recreate only unique tasks with correct projectId and participants
+  for (const task of uniqueTasks) {
+    const newTask = new Task({
+      title: task.title,
+      description: task.description,
+      duration: task.duration,
+      dueDate: task.dueDate,
+      completed: task.completed,
+      creator: userId,
+      participants: [userId],
+      projectId: projectId,
+      status: task.status,
+    });
+
+    await newTask.save();
+    console.log(`✅ Recreated task: ${task.title}`);
+  }
+
+  console.log("🎉 Task cleanup complete.");
 };
 
 module.exports = {

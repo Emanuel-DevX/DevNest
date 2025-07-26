@@ -11,6 +11,7 @@ const projectRoutes = require("./routes/project");
 const dashboardRoutes = require("./routes/dashboard");
 const sprintRoutes = require("./routes/sprint");
 const taskRoutes = require("./routes/task");
+const devRoutes = require("./routes/dev");
 
 const app = express();
 dotenv.config();
@@ -33,7 +34,8 @@ app.use(verifyToken);
 app.use("/projects", projectRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/sprints", sprintRoutes);
-app.use("/tasks", taskRoutes)
+app.use("/tasks", taskRoutes);
+app.use("/dev", devRoutes);
 
 app.listen(PORT, () => {
   console.log(`All good server is running on ${API_URL}`);
