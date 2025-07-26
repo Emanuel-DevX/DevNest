@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import { ViewSprint } from "../sprint/SprintMeta";
+import TaskList from "./TaskList"
 import fetcher from "../../../lib/api";
 
 const ProjectTaskView = function () {
@@ -45,21 +46,8 @@ const ProjectTaskView = function () {
         {currentSprintId && (
           <ViewSprint sprintData={currentSprint} viewOnly={true} />
         )}
-
-        <div>
-          {tasks.map((task) => (
-            <li className="py-1">
-              {task.title}
-              <div className="text-xs text-end text-teal-400">
-                {new Date(task.dueDate).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </div>
-            </li>
-          ))}
-        </div>
+        <TaskList tasks={tasks} refreshProject={refreshProject}  />
+    
       </div>
     </>
   );
