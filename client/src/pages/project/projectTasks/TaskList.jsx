@@ -105,7 +105,7 @@ const TaskList = function ({ tasks, projectMembers, refreshProject }) {
                   handleTaskCompletion(task._id, complete)
                 }
                 projectMembers={projectMembers || []}
-                status="Overdue"
+                status="Over due"
               />
             ))}
           </div>

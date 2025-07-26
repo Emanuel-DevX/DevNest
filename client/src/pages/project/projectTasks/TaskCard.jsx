@@ -57,35 +57,41 @@ export default function TaskCard({
             <MoreVertical className="w-5 h-5 text-gray-400 hover:text-white" />
           </button>
           {showMenu && (
-            <div className="absolute right-0  w-40 bg-zinc-800 border border-gray-600 rounded-md shadow-lg z-50">
+            <>
               <button
-                onClick={() => {
-                  setShowAssignModal(true);
-                  setShowMenu(false);
-                }}
-                className="w-full px-4 py-1 text-left text-sm hover:bg-zinc-700 text-gray-200"
-              >
-                Assign Task
-              </button>
-              <button
-                onClick={() => {
-                  setShowPushModal(true);
-                  setShowMenu(false);
-                }}
-                className="w-full px-4 py-1 text-left text-sm hover:bg-zinc-700 text-gray-200"
-              >
-                Push Due Date
-              </button>
-              <button
-                onClick={() => {
-                  setShowDeleteModal(true);
-                  setShowMenu(false);
-                }}
-                className="w-full px-4 py-1 text-left text-sm text-red-400 hover:bg-zinc-700"
-              >
-                Delete Task
-              </button>
-            </div>
+                onClick={() => setShowMenu(false)}
+                className="fixed inset-0 min-w-screen min-h-screen -top-120 -left-100 z-40 cursor-default"
+              ></button>
+              <div className="absolute right-0  w-40 bg-zinc-800 border border-gray-600 rounded-md shadow-lg z-50">
+                <button
+                  onClick={() => {
+                    setShowAssignModal(true);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-4 py-1 text-left text-sm hover:bg-zinc-700 text-gray-200"
+                >
+                  Assign Task
+                </button>
+                <button
+                  onClick={() => {
+                    setShowPushModal(true);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-4 py-1 text-left text-sm hover:bg-zinc-700 text-gray-200"
+                >
+                  Push Due Date
+                </button>
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(true);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-4 py-1 text-left text-sm text-red-400 hover:bg-zinc-700"
+                >
+                  Delete Task
+                </button>
+              </div>
+            </>
           )}
         </div>
 
