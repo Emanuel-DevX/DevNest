@@ -118,9 +118,52 @@ const getTasksByProject = async (req, res) => {
   }
 };
 
+const updateTaskCompletion = async (req, res) => {
+  const taskId = req.params.taskId;
+  const userId = req.user.id;
+
+  if (!taskId) {
+    return res
+      .status(400)
+      .json({ message: "Task ID is required to mark a task as done" });
+  }
+
+  try {
+    const { complete } = req.body;
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({ message: "Could not find task" });
+    }
+
+    const isParticipant = task.participants.some(
+      (p) => p.toString() === userId.toString()
+    );
+
+    if (!isParticipant) {
+      return res.status(401).json({
+        message: "You need to be a participant of this task to mark it as done",
+      });
+    }
+
+    task.completed = complete;
+    task.status = complete ? "completed" : "pending";
+    await task.save();
+
+    return res.status(200).json({
+      message: "Successfully updated task completion status",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Unable to update task completion",
+      error: err.message,
+    });
+  }
+};
 
 module.exports = {
   addTask,
   addToCalendar,
   getTasksByProject,
+  updateTaskCompletion,
 };
