@@ -10,6 +10,7 @@ const authRoutes = require("./routes/auth");
 const projectRoutes = require("./routes/project");
 const dashboardRoutes = require("./routes/dashboard");
 const sprintRoutes = require("./routes/sprint");
+const taskRoutes = require("./routes/task");
 
 const app = express();
 dotenv.config();
@@ -32,6 +33,7 @@ app.use(verifyToken);
 app.use("/projects", projectRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/sprints", sprintRoutes);
+app.use("/tasks", taskRoutes)
 
 app.listen(PORT, () => {
   console.log(`All good server is running on ${API_URL}`);

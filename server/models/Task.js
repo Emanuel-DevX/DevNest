@@ -31,6 +31,7 @@ const taskSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     projectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",

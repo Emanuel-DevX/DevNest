@@ -104,7 +104,10 @@ const getTasksByProject = async (req, res) => {
   try {
     console.log(JSON.stringify(filters, null, 2));
 
-    const tasks = await Task.find(filters);
+    const tasks = await Task.find(filters).populate(
+      "participants",
+      "name email"
+    );
 
     return res.status(200).json(tasks);
   } catch (err) {
@@ -115,4 +118,9 @@ const getTasksByProject = async (req, res) => {
   }
 };
 
-module.exports = { addTask, addToCalendar, getTasksByProject };
+
+module.exports = {
+  addTask,
+  addToCalendar,
+  getTasksByProject,
+};
