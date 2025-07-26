@@ -2,17 +2,15 @@ import { Square, CheckSquare } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const TaskCard = function ({ task, handleDone, handleAssign, projectMembers }) {
-  const [isComplete, setIsComplete] = useState(null);
-  useEffect(() => {
-    setIsComplete(task.completed);
-  }, []);
+  const [isComplete, setIsComplete] = useState(task.completed);
+
   return (
     <>
       <div className="border bg-gradient-to-br from-black via-teal-300/10 p-4 to-black flex">
         <button
           onClick={() => {
-            setIsComplete((c) => !c);
-            handleDone(isComplete);
+            handleDone(!isComplete);
+            setIsComplete(!isComplete);
           }}
         >
           {isComplete ? <CheckSquare /> : <Square />}
