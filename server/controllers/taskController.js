@@ -1,5 +1,6 @@
 const Task = require("../models/Task");
 const Sprint = require("../models/Sprint");
+const User = require("../models/User");
 
 // PATCH /tasks/:taskId/calendar
 const addToCalendar = async (req, res) => {
@@ -104,9 +105,14 @@ const getTasksByProject = async (req, res) => {
     console.log(JSON.stringify(filters, null, 2));
 
     const tasks = await Task.find(filters);
-    const found = tasks.map((task) => task.dueDate);
-    console.log(found);
-    return res.status(200).json(tasks);
+    const resp = tasks.map((task) => ({
+      ...task.toObject(),
+      participantUsernames: task.participants.map(
+        (p) => p.user?.username || null
+      ),
+    }));
+
+    return res.status(200).json(resp);
   } catch (err) {
     return res.status(500).json({
       message: `Could not fetch tasks with the project id ${projectId}`,
