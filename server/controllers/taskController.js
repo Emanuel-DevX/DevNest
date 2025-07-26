@@ -105,14 +105,8 @@ const getTasksByProject = async (req, res) => {
     console.log(JSON.stringify(filters, null, 2));
 
     const tasks = await Task.find(filters);
-    const resp = tasks.map((task) => ({
-      ...task.toObject(),
-      participantUsernames: task.participants.map(
-        (p) => p.user?.username || null
-      ),
-    }));
 
-    return res.status(200).json(resp);
+    return res.status(200).json(tasks);
   } catch (err) {
     return res.status(500).json({
       message: `Could not fetch tasks with the project id ${projectId}`,
