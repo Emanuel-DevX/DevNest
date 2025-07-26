@@ -24,15 +24,8 @@ const taskAssignmentSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    status: {
-      type: String,
-      enum: ["assigned", "in_progress", "completed"],
-      default: "assigned",
-    },
-    notes: {
-      type: String,
-      default: "",
-    },
+
+
   },
   { timestamps: true }
 );
