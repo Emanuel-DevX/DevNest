@@ -7,27 +7,16 @@ import {
   Settings,
   ChevronsLeft,
   ChevronsRight,
+  Bell,
+  BellDot,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-
-const menuItems = [
-  {
-    name: "Dashboard",
-    icon: <LayoutDashboard size={20} />,
-    path: "/dashboard",
-  },
-  { name: "Notes", icon: <Notebook size={20} />, path: "/notes" },
-  { name: "Tasks", icon: <CheckSquare size={20} />, path: "/tasks" },
-  {
-    name: "Settings",
-    icon: <Settings size={20} />,
-    path: "/settings",
-  },
-];
+import ProjectBar from "./ProjectBar";
 
 const SideNavbar = function ({ setExpand }) {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [hasUnread, setHasUnread] = useState(true);
   const location = useLocation();
   const isActive = (path) => location.pathname.startsWith(path);
 
@@ -36,7 +25,7 @@ const SideNavbar = function ({ setExpand }) {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
       setCollapsed(mobile);
-      setExpand(mobile)
+      setExpand(mobile);
     };
 
     handleResize(); // run once on mount
@@ -47,6 +36,32 @@ const SideNavbar = function ({ setExpand }) {
       window.removeEventListener("resize", handleResize); // clean up
     };
   }, []);
+  const menuItems = [
+    {
+      name: "Dashboard",
+      icon: <LayoutDashboard size={20} />,
+      path: "/dashboard",
+    },
+    { name: "Notes", icon: <Notebook size={20} />, path: "/notes" },
+    { name: "Tasks", icon: <CheckSquare size={20} />, path: "/tasks" },
+    {
+      name: "Settings",
+      icon: <Settings size={20} />,
+      path: "/settings",
+    },
+    {
+      name: "Notifications",
+      icon: hasUnread ? (
+        <div className="relative" >
+          <Bell size={20} />
+          <span className="absolute w-2 h-2 bg-red-500 rounded-full -top-1 -right-1"></span>
+        </div>
+      ) : (
+        <Bell size={20} />
+      ),
+      path: "/notifications",
+    },
+  ];
 
   return (
     <>
@@ -102,10 +117,13 @@ const SideNavbar = function ({ setExpand }) {
               <hr className="h-[0.2px]  bg-gray-700 mx-3 my-1 border-none" />
             </ul>
           </button>
-
-          {/* Optional: Footer Actions */}
-          <div className="px-2 pb-4">
-            {/* Add more options like logout or profile here if needed */}
+          <h2
+            className={`font-bold ml-2 mt-2 pb-2  text-teal-400 ${collapsed ? "text-xs" : "text-lg"}`}
+          >
+            Projects
+          </h2>
+          <div className="px-4 pb-4 max-h-80 overflow-auto hide-scrollbar">
+            <ProjectBar collapsed={collapsed} />
           </div>
         </div>
       </nav>

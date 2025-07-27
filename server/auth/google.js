@@ -1,6 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
+const Project = require("../models/Project");
 require("dotenv").config();
 
 passport.use(
@@ -26,7 +27,8 @@ passport.use(
           await Project.create({
             title: "General",
             owner: user._id,
-            protected:true
+            participants: [user.id],
+            protected: true,
           });
         }
 

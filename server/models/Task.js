@@ -1,23 +1,5 @@
 const mongoose = require("mongoose");
 
-const participantSchema = new mongoose.Schema(
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    addedToCalendar: {
-      type: Boolean,
-      default: false,
-    },
-    startTime: {
-      type: Date,
-      default: null,
-    },
-  },
-  { _id: false } // <-- disables _id on each participant entry
-);
 const taskSchema = new mongoose.Schema(
   {
     title: {
@@ -49,7 +31,7 @@ const taskSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    participants: [participantSchema],
+    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     projectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",
