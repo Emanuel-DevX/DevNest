@@ -166,12 +166,15 @@ const updateTaskInfo = async (req, res) => {
       .json({ message: "Project and Task IDs are required" });
   }
   try {
-    const { participants, dueDate } = req.body;
+    const { participants, dueDate, title, description, duration, actualTime } = req.body;
     const updates = {};
-    if (participants !== undefined || participants !== null)
-      updates.participants = participants;
-    if (dueDate !== null || dueDate !== null)
-      updates.dueDate = new Date(dueDate);
+    if (participants != null) updates.participants = participants;
+    if (dueDate != null) updates.dueDate = new Date(dueDate);
+    if (title != null) updates.title = title;
+    if (description != null) updates.description = description;
+    if (duration != null) updates.duration = duration;
+    if (actualTime != null) updates.actualTime = actualTime;
+    
     await Task.updateOne({ _id: taskId }, updates);
     return res.status(200).json({ message: "Successfully updated task info" });
   } catch (err) {

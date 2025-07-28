@@ -18,6 +18,9 @@ const taskSchema = new mongoose.Schema(
       default: 30,
       required: true,
     },
+    actualTime:{
+      type:Number,
+    },
     dueDate: {
       type: Date,
       required: true,

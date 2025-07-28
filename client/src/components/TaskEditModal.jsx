@@ -9,15 +9,15 @@ export default function TaskEditModal({
 }) {
   const [title, setTitle] = useState(task?.title || "");
   const [description, setDescription] = useState(task?.description || "");
-  const [timeEstimate, setTimeEstimate] = useState(task?.duration/60 || "");
-  const [actualTime, setActualTime] = useState(task?.actualTime || "");
+  const [timeEstimate, setTimeEstimate] = useState(task?.duration / 60 || "");
+  const [actualTime, setActualTime] = useState(task?.actualTime / 60 || "");
 
   const handleSave = () => {
     const updates = {
       title: title.trim(),
       description: description.trim(),
-      duration: Number(timeEstimate),
-      actualTime: Number(actualTime),
+      duration: Number(timeEstimate) * 60,
+      actualTime: Number(actualTime) * 60,
     };
     onUpdate(updates);
   };
@@ -77,7 +77,7 @@ export default function TaskEditModal({
                 Actual Time (hrs)
               </label>
               <input
-              step={0.5}
+                step={0.5}
                 type="number"
                 className="w-full bg-zinc-800 border border-gray-600 rounded p-2 text-white"
                 value={actualTime}

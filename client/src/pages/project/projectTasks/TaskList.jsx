@@ -87,6 +87,30 @@ const TaskList = function ({
       console.error(err.message || "Could not delete task");
     }
   };
+  const handleUpdateTask = async (taskId, updates) => {
+    try {
+      const options = {};
+      options.body = JSON.stringify({ ...updates });
+      options.method = "PATCH";
+      const res = await fetcher(
+        `/projects/${projectId}/tasks/${taskId}`,
+        options
+      );
+      let ts = {
+        type: "success",
+        message: res.message || "Successfull task update",
+      };
+      setToast(ts);
+      refreshProject();
+    } catch (err) {
+      let ts = {
+        type: "error",
+        message: res.message || "Could not update task",
+      };
+      setToast(ts);
+      console.error(res.message || "Could not update task");
+    }
+  };
   const handlePushDueDate = async (taskId, newDate) => {
     try {
       const options = {};
@@ -151,6 +175,9 @@ const TaskList = function ({
                   handlePushDueDate={(newDate) =>
                     handlePushDueDate(task._id, newDate)
                   }
+                  handleUpdateTask={(updates) =>
+                    handleUpdateTask(task._id, updates)
+                  }
                 />
               ))}
             </div>
@@ -195,6 +222,9 @@ const TaskList = function ({
                   handlePushDueDate={(newDate) =>
                     handlePushDueDate(task._id, newDate)
                   }
+                  handleUpdateTask={(updates) =>
+                    handleUpdateTask(task._id, updates)
+                  }
                 />
               ))}
             </div>
@@ -238,6 +268,10 @@ const TaskList = function ({
                   handlePushDueDate={(newDate) =>
                     handlePushDueDate(task._id, newDate)
                   }
+                  handleUpdateTask={(updates) =>
+                  { 
+                    handleUpdateTask(task._id, updates)
+                  }}
                 />
               ))}
             </div>
