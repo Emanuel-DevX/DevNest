@@ -13,8 +13,12 @@ const membershipSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["owner", "editor", "viewer"],
+      enum: ["owner", "editor", "admin"],
       default: "editor",
+    },
+    pinned: {
+      type: Boolean,
+      default: false,
     },
     joinedAt: { type: Date, default: Date.now },
   },

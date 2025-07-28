@@ -36,7 +36,14 @@ const getAllProjects = async (req, res) => {
   try {
     const memberships = await Membership.find({ userId }).lean();
     const projectIds = memberships.map((m) => m.projectId);
-    const projects = await Project.find({ _id: { $in: projectIds } });
+    let projects = await Project.find({ _id: { $in: projectIds } }).lean();
+    projects = projects.map((project) => ({
+      ...project,
+      pinned:
+        memberships.filter(
+          (m) => m.projectId.toString() === project._id.toString()
+        )[0].pinned || false,
+    }));
     return res.status(200).json(projects);
   } catch (err) {
     return res.status(500).json({
@@ -56,7 +63,15 @@ const getProjectInfo = async (req, res) => {
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
-    const members = await Membership.find({ projectId });
+    let members = await Membership.find({ projectId })
+      .populate("userId", "name email")
+      .lean();
+    members = members.map((member) => ({
+      ...member,
+      name: member.userId.name,
+      email: member.userId.email,
+      userId: member.userId._id,
+    }));
     const sprints = await Sprint.find({ projectId });
     const today = new Date();
     const sprintData = sprints.map((sprint) => ({
@@ -67,15 +82,13 @@ const getProjectInfo = async (req, res) => {
     }));
     const taskCount = await Task.countDocuments(projectId);
 
-    return res
-      .status(200)
-      .json({
-        ...project,
-        members,
-        sprints: sprintData,
-        taskCount: taskCount,
-        noteCount: 0,
-      });
+    return res.status(200).json({
+      ...project,
+      members,
+      sprints: sprintData,
+      taskCount: taskCount,
+      noteCount: 0,
+    });
   } catch (err) {
     return res.status(500).json({
       message: "Failed to fetch project information",
@@ -120,7 +133,7 @@ const updateProject = async (req, res) => {
     const { pinned, name, description } = req.body;
     const updates = {};
     if (pinned !== undefined && pinned !== null) {
-      updates.pinned = pinned;
+      await Membership.updateOne({ userId, projectId }, { pinned });
     }
     if (name && name.trim().length > 3) {
       updates.name = name.trim();
