@@ -100,7 +100,6 @@ const getTasksByProject = async (req, res) => {
   }
 
   try {
-
     const tasks = await Task.find(filters).populate(
       "participants",
       "name email"
@@ -158,7 +157,6 @@ const updateTaskCompletion = async (req, res) => {
   }
 };
 
-
 const updateTaskInfo = async (req, res) => {
   const projectId = req.params.projectId;
   const taskId = req.params.taskId;
@@ -183,10 +181,36 @@ const updateTaskInfo = async (req, res) => {
   }
 };
 
+const deleteTask = async (req, res) => {
+  const projectId = req.params.projectId;
+  const taskId = req.params.taskId;
+  if (!projectId || !taskId) {
+    return res
+      .status(400)
+      .json({ message: "Project and Task IDs are required" });
+  }
+  try {
+    const deleted = await Task.deleteOne({ _id: taskId });
+    if (deleted.deletedCount === 0) {
+      return res.status(404).json({ message: "Could not find task to delete" });
+    }
+    return res
+      .status(200)
+      .json({ message: `Successfully deleted task: ${taskId}` });
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).json({
+      message: "Could not delete task",
+      error: err.message,
+    });
+  }
+};
+
 module.exports = {
   addTask,
   addToCalendar,
   getTasksByProject,
   updateTaskCompletion,
   updateTaskInfo,
+  deleteTask,
 };

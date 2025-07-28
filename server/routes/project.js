@@ -7,7 +7,7 @@ const {
   updateProject,
 } = require("../controllers/projectController");
 const { addSprint } = require("../controllers/sprintController");
-const { addTask, getTasksByProject, updateTaskInfo } = require("../controllers/taskController");
+const { addTask, getTasksByProject, updateTaskInfo, deleteTask } = require("../controllers/taskController");
 
 const router = express.Router();
 
@@ -24,5 +24,7 @@ router.post("/:projectId/sprints", addSprint);
 router.post("/:projectId/tasks", addTask);
 router.get("/:projectId/tasks", getTasksByProject);
 router.patch("/:projectId/tasks/:taskId", updateTaskInfo)
+router.delete("/:projectId/tasks/:taskId", deleteTask);
+
 
 module.exports = router;
