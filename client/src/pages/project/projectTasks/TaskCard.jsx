@@ -197,7 +197,7 @@ export default function TaskCard({
       {showPushModal && (
         <PushDueDateModal
           currentDueDate={task.dueDate}
-          onPush={(newDate) => handlePushDueDate(task._id, newDate)}
+          onPush={(newDate) => handlePushDueDate(newDate)}
           onClose={() => setShowPushModal(false)}
         />
       )}

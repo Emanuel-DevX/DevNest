@@ -87,6 +87,30 @@ const TaskList = function ({
       console.error(err.message || "Could not delete task");
     }
   };
+  const handlePushDueDate = async (taskId, newDate) => {
+    try {
+      const options = {};
+      options.body = JSON.stringify({ dueDate: newDate });
+      options.method = "PATCH";
+      const res = await fetcher(
+        `/projects/${projectId}/tasks/${taskId}`,
+        options
+      );
+      let ts = {
+        type: "success",
+        message: "Success",
+      };
+      setToast(ts);
+      refreshProject();
+    } catch (err) {
+      let ts = {
+        type: "error",
+        message: res.message || "Could not push task dueDate",
+      };
+      setToast(ts);
+      console.error(err.message || "Could not task dueDate");
+    }
+  };
 
   return (
     <>
@@ -124,6 +148,9 @@ const TaskList = function ({
                   handleDelete={() => handleTaskDeletion(task._id)}
                   projectMembers={projectMembers || []}
                   status="Pending"
+                  handlePushDueDate={(newDate) =>
+                    handlePushDueDate(task._id, newDate)
+                  }
                 />
               ))}
             </div>
@@ -165,6 +192,9 @@ const TaskList = function ({
                   handleDelete={() => handleTaskDeletion(task._id)}
                   projectMembers={projectMembers || []}
                   status="Over due"
+                  handlePushDueDate={(newDate) =>
+                    handlePushDueDate(task._id, newDate)
+                  }
                 />
               ))}
             </div>
@@ -205,6 +235,9 @@ const TaskList = function ({
                   handleDelete={() => handleTaskDeletion(task._id)}
                   projectMembers={projectMembers || []}
                   status="Completed"
+                  handlePushDueDate={(newDate) =>
+                    handlePushDueDate(task._id, newDate)
+                  }
                 />
               ))}
             </div>
