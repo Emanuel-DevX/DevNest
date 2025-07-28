@@ -176,7 +176,9 @@ export default function TaskCard({
       {showDeleteModal && (
         <DeleteTaskConfirmation
           taskTitle={task.title}
-          onConfirm={() => handleDelete(task._id)}
+          onConfirm={() => {
+            setShowDeleteModal(false)
+            handleDelete()}}
           onClose={() => setShowDeleteModal(false)}
         />
       )}

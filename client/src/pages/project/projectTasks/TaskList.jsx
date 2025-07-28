@@ -67,6 +67,26 @@ const TaskList = function ({
       console.error(res.message || "Could not assign task");
     }
   };
+  const handleTaskDeletion = async (taskId) => {
+    try {
+      await fetcher(`/projects/${projectId}/tasks/${taskId}`, {
+        method: "DELETE",
+      });
+      let ts = {
+        type: "success",
+        message: "Successfuly deleted task",
+      };
+      setToast(ts);
+      refreshProject();
+    } catch (err) {
+      let ts = {
+        type: "error",
+        message: "Could not delete task",
+      };
+      setToast(ts);
+      console.error(err.message || "Could not delete task");
+    }
+  };
 
   return (
     <>
@@ -101,6 +121,7 @@ const TaskList = function ({
                   handleAssign={(userIds) =>
                     handleTaskAssignment(task._id, userIds)
                   }
+                  handleDelete={() => handleTaskDeletion(task._id)}
                   projectMembers={projectMembers || []}
                   status="Pending"
                 />
@@ -138,6 +159,10 @@ const TaskList = function ({
                   handleDone={(complete) =>
                     handleTaskCompletion(task._id, complete)
                   }
+                  handleAssign={(userIds) =>
+                    handleTaskAssignment(task._id, userIds)
+                  }
+                  handleDelete={() => handleTaskDeletion(task._id)}
                   projectMembers={projectMembers || []}
                   status="Over due"
                 />
@@ -174,6 +199,10 @@ const TaskList = function ({
                   handleDone={(complete) =>
                     handleTaskCompletion(task._id, complete)
                   }
+                  handleAssign={(userIds) =>
+                    handleTaskAssignment(task._id, userIds)
+                  }
+                  handleDelete={() => handleTaskDeletion(task._id)}
                   projectMembers={projectMembers || []}
                   status="Completed"
                 />
