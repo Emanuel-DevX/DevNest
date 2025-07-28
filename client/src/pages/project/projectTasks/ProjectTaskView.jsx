@@ -46,7 +46,7 @@ const ProjectTaskView = function () {
         {currentSprintId && (
           <ViewSprint sprintData={currentSprint} viewOnly={true} />
         )}
-        <TaskList tasks={tasks} refreshProject={refreshProject}  />
+        <TaskList tasks={tasks} projectMembers={project.members} projectId={project._id} refreshProject={refreshProject}  />
     
       </div>
     </>

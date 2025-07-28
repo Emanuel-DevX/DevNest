@@ -100,7 +100,6 @@ const getTasksByProject = async (req, res) => {
   }
 
   try {
-    console.log(JSON.stringify(filters, null, 2));
 
     const tasks = await Task.find(filters).populate(
       "participants",
@@ -159,52 +158,10 @@ const updateTaskCompletion = async (req, res) => {
   }
 };
 
-const cleanUpTasks = async () => {
-  const projectId = "687d4d3ec1d78e3d967d16af";
-  const userId = "6875f615067e200fca4d7f4e";
-
-  // Step 1: Get all tasks
-  const tasks = await Task.find();
-
-  // Step 2: Filter unique ones by title
-  const seen = new Set();
-  const uniqueTasks = [];
-
-  for (const task of tasks) {
-    if (!seen.has(task.title)) {
-      seen.add(task.title);
-      uniqueTasks.push(task);
-    }
-  }
-
-  // Step 3: Delete all tasks
-  await Task.deleteMany({});
-  console.log("🗑️ Deleted all tasks.");
-
-  // Step 4: Recreate only unique tasks with correct projectId and participants
-  for (const task of uniqueTasks) {
-    const newTask = new Task({
-      title: task.title,
-      description: task.description,
-      duration: task.duration,
-      dueDate: task.dueDate,
-      completed: task.completed,
-      creator: userId,
-      participants: [userId],
-      projectId: projectId,
-      status: task.status,
-    });
-
-    await newTask.save();
-    console.log(`✅ Recreated task: ${task.title}`);
-  }
-
-  console.log("🎉 Task cleanup complete.");
-};
 
 const updateTaskInfo = async (req, res) => {
   const projectId = req.params.projectId;
-  const taskId = req.params.projectId;
+  const taskId = req.params.taskId;
   if (!projectId || !taskId) {
     return res
       .status(400)
@@ -218,6 +175,7 @@ const updateTaskInfo = async (req, res) => {
     await Task.updateOne({ _id: taskId }, updates);
     return res.status(200).json({ message: "Successfully updated task info" });
   } catch (err) {
+    console.log(err.message);
     return res.status(500).json({
       message: "Could not update task info",
       error: err.message,
@@ -230,4 +188,5 @@ module.exports = {
   addToCalendar,
   getTasksByProject,
   updateTaskCompletion,
+  updateTaskInfo,
 };

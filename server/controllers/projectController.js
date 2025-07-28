@@ -70,7 +70,7 @@ const getProjectInfo = async (req, res) => {
       ...member,
       name: member.userId.name,
       email: member.userId.email,
-      userId: member.userId._id,
+      userId: member.userId._id
     }));
     const sprints = await Sprint.find({ projectId });
     const today = new Date();

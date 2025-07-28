@@ -8,8 +8,9 @@ export default function AssignTaskModal({
   onAssign,
   onClose,
 }) {
+  console.log(selected);
   const [selectedUsers, setSelectedUsers] = useState([...selected]);
-
+  console.log(selectedUsers);
   const toggleUser = (userId) => {
     setSelectedUsers((prev) =>
       prev.includes(userId)
@@ -32,10 +33,10 @@ export default function AssignTaskModal({
           {members.map((member) => (
             <button
               key={member._id}
-              onClick={() => toggleUser(member._id)}
+              onClick={() => toggleUser(member.userId)}
               className={`flex items-center gap-3 p-2 rounded-md text-left transition-colors text-sm
                 ${
-                  selectedUsers.includes(member._id)
+                  selectedUsers.includes(member.userId)
                     ? "bg-teal-500/30 text-teal-200"
                     : "bg-zinc-800 hover:bg-zinc-700 text-gray-200"
                 }`}

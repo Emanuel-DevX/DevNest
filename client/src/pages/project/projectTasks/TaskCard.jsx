@@ -166,7 +166,9 @@ export default function TaskCard({
         <AssignTaskModal
           members={projectMembers}
           selected={task.participants.map((p) => p._id)}
-          onAssign={(userIds) => handleAssign(task._id, userIds)}
+          onAssign={(userIds) => {
+            setShowAssignModal(false)
+            handleAssign(userIds)}}
           onClose={() => setShowAssignModal(false)}
         />
       )}
