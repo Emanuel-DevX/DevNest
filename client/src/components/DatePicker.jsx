@@ -25,7 +25,7 @@ export default function DarkDatePicker({
       onClick={handleContainerClick}
     >
       <DatePicker
-        shouldCloseOnSelect={true}
+        shouldCloseOnSelect
         selected={value}
         onChange={(date) => {
           onChange(date);
@@ -63,7 +63,7 @@ export default function DarkDatePicker({
       </div>
 
       {/* Custom styles to override react-datepicker defaults */}
-      <style jsx global>{`
+      <style>{`
         .react-datepicker__header {
           background-color: rgb(39 39 42) !important;
           border-bottom: 1px solid rgb(82 82 91) !important;
