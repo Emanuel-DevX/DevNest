@@ -7,7 +7,7 @@ const {
   updateProject,
 } = require("../controllers/projectController");
 const { addSprint } = require("../controllers/sprintController");
-const { addTask, getTasksByProject } = require("../controllers/taskController");
+const { addTask, getTasksByProject, updateTaskInfo } = require("../controllers/taskController");
 
 const router = express.Router();
 
@@ -23,5 +23,6 @@ router.post("/:projectId/sprints", addSprint);
 //Task Routes
 router.post("/:projectId/tasks", addTask);
 router.get("/:projectId/tasks", getTasksByProject);
+router.patch("/:projectId/tasks/:taskId", updateTaskInfo)
 
 module.exports = router;

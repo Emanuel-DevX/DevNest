@@ -202,6 +202,29 @@ const cleanUpTasks = async () => {
   console.log("🎉 Task cleanup complete.");
 };
 
+const updateTaskInfo = async (req, res) => {
+  const projectId = req.params.projectId;
+  const taskId = req.params.projectId;
+  if (!projectId || !taskId) {
+    return res
+      .status(400)
+      .json({ message: "Project and Task IDs are required" });
+  }
+  try {
+    const { participants } = req.body;
+    const updates = {};
+    if (participants !== undefined || participants !== null)
+      updates.participants = participants;
+    await Task.updateOne({ _id: taskId }, updates);
+    return res.status(200).json({ message: "Successfully updated task info" });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Could not update task info",
+      error: err.message,
+    });
+  }
+};
+
 module.exports = {
   addTask,
   addToCalendar,
