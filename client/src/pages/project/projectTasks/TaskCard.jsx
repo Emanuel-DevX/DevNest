@@ -39,7 +39,9 @@ export default function TaskCard({
       .filter((p) => p.email === currentUser.email)[0]
       .role.toLowerCase()
   );
-
+  const isParticipant = task.participants.some(
+    (participant) => participant._id == currentUser.id
+  );
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -72,7 +74,7 @@ export default function TaskCard({
                 onClick={() => setShowMenu(false)}
                 className="fixed inset-0 min-w-screen min-h-screen -top-120 -left-100 z-40 cursor-default"
               ></button>
-              <div className="absolute right-0  w-40 bg-zinc-800 border border-gray-600 rounded-md shadow-lg z-50">
+              <div className="absolute right-3 top-4  w-40 bg-zinc-800 border border-gray-600 rounded-md shadow-lg z-50">
                 <button
                   onClick={() => {
                     setShowAssignModal(true);
@@ -119,6 +121,7 @@ export default function TaskCard({
           <button
             onClick={() => {
               handleDone(!isComplete);
+              if (!isParticipant) return;
               setIsComplete(!isComplete);
             }}
             className=""

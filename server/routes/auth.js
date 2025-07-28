@@ -37,6 +37,7 @@ router.get(
         name: user.name,
         email: user.email,
         image: user.image,
+        id: user._id,
       })
     )}`;
 

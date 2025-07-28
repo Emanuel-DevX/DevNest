@@ -3,7 +3,9 @@ import fetcher from "../../../lib/api";
 import TaskCard from "./TaskCard";
 import { AlertTriangle, CheckCircle, ChevronDown, Clock } from "lucide-react";
 import Toast from "../../../components/Toast";
+import { getCurrentUser } from "../../../lib/auth";
 
+const currentUser = getCurrentUser();
 const TaskList = function ({
   tasks,
   projectMembers,
@@ -33,6 +35,16 @@ const TaskList = function ({
     setDuePassedTasks(duePassed);
   }, [tasks]);
   const handleTaskCompletion = async (taskId, complete) => {
+    const isParticipant = tasks
+      .filter((task) => task._id === taskId)[0]
+      .participants.some((p) => p._id == currentUser.id);
+    if (!isParticipant) {
+      setToast({
+        message: "You need to be a participant of this task to mark it as done",
+        type: "Error",
+      });
+      return;
+    }
     try {
       const url = `/tasks/${taskId}/complete`;
       const options = {
@@ -268,9 +280,8 @@ const TaskList = function ({
                   handlePushDueDate={(newDate) =>
                     handlePushDueDate(task._id, newDate)
                   }
-                  handleUpdateTask={(updates) =>
-                  { 
-                    handleUpdateTask(task._id, updates)
+                  handleUpdateTask={(updates) => {
+                    handleUpdateTask(task._id, updates);
                   }}
                 />
               ))}
