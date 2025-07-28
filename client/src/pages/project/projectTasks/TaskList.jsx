@@ -152,7 +152,7 @@ const TaskList = function ({
           </div>
           {isDuePassedOpen && (
             <div className="gap-3 flex flex-col p-4">
-              {pendingTasks.map((task) => (
+              {duePassedTasks.map((task) => (
                 <TaskCard
                   key={task._id}
                   task={task}

@@ -7,10 +7,9 @@ export default function AssignTaskModal({
   selected = [],
   onAssign,
   onClose,
+  canAssign,
 }) {
-  console.log(selected);
   const [selectedUsers, setSelectedUsers] = useState([...selected]);
-  console.log(selectedUsers);
   const toggleUser = (userId) => {
     setSelectedUsers((prev) =>
       prev.includes(userId)
@@ -51,12 +50,22 @@ export default function AssignTaskModal({
             </button>
           ))}
         </div>
-        <button
-          onClick={() => onAssign(selectedUsers)}
-          className="mt-4 w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-md font-medium"
-        >
-          Confirm Assignment
-        </button>
+        {canAssign ? (
+          <button
+            onClick={() => onAssign(selectedUsers)}
+            className="mt-4 w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-md font-medium"
+          >
+            Confirm Assignment
+          </button>
+        ) : (
+          <button
+            title="Only owner and admins can assign tasks"
+            onClick={() => {}}
+            className="mt-4 w-full bg-slate-800/50  text-white/80  py-2 rounded-md font-medium"
+          >
+            Confirm Assignment
+          </button>
+        )}
       </div>
     </div>
   );

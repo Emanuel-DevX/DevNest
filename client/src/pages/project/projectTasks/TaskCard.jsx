@@ -31,7 +31,7 @@ export default function TaskCard({
   const isOverdue = status === "Over due";
   const isCompleted = status === "Completed";
   const currentUser = getCurrentUser();
-  const canDelete = ["admin", "owner"].includes(
+  const isAdmin = ["admin", "owner"].includes(
     projectMembers
       .filter((p) => p.email === currentUser.email)[0]
       .role.toLowerCase()
@@ -177,6 +177,7 @@ export default function TaskCard({
             setShowAssignModal(false);
             handleAssign(userIds);
           }}
+          canAssign = {isAdmin}
           onClose={() => setShowAssignModal(false)}
         />
       )}
@@ -189,7 +190,7 @@ export default function TaskCard({
             handleDelete();
           }}
           onClose={() => setShowDeleteModal(false)}
-          canDelete={canDelete}
+          canDelete={isAdmin}
         />
       )}
 
