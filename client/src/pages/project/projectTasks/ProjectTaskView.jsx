@@ -34,18 +34,24 @@ const ProjectTaskView = function () {
         }
         const res = await fetcher(url);
         setTasks(res);
+        if (currentSprintId) {
+          const sp = project.sprints?.find((sp) => sp._id === currentSprintId);
+          setCurrentSprint(sp || {});
+        } else {
+          setCurrentSprint({});
+        }
       } catch (err) {
         console.error(err);
       }
     };
-    if (project && (currentSprintId || project.sprints?.length === 0)) {
+    if (project) {
       fetchSprintTasks();
     }
   }, [currentSprintId, project]);
 
   return (
     <>
-      <div className="relative">
+      <div className="relative ">
         <div className="absolute right-0 top-0 ">
           <button
             className="flex text-sm items-end justify-end w-28"
@@ -71,12 +77,23 @@ const ProjectTaskView = function () {
                   {sp.title}
                 </button>
               ))}
+              <button
+                onClick={() => {
+                  setShowSprintMenu(false);
+                  setCurrentSprintId(null);
+                  setCurrentSprint({});
+                }}
+                key={Math.random()}
+                className="p-1 px-2 w-full flex items-start text-sm hover:bg-zinc-900 hover:text-teal-400"
+              >
+                All
+              </button>
             </ul>
           )}
         </div>
-        {currentSprintId && (
-          <ViewSprint sprintData={currentSprint} viewOnly={true} />
-        )}
+
+        <ViewSprint sprintData={currentSprint} viewOnly={true} />
+
         <TaskList
           tasks={tasks}
           projectMembers={project.members}

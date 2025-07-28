@@ -52,6 +52,24 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
     const end = new Date(sprintData.endDate);
     return now >= start && now <= end;
   };
+  if (!sprintData || !sprintData._id) {
+    return (
+      <div className="py-4">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <h3 className="text-lg font-medium text-white">
+                No sprint selected
+              </h3>
+            </div>
+            <div className="text-sm text-slate-400">
+              Select a sprint above or create one from the Sprints page
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-4 ">
