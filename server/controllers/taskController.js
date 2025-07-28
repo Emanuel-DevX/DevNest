@@ -166,10 +166,12 @@ const updateTaskInfo = async (req, res) => {
       .json({ message: "Project and Task IDs are required" });
   }
   try {
-    const { participants } = req.body;
+    const { participants, dueDate } = req.body;
     const updates = {};
     if (participants !== undefined || participants !== null)
       updates.participants = participants;
+    if (dueDate !== null || dueDate !== null)
+      updates.dueDate = new Date(dueDate);
     await Task.updateOne({ _id: taskId }, updates);
     return res.status(200).json({ message: "Successfully updated task info" });
   } catch (err) {
