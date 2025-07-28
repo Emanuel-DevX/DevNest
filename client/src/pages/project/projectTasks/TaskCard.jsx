@@ -11,6 +11,7 @@ import { useState } from "react";
 import AssignTaskModal from "./AssignTaskModal";
 import DeleteTaskConfirmation from "./DeleteTaskConfirmation";
 import PushDueDateModal from "./PushDueDateModal";
+import { getCurrentUser } from "../../../lib/auth";
 
 export default function TaskCard({
   task,
@@ -29,6 +30,12 @@ export default function TaskCard({
 
   const isOverdue = status === "Over due";
   const isCompleted = status === "Completed";
+  const currentUser = getCurrentUser();
+  const canDelete = ["admin", "owner"].includes(
+    projectMembers
+      .filter((p) => p.email === currentUser.email)[0]
+      .role.toLowerCase()
+  );
 
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString("en-US", {
@@ -167,8 +174,9 @@ export default function TaskCard({
           members={projectMembers}
           selected={task.participants.map((p) => p._id)}
           onAssign={(userIds) => {
-            setShowAssignModal(false)
-            handleAssign(userIds)}}
+            setShowAssignModal(false);
+            handleAssign(userIds);
+          }}
           onClose={() => setShowAssignModal(false)}
         />
       )}
@@ -177,9 +185,11 @@ export default function TaskCard({
         <DeleteTaskConfirmation
           taskTitle={task.title}
           onConfirm={() => {
-            setShowDeleteModal(false)
-            handleDelete()}}
+            setShowDeleteModal(false);
+            handleDelete();
+          }}
           onClose={() => setShowDeleteModal(false)}
+          canDelete={canDelete}
         />
       )}
 
