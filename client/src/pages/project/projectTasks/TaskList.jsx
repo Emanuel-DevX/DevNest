@@ -152,23 +152,25 @@ const TaskList = function ({
     <>
       <div className="flex flex-col gap-2">
         <div id="pending" className="">
-          <div className="py-2 flex w-full justify-between items-center  bg-zinc-800/40 p-2 rounded-xl">
-            <div className="flex items-center gap-2 ">
-              <Clock />
-              <h3 className="flex flex-col text-teal-300 font-bold">
-                Pending Tasks
-                <span className="text-sm text-white">
-                  {pendingTasks.length} tasks
-                </span>
-              </h3>
+          <button
+            onClick={() => setIsPendingOpen(!isPendingOpen)}
+            className="w-full"
+          >
+            <div className="py-2 flex  justify-between items-center  bg-zinc-800/40 p-2 rounded-xl">
+              <div className="flex items-center gap-2 ">
+                <Clock />
+                <h3 className="flex flex-col items-start text-teal-300 font-bold">
+                  Pending Tasks
+                  <span className="text-sm text-white">
+                    {pendingTasks.length} tasks
+                  </span>
+                </h3>
+              </div>
+              <ChevronDown
+                className={`w-10 ${isPendingOpen ? "rotate-180" : ""}`}
+              />
             </div>
-            <button
-              onClick={() => setIsPendingOpen(!isPendingOpen)}
-              className="w-10"
-            >
-              <ChevronDown className={`${isPendingOpen ? "rotate-180" : ""}`} />
-            </button>
-          </div>
+          </button>
           {isPendingOpen && (
             <div className="gap-3 flex flex-col p-4">
               {pendingTasks.map((task) => (
@@ -197,25 +199,25 @@ const TaskList = function ({
         </div>
 
         <div id="overdue" className="">
-          <div className="py-2 flex w-full justify-between items-center  bg-zinc-800/40 p-2 rounded-xl">
-            <div className="flex items-center gap-2 ">
-              <AlertTriangle />
-              <h3 className="flex flex-col text-red-600 font-bold">
-                Overdue Tasks
-                <span className="text-sm text-white">
-                  {duePassedTasks.length} tasks
-                </span>
-              </h3>
-            </div>
-            <button
-              onClick={() => setIsDuePassedOpen(!isDuePassedOpen)}
-              className="w-10"
-            >
+          <button
+            onClick={() => setIsDuePassedOpen(!isDuePassedOpen)}
+            className="w-full"
+          >
+            <div className="py-2 flex w-full justify-between items-center  bg-zinc-800/40 p-2 rounded-xl">
+              <div className="flex items-center gap-2 ">
+                <AlertTriangle />
+                <h3 className="flex flex-col items-start text-red-600 font-bold">
+                  Overdue Tasks
+                  <span className="text-sm text-white">
+                    {duePassedTasks.length} tasks
+                  </span>
+                </h3>
+              </div>
               <ChevronDown
-                className={`${isDuePassedOpen ? "rotate-180" : ""}`}
+                className={`w-10 ${isDuePassedOpen ? "rotate-180" : ""}`}
               />
-            </button>
-          </div>
+            </div>
+          </button>
           {isDuePassedOpen && (
             <div className="gap-3 flex flex-col p-4">
               {duePassedTasks.map((task) => (
@@ -243,25 +245,25 @@ const TaskList = function ({
           )}
         </div>
         <div id="completed" className="">
-          <div className="py-2 flex w-full justify-between items-center  bg-zinc-800/40 p-2 rounded-xl">
-            <div className="flex items-center gap-2 ">
-              <CheckCircle />
-              <h3 className="flex flex-col text-green-500 font-bold">
-                Completed Tasks
-                <span className="text-sm text-white">
-                  {doneTasks.length} tasks
-                </span>
-              </h3>
-            </div>
-            <button
-              onClick={() => setIsCompletedOpen(!isCompletedOpen)}
-              className="w-10"
-            >
+          <button
+            onClick={() => setIsCompletedOpen(!isCompletedOpen)}
+            className="w-full"
+          >
+            <div className="py-2 flex w-full justify-between items-center  bg-zinc-800/40 p-2 rounded-xl">
+              <div className="flex items-center gap-2 ">
+                <CheckCircle />
+                <h3 className="flex flex-col items-start text-green-500 font-bold">
+                  Completed Tasks
+                  <span className="text-sm text-white">
+                    {doneTasks.length} tasks
+                  </span>
+                </h3>
+              </div>
               <ChevronDown
-                className={`${isCompletedOpen ? "rotate-180" : ""}`}
+                className={`w-10 ${isCompletedOpen ? "rotate-180" : ""}`}
               />
-            </button>
-          </div>
+            </div>
+          </button>
           {isCompletedOpen && (
             <div className="gap-3 flex flex-col p-4">
               {doneTasks.map((task) => (

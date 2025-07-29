@@ -3,7 +3,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 import { ViewSprint } from "../sprint/SprintMeta";
 import TaskList from "./TaskList";
 import fetcher from "../../../lib/api";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, PlusCircle } from "lucide-react";
 
 const ProjectTaskView = function () {
   const [currentSprint, setCurrentSprint] = useState({});
@@ -51,7 +51,7 @@ const ProjectTaskView = function () {
 
   return (
     <>
-      <div className="relative ">
+      <div className="relative">
         <div className="absolute right-0 top-0 ">
           <button
             className="flex text-sm items-end justify-end w-28"
@@ -100,6 +100,12 @@ const ProjectTaskView = function () {
           projectId={project._id}
           refreshProject={refreshProject}
         />
+      </div>
+      <div className="fixed bottom-10 z-0  flex justify-end  max-w-6xl w-[80%]">
+        <button className="z-50 flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 py-2 rounded-full shadow-lg transition-colors">
+          <PlusCircle className="w-5 h-5" />
+          Add Task
+        </button>
       </div>
     </>
   );
