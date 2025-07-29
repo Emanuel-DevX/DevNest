@@ -44,8 +44,9 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
       title: trimmedTitle,
       description,
       dueDate: dueDate ? new Date(dueDate) : null,
-      duration: duration ? Number(duration) : null,
+      duration: duration ? Math.floor(Number(duration) * 10)/10 : null,
       projectId,
+      participants: selectedMembers
     };
     onSave(newTask);
   };
