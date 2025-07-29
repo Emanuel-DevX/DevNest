@@ -1,11 +1,14 @@
 // DeleteTaskConfirmation.jsx
 import { X, Trash2 } from "lucide-react";
+import { getCurrentUser } from "../../../lib/auth";
 
 export default function DeleteTaskConfirmation({
   taskTitle,
   onConfirm,
   onClose,
+  canDelete
 }) {
+
   return (
     <div className="min-w-screen min-h-screen fixed top-0 left-0 bg-black/50 z-50 flex justify-center items-center">
       <div className=" ">
@@ -30,12 +33,22 @@ export default function DeleteTaskConfirmation({
             >
               Cancel
             </button>
-            <button
-              onClick={onConfirm}
-              className="px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white"
-            >
-              Delete
-            </button>
+            {canDelete ? (
+              <button
+                onClick={onConfirm}
+                className="px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white"
+              >
+                Delete
+              </button>
+            ) : (
+              <button
+                onClick={() => {}}
+                className="px-4 py-2 rounded-md bg-slate-800/50  text-white"
+                title="Only admins and owners can delete a task"
+              >
+                Delete
+              </button>
+            )}
           </div>
         </div>
       </div>

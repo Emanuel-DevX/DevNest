@@ -19,10 +19,7 @@ const projectSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    pinned: {
-      type: Boolean,
-      default: false,
-    },
+
     protected: {
       type: Boolean,
       default: false,

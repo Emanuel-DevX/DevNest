@@ -1,6 +1,7 @@
 // PushDueDateModal.jsx
 import { useState } from "react";
 import { X, CalendarDays } from "lucide-react";
+import DarkDatePicker from "../../../components/DatePicker";
 
 export default function PushDueDateModal({ currentDueDate, onPush, onClose }) {
   const [newDate, setNewDate] = useState(() => {
@@ -25,13 +26,14 @@ export default function PushDueDateModal({ currentDueDate, onPush, onClose }) {
           Current due date:{" "}
           <strong>{new Date(currentDueDate).toLocaleDateString()}</strong>
         </p>
-        <input
+        <DarkDatePicker
           type="date"
           value={newDate}
-          min={new Date().toISOString().split("T")[0]}
-          onChange={(e) => setNewDate(e.target.value)}
+          minDate={new Date().toISOString().split("T")[0]}
+          onChange={(d) => setNewDate(d)}
           className="w-full p-2 rounded-md bg-gray-800 text-gray-100 border border-gray-600"
         />
+
         <button
           onClick={() => onPush(newDate)}
           className="mt-4 w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-md font-medium"

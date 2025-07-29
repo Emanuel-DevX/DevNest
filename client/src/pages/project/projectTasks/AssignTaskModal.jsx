@@ -7,9 +7,9 @@ export default function AssignTaskModal({
   selected = [],
   onAssign,
   onClose,
+  canAssign,
 }) {
   const [selectedUsers, setSelectedUsers] = useState([...selected]);
-
   const toggleUser = (userId) => {
     setSelectedUsers((prev) =>
       prev.includes(userId)
@@ -32,10 +32,10 @@ export default function AssignTaskModal({
           {members.map((member) => (
             <button
               key={member._id}
-              onClick={() => toggleUser(member._id)}
+              onClick={() => toggleUser(member.userId)}
               className={`flex items-center gap-3 p-2 rounded-md text-left transition-colors text-sm
                 ${
-                  selectedUsers.includes(member._id)
+                  selectedUsers.includes(member.userId)
                     ? "bg-teal-500/30 text-teal-200"
                     : "bg-zinc-800 hover:bg-zinc-700 text-gray-200"
                 }`}
@@ -50,12 +50,22 @@ export default function AssignTaskModal({
             </button>
           ))}
         </div>
-        <button
-          onClick={() => onAssign(selectedUsers)}
-          className="mt-4 w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-md font-medium"
-        >
-          Confirm Assignment
-        </button>
+        {canAssign ? (
+          <button
+            onClick={() => onAssign(selectedUsers)}
+            className="mt-4 w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-md font-medium"
+          >
+            Confirm Assignment
+          </button>
+        ) : (
+          <button
+            title="Only owner and admins can assign tasks"
+            onClick={() => {}}
+            className="mt-4 w-full bg-slate-800/50  text-white/80  py-2 rounded-md font-medium"
+          >
+            Confirm Assignment
+          </button>
+        )}
       </div>
     </div>
   );

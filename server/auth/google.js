@@ -1,7 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
-const Project = require("../models/Project");
+const { createGeneralProject } = require("../middlewares/signupGeneralProject");
 require("dotenv").config();
 
 passport.use(
@@ -24,12 +24,7 @@ passport.use(
             email: profile.emails[0].value,
             image: profile.photos[0].value,
           });
-          await Project.create({
-            title: "General",
-            owner: user._id,
-            participants: [user.id],
-            protected: true,
-          });
+          await createGeneralProject(user.id);
         }
 
         done(null, user); // pass user to session

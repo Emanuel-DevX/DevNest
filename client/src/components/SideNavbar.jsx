@@ -67,7 +67,7 @@ const SideNavbar = function ({ setExpand }) {
     <>
       <nav
         className={`h-screen md:bg-zinc-950/10 bg-[#0e0d0d] border-r border-teal-300/10 transition-all duration-300
-        ${collapsed ? "w-16" : "w-48"} fixed z-50`}
+        ${collapsed ? "w-16" : "w-48"} fixed z-40`}
       >
         {/* Top Section */}
         <div className="h-full flex flex-col overflow-hidden">
