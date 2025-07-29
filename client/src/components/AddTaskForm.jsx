@@ -89,7 +89,7 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
             />
           </div>
 
-          <div>
+          <div className="">
             <label className="block text-sm font-medium text-white mb-1">
               Select Project
             </label>
@@ -105,7 +105,7 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
               </button>
 
               {open && (
-                <div className="absolute z-50 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-md shadow-lg">
+                <div className="overflow-y-scroll max-h-80 absolute z-50 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-md shadow-lg">
                   {projectList.map((project) => (
                     <div
                       key={project._id}
@@ -141,7 +141,7 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
               </button>
 
               {memberDropdownOpen && (
-                <div className="absolute z-50 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-md shadow-lg max-h-60 overflow-auto">
+                <div className="overflow-y-scroll absolute z-50 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-md shadow-lg max-h-60 overflow-auto">
                   {memberList.map((member) => (
                     <label
                       key={member._id}
