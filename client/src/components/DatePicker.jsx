@@ -41,7 +41,7 @@ export default function DarkDatePicker({
           "hover:!bg-teal-600 hover:!text-white !transition-all !duration-200 !rounded-md !mx-1 !font-medium !text-white " +
           "focus:!bg-teal-600 focus:!text-white active:!scale-95"
         }
-        weekDayClassName={() => "!text-gray-400 !font-semibold !text-xs"}
+        weekDayClassName={() => "!text-teal-300 !font-semibold !text-xs"}
         monthClassName={() =>
           "hover:!bg-gray-700 !transition-colors !rounded-lg"
         }
