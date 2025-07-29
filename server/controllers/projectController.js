@@ -70,7 +70,7 @@ const getProjectInfo = async (req, res) => {
       ...member,
       name: member.userId.name,
       email: member.userId.email,
-      userId: member.userId._id
+      userId: member.userId._id,
     }));
     const sprints = await Sprint.find({ projectId });
     const today = new Date();
@@ -157,10 +157,60 @@ const updateProject = async (req, res) => {
   }
 };
 
+const getOwnedProjects = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get memberships where user is owner/admin
+    const memberships = await Membership.find({
+      userId,
+      role: { $in: ["owner", "admin"] },
+    });
+
+    const projectIds = memberships.map((m) => m.projectId);
+
+    // Get all projects
+    let projects = await Project.find({
+      _id: { $in: projectIds },
+    }).lean();
+
+    // Get all memberships for those projects
+    const allMemberships = await Membership.find({
+      projectId: { $in: projectIds },
+    }).populate("userId", "name email"); // populate name + email from User
+
+    // Group members by projectId
+    const membersByProject = {};
+    for (const m of allMemberships) {
+      const pid = m.projectId.toString();
+      if (!membersByProject[pid]) membersByProject[pid] = [];
+      membersByProject[pid].push({
+        _id: m.userId._id,
+        name: m.userId.name,
+        email: m.userId.email,
+        role: m.role,
+      });
+    }
+
+    // Attach members to each project
+    projects = projects.map((project) => ({
+      ...project,
+      members: membersByProject[project._id.toString()] || [],
+    }));
+
+    res.status(200).json(projects);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not fetch projects." });
+  }
+};
+
+
 module.exports = {
   createProject,
   getAllProjects,
   getProjectInfo,
   deleteProject,
   updateProject,
+  getOwnedProjects,
 };
