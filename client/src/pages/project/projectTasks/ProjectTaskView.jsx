@@ -4,12 +4,14 @@ import { ViewSprint } from "../sprint/SprintMeta";
 import TaskList from "./TaskList";
 import fetcher from "../../../lib/api";
 import { ChevronDown, PlusCircle } from "lucide-react";
+import AddTaskForm from "../../../components/AddTaskForm";
 
 const ProjectTaskView = function () {
   const [currentSprint, setCurrentSprint] = useState({});
   const [currentSprintId, setCurrentSprintId] = useState(null);
 
   const [showSprintMenu, setShowSprintMenu] = useState(false);
+  const [showAddTaskForm, setShowAddTaskForm] = useState(false);
 
   const [tasks, setTasks] = useState([]);
   const { project, refreshProject } = useOutletContext();
@@ -48,6 +50,9 @@ const ProjectTaskView = function () {
       fetchSprintTasks();
     }
   }, [currentSprintId, project]);
+  const handleAddTask = async (newTask) => {
+    console.log(newTask);
+  };
 
   return (
     <>
@@ -102,11 +107,23 @@ const ProjectTaskView = function () {
         />
       </div>
       <div className="fixed bottom-10 z-0  flex justify-end  max-w-6xl w-[80%]">
-        <button className="z-50 flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 py-2 rounded-full shadow-lg transition-colors">
+        <button
+          onClick={() => {
+            setShowAddTaskForm(true);
+          }}
+          className="z-50 flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 py-2 rounded-full shadow-lg transition-colors"
+        >
           <PlusCircle className="w-5 h-5" />
           Add Task
         </button>
       </div>
+      {showAddTaskForm && (
+        <AddTaskForm
+          selectedProject={project}
+          onCancel={() => setShowAddTaskForm(false)}
+          onSave={(newTask) => handleAddTask(newTask)}
+        />
+      )}
     </>
   );
 };

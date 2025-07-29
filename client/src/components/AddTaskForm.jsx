@@ -1,14 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Toast from "./Toast";
 import DarkDatePicker from "./DatePicker";
+import { ChevronDown } from "lucide-react";
+import fetcher from "../lib/api";
 const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
   const [error, setError] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
   const [duration, setDuration] = useState("");
-
+  const [projectId, setProjectId] = useState("");
+  const [projectName, setProjectName] = useState("");
+  const [projectList, setProjectList] = useState([]);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const fetchOwnedProjects = async () => {
+      const res = await fetcher("/projects/owned");
+      setProjectList(res);
+      if (res.some((p) => p._id === selectedProject._id)) {
+        setProjectName(selectedProject.name);
+        setProjectId(selectedProject._id);
+      }
+    };
+    fetchOwnedProjects();
+  }, []);
   const handleAddTask = () => {
+    console.log(projectList);
     const trimmedTitle = title.trim();
     if (trimmedTitle.length < 3) {
       setError("Title must be at least 3 characters.");
@@ -19,6 +36,7 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
       description,
       dueDate: dueDate ? new Date(dueDate) : null,
       duration: duration ? Number(duration) : null,
+      projectId,
     };
     onSave(newTask);
   };
@@ -61,12 +79,40 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
               className="w-full px-2 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-teal-500 focus:border-teal-500 transition"
             />
           </div>
+
           <div>
-            {selectedProject.name}
-            <select name="project" id="" value={selectedProject.name}>
-                
-                <option>ff</option>
-            </select>
+            <label className="block text-sm font-medium text-white mb-1">
+              Select Project
+            </label>
+            <div className="relative w-full text-sm">
+              <button
+                onClick={() => setOpen(!open)}
+                className="w-full bg-zinc-800 text-white px-4 py-2 rounded-md flex justify-between items-center border border-zinc-700"
+              >
+                {projectName || "Select a project"}
+                <ChevronDown
+                  className={`w-4 h-4 transition ${open ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {open && (
+                <div className="absolute z-50 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-md shadow-lg">
+                  {projectList.map((project) => (
+                    <div
+                      key={project._id}
+                      onClick={() => {
+                        setProjectId(project._id);
+                        setProjectName(project.name);
+                        setOpen(false);
+                      }}
+                      className="px-4 py-2 hover:bg-teal-600 hover:text-black cursor-pointer"
+                    >
+                      {project.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="w-full flex justify-end gap-3 pt-2">
