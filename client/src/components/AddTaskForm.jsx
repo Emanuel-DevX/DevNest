@@ -34,7 +34,6 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
     setMemberList(membs);
   }, [projectId]);
   const handleAddTask = () => {
-    console.log(projectList);
     const trimmedTitle = title.trim();
     if (trimmedTitle.length < 3) {
       setError("Title must be at least 3 characters.");
@@ -44,7 +43,7 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
       title: trimmedTitle,
       description,
       dueDate: dueDate ? new Date(dueDate) : null,
-      duration: duration ? Math.floor(Number(duration) * 10)/10 : null,
+      duration: duration ? Math.floor(Number(duration) * 2)/2 * 60 : null,
       projectId,
       participants: selectedMembers
     };
