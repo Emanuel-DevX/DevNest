@@ -13,6 +13,9 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
   const [projectName, setProjectName] = useState("");
   const [projectList, setProjectList] = useState([]);
   const [open, setOpen] = useState(false);
+  const [memberDropdownOpen, setMemberDropdownOpen] = useState(false);
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [memberList, setMemberList] = useState([]);
   useEffect(() => {
     const fetchOwnedProjects = async () => {
       const res = await fetcher("/projects/owned");
@@ -24,6 +27,12 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
     };
     fetchOwnedProjects();
   }, []);
+  useEffect(() => {
+    const membs =
+      projectList.filter((p) => p._id.toString() === projectId.toString())[0]
+        ?.members || [];
+    setMemberList(membs);
+  }, [projectId]);
   const handleAddTask = () => {
     console.log(projectList);
     const trimmedTitle = title.trim();
@@ -43,7 +52,7 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
 
   return (
     <>
-      <div className="z-50 fixed top-0 left-0 w-screen h-screen bg-black/50 flex items-center justify-center">
+      <div className="z-50 fixed top-0 left-0 w-screen h-screen bg-black/80 flex items-center justify-center">
         <div className="z-50 w-sm min-w-[22rem] bg-zinc-800 rounded-xl p-4 flex flex-col gap-4">
           <div className="mx-auto">Add a new task</div>
           <input
@@ -109,6 +118,49 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
                     >
                       {project.name}
                     </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-white mb-1">
+              Assign Members
+            </label>
+            <div className="relative w-full text-sm">
+              <button
+                onClick={() => setMemberDropdownOpen(!memberDropdownOpen)}
+                className="w-full bg-zinc-800 text-white px-4 py-2 rounded-md flex justify-between items-center border border-zinc-700"
+              >
+                {selectedMembers.length > 0
+                  ? `${selectedMembers.length} member${selectedMembers.length > 1 ? "s" : ""} selected`
+                  : "Select members"}
+                <ChevronDown
+                  className={`w-4 h-4 transition ${memberDropdownOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {memberDropdownOpen && (
+                <div className="absolute z-50 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-md shadow-lg max-h-60 overflow-auto">
+                  {memberList.map((member) => (
+                    <label
+                      key={member._id}
+                      className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-teal-600 hover:text-black"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedMembers.includes(member._id)}
+                        onChange={() => {
+                          setSelectedMembers((prev) =>
+                            prev.includes(member._id)
+                              ? prev.filter((id) => id !== member._id)
+                              : [...prev, member._id]
+                          );
+                        }}
+                        className="accent-teal-500"
+                      />
+                      {member.name || member.email}
+                    </label>
                   ))}
                 </div>
               )}
