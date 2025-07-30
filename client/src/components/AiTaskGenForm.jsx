@@ -18,7 +18,123 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
   const [projectOpen, setProjectOpen] = useState(false);
   const [sprintOpen, setSprintOpen] = useState(false);
 
+  // Form fields
+  const [featureInput, setFeatureInput] = useState("");
+  const [features, setFeatures] = useState([]);
+  const [contributors, setContributors] = useState(""); // override (optional)
+  const [hoursPerDay, setHoursPerDay] = useState(4); // default sensible focus
+  const [numTasks, setNumTasks] = useState(10); // desired number of tasks
+  const [includeWeekends, setIncludeWeekends] = useState(false);
+  const [focus, setFocus] = useState("balance"); // generation bias
 
+  // UI
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  // Load owned projects
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetcher("/projects/owned");
+        setProjects(res || []);
+      } catch (e) {
+        setToast({ type: "error", message: "Failed to load projects." });
+      }
+    })();
+  }, []);
+
+  // When project changes, load sprints for that project
+  useEffect(() => {
+    if (!projectId) {
+      setSprints([]);
+      setSprintId("");
+      setSprintName("");
+      return;
+    }
+    (async () => {
+      try {
+        const spList = projects.filter(
+          (p) => p._id.toString() === projectId.toString()
+        )[0].sprints;
+        setSprints(spList || []);
+        setSprintId("");
+        setSprintName("");
+      } catch (e) {
+        setToast({ type: "error", message: "Failed to load sprints." });
+      }
+    })();
+  }, [projectId]);
+
+  // Helpers
+  const addFeaturesFromInput = () => {
+    const parts = featureInput
+      .split(/[\n,]/g)
+      .map((t) => t.trim())
+      .filter(Boolean);
+    if (parts.length) {
+      setFeatures((prev) => {
+        const set = new Set(prev);
+        parts.forEach((p) => set.add(p));
+        return Array.from(set);
+      });
+      setFeatureInput("");
+    }
+  };
+
+  const removeFeature = (text) =>
+    setFeatures((prev) => prev.filter((f) => f !== text));
+
+  // Validation
+  const validate = () => {
+    if (!projectId) return "Please select a project.";
+    if (!sprintId) return "Please select a sprint.";
+    if (features.length === 0) return "Add at least one feature/goal.";
+    if (numTasks <= 0) return "Number of tasks must be at least 1.";
+    if (hoursPerDay < 0) return "Hours per day cannot be negative.";
+    if (contributors && Number(contributors) < 1)
+      return "Contributors must be at least 1.";
+    return null;
+    // Note: due date will be derived from the sprint on the backend.
+  };
+
+  const handleGenerate = async () => {
+    const err = validate();
+    if (err) {
+      setToast({ type: "error", message: err });
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Build payload for backend
+      const payload = {
+        projectId,
+        sprintId,
+        goals: features, // user-entered core features
+        contributorsOverride: contributors ? Number(contributors) : undefined,
+        hoursPerDay: Number(hoursPerDay), // per contributor
+        numTasks: Number(numTasks),
+        includeWeekends: !!includeWeekends,
+        focus, // "balance" | "frontend" | "backend" | "bugs" | "docs-tests"
+        // Backend can derive sprint start/end; dueDate: sprintEnd - 1 day (your BE rule)
+      };
+
+      // Adjust to your chosen endpoint
+      const result = await fetcher("/ai/tasks/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      // Let parent handle toast/refresh/close
+      await onSuccess(result);
+    } catch (e) {
+      setToast({ type: "error", message: e?.message || "Generation failed." });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
