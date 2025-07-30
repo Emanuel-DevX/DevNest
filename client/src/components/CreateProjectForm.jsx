@@ -2,27 +2,34 @@ import { useState } from "react";
 import Toast from "./Toast";
 import fetcher from "../lib/api";
 
-const CreateProjectForm = function ({ onCancel }) {
+const CreateProjectForm = function ({ onClose, onSuccess }) {
   const [name, setName] = useState("");
   const [toast, setToast] = useState(null);
   const [description, setDescription] = useState("");
-  const handleCreateProject = async() => {
+  const handleCreateProject = async () => {
     const trimmedName = name.trim();
     if (trimmedName.length < 3) {
       setToast({
         message: "Title needs to be at least 3 characters long",
         type: "error",
       });
-      return
+      return;
     }
-    try{
-        await fetcher()
-
-    }catch(err){
-        console.error(err.message)
-        setToast({message:"Could not create project", type:"error"})
+    try {
+      const options = {
+        method: "POST",
+        body: JSON.stringify({
+          name: trimmedName,
+          description: description.trim(),
+        }),
+      };
+      await fetcher(`/projects`, options);
+      onClose();
+      onSuccess();
+    } catch (err) {
+      console.error(err.message);
+      setToast({ message: "Could not create project", type: "error" });
     }
-    
   };
   return (
     <>
@@ -50,7 +57,7 @@ const CreateProjectForm = function ({ onCancel }) {
 
           <div className="w-full flex justify-end gap-3 pt-2">
             <button
-              onClick={onCancel}
+              onClick={onClose}
               className="px-5 py-1 bg-zinc-700 hover:bg-zinc-600 rounded-2xl"
             >
               Cancel
@@ -64,7 +71,13 @@ const CreateProjectForm = function ({ onCancel }) {
           </div>
         </div>
       </div>
-      {toast && <Toast message={toast.message} type={toast.type} />}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </>
   );
 };

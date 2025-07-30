@@ -14,12 +14,14 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import ProjectBar from "./ProjectBar";
 import CreateProjectForm from "./CreateProjectForm";
+import Toast from "./Toast";
 
 const SideNavbar = function ({ setExpand }) {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [hasUnread, setHasUnread] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [toast, setToast] = useState(false);
   const location = useLocation();
   const isActive = (path) => location.pathname.startsWith(path);
 
@@ -133,10 +135,10 @@ const SideNavbar = function ({ setExpand }) {
             onClick={() => {
               setShowCreateForm(true);
             }}
-            className={`mt-5 max-w-28 flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-bold  p-2 rounded-full shadow-lg transition-colors ${collapsed ?"mx-auto":"ml-4"}`}
+            className={`mt-5 max-w-28 flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-bold  p-2 rounded-full shadow-lg transition-colors ${collapsed ? "mx-auto" : "ml-4"}`}
           >
             <PlusCircle className="w-6 h-6" />
-            <span className={`${!collapsed ?"block":"hidden"}`}>Create</span>
+            <span className={`${!collapsed ? "block" : "hidden"}`}>Create</span>
           </button>
         </div>
       </nav>
@@ -147,7 +149,22 @@ const SideNavbar = function ({ setExpand }) {
         />
       )}
       {showCreateForm && (
-        <CreateProjectForm onCancel={() => setShowCreateForm(false)} />
+        <CreateProjectForm
+          onClose={() => setShowCreateForm(false)}
+          onSuccess={() =>
+            setToast({
+              message: "Project created successfully!",
+              type: "success",
+            })
+          }
+        />
+      )}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </>
   );
