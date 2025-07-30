@@ -80,7 +80,7 @@ const getProjectInfo = async (req, res) => {
         new Date(sprint.startDate) <= today &&
         today <= new Date(sprint.endDate),
     }));
-    const taskCount = await Task.countDocuments(projectId);
+    const taskCount = await Task.countDocuments({projectId});
 
     return res.status(200).json({
       ...project,
