@@ -1,11 +1,20 @@
 import { useState } from "react";
 import Toast from "./Toast";
 import fetcher from "../lib/api";
+import { useDispatch } from "react-redux";
+import { setProjects } from "../features/projectSlice";
 
 const CreateProjectForm = function ({ onClose, onSuccess }) {
   const [name, setName] = useState("");
   const [toast, setToast] = useState(null);
   const [description, setDescription] = useState("");
+  const dispatch = useDispatch();
+
+  const refreshProjects = async () => {
+    const projects = await fetcher("/projects");
+    dispatch(setProjects(projects));
+  };
+
   const handleCreateProject = async () => {
     const trimmedName = name.trim();
     if (trimmedName.length < 3) {
@@ -26,6 +35,7 @@ const CreateProjectForm = function ({ onClose, onSuccess }) {
       await fetcher(`/projects`, options);
       onClose();
       onSuccess();
+      refreshProjects();
     } catch (err) {
       console.error(err.message);
       setToast({ message: "Could not create project", type: "error" });
