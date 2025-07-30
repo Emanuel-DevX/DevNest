@@ -1,9 +1,29 @@
 import { useState } from "react";
+import Toast from "./Toast";
+import fetcher from "../lib/api";
 
 const CreateProjectForm = function ({ onCancel }) {
   const [name, setName] = useState("");
+  const [toast, setToast] = useState(null);
   const [description, setDescription] = useState("");
-  const handleCreateProject = () => {};
+  const handleCreateProject = async() => {
+    const trimmedName = name.trim();
+    if (trimmedName.length < 3) {
+      setToast({
+        message: "Title needs to be at least 3 characters long",
+        type: "error",
+      });
+      return
+    }
+    try{
+        await fetcher()
+
+    }catch(err){
+        console.error(err.message)
+        setToast({message:"Could not create project", type:"error"})
+    }
+    
+  };
   return (
     <>
       <div className="fixed top-0 left-0 w-screen h-screen z-50 bg-black/80 flex justify-center items-center">
@@ -44,6 +64,7 @@ const CreateProjectForm = function ({ onCancel }) {
           </div>
         </div>
       </div>
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </>
   );
 };

@@ -9,14 +9,17 @@ import {
   ChevronsRight,
   Bell,
   BellDot,
+  PlusCircle,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import ProjectBar from "./ProjectBar";
+import CreateProjectForm from "./CreateProjectForm";
 
 const SideNavbar = function ({ setExpand }) {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [hasUnread, setHasUnread] = useState(true);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const location = useLocation();
   const isActive = (path) => location.pathname.startsWith(path);
 
@@ -52,7 +55,7 @@ const SideNavbar = function ({ setExpand }) {
     {
       name: "Notifications",
       icon: hasUnread ? (
-        <div className="relative" >
+        <div className="relative">
           <Bell size={20} />
           <span className="absolute w-2 h-2 bg-red-500 rounded-full -top-1 -right-1"></span>
         </div>
@@ -70,7 +73,7 @@ const SideNavbar = function ({ setExpand }) {
         ${collapsed ? "w-16" : "w-48"} fixed z-40`}
       >
         {/* Top Section */}
-        <div className="h-full flex flex-col overflow-hidden">
+        <div className="h-full  flex flex-col overflow-hidden">
           {/* Toggle Button */}
           <div
             className={`flex  p-2 ${collapsed ? "justify-center" : "justify-start pl-5"}`}
@@ -125,13 +128,26 @@ const SideNavbar = function ({ setExpand }) {
           <div className="px-4 pb-4 max-h-80 overflow-auto hide-scrollbar">
             <ProjectBar collapsed={collapsed} />
           </div>
+          <button
+            title={"Create a new project"}
+            onClick={() => {
+              setShowCreateForm(true);
+            }}
+            className={`mt-5 max-w-28 flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-bold  p-2 rounded-full shadow-lg transition-colors ${collapsed ?"mx-auto":"ml-4"}`}
+          >
+            <PlusCircle className="w-6 h-6" />
+            <span className={`${!collapsed ?"block":"hidden"}`}>Create</span>
+          </button>
         </div>
       </nav>
       {isMobile && !collapsed && (
         <div
           onClick={() => setCollapsed(true)}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-39 transition-opacity duration-300"
         />
+      )}
+      {showCreateForm && (
+        <CreateProjectForm onCancel={() => setShowCreateForm(false)} />
       )}
     </>
   );

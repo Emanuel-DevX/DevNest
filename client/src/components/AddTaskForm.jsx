@@ -54,7 +54,9 @@ const AddTaskForm = function ({ selectedProject, onSave, onCancel }) {
     <>
       <div className="z-50 fixed top-0 left-0 w-screen h-screen bg-black/80 flex items-center justify-center">
         <div className="z-50 w-sm min-w-[22rem] bg-zinc-800 rounded-xl p-4 flex flex-col gap-4">
-          <div className="mx-auto">Add a new task</div>
+          <div className="mx-auto text-xl text-teal-500 font-bold">
+            Add a new task
+          </div>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
