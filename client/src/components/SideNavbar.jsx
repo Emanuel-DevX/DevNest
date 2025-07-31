@@ -135,7 +135,7 @@ const SideNavbar = function ({ setExpand }) {
             onClick={() => {
               setShowCreateForm(true);
             }}
-            className={`mt-5 max-w-28 flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-bold  p-2 rounded-full shadow-lg transition-colors ${collapsed ? "mx-auto" : "ml-4"}`}
+            className={`mt-5 max-w-28 flex items-center justify-center gap-2 border border-zinc-800 hover:text-teal-400 hover:bg-zinc-900 hover:font-bold text-teal-500 font-bold  p-2 rounded-full shadow-lg transition-colors ${collapsed ? "mx-auto" : "ml-4"}`}
           >
             <PlusCircle className="w-6 h-6" />
             <span className={`${!collapsed ? "block" : "hidden"}`}>Create</span>
