@@ -80,7 +80,7 @@ const getProjectInfo = async (req, res) => {
         new Date(sprint.startDate) <= today &&
         today <= new Date(sprint.endDate),
     }));
-    const taskCount = await Task.countDocuments({projectId});
+    const taskCount = await Task.countDocuments({ projectId });
 
     return res.status(200).json({
       ...project,
@@ -192,11 +192,34 @@ const getOwnedProjects = async (req, res) => {
       });
     }
 
-    // Attach members to each project
-    projects = projects.map((project) => ({
-      ...project,
-      members: membersByProject[project._id.toString()] || [],
-    }));
+    //Get all sprints for selected projects
+    const allSprints = await Sprint.find({ projectId: { $in: projectIds } })
+      .sort({ startDate: 1 })
+      .lean();
+
+    // group sprints by projectId
+    const sprintsByProject = {};
+    for (const s of allSprints) {
+      const pid = s.projectId.toString();
+      if (!sprintsByProject[pid]) sprintsByProject[pid] = [];
+      sprintsByProject[pid].push({
+        _id: s._id,
+        name: s.name || s.title,
+        startDate: s.startDate,
+        endDate: s.endDate,
+        status: s.status,
+      });
+    }
+
+    //attach members + sprints to each project
+    projects = projects.map((p) => {
+      const pid = p._id.toString();
+      return {
+        ...p,
+        members: membersByProject[pid] || [],
+        sprints: sprintsByProject[pid] || [],
+      };
+    });
 
     res.status(200).json(projects);
   } catch (err) {
@@ -204,7 +227,6 @@ const getOwnedProjects = async (req, res) => {
     res.status(500).json({ error: "Could not fetch projects." });
   }
 };
-
 
 module.exports = {
   createProject,
