@@ -3,7 +3,7 @@ import AddTask from "./AddTaskForm";
 import AiTaskGen from "./AiTaskGenForm";
 
 export default function TaskCreator(onClose) {
-  const [activeTab, setActiveTab] = useState("ai"); // "add" or "ai"
+  const [activeTab, setActiveTab] = useState("add"); // "add" or "ai"
 
   return (
     <div className="fixed top-0 left-0 w-screen h-screen z-50 bg-black/80 flex justify-center items-center">
