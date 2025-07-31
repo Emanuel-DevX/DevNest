@@ -4,7 +4,7 @@ import { ViewSprint } from "../sprint/SprintMeta";
 import TaskList from "./TaskList";
 import fetcher from "../../../lib/api";
 import { ChevronDown, PlusCircle } from "lucide-react";
-import AddTaskForm from "../../../components/AddTaskForm";
+import TaskCreator from "../../../components/TaskCreateTabs";
 import Toast from "../../../components/Toast";
 const ProjectTaskView = function () {
   const [toast, setToast] = useState(null);
@@ -51,22 +51,6 @@ const ProjectTaskView = function () {
       fetchSprintTasks();
     }
   }, [currentSprintId, project]);
-  const handleAddTask = async (newTask) => {
-    try {
-      const url = `/projects/${newTask.projectId}/tasks`;
-      const options = {
-        method: "POST",
-        body: JSON.stringify(newTask),
-      };
-      await fetcher(url, options);
-      setToast({ message: "Task added" });
-      setShowAddTaskForm(false)
-      await refreshProject()
-    } catch (err) {
-      console.error(err.message);
-      setToast({ message: err.message || "Could not add task", type: error });
-    }
-  };
 
   return (
     <>
@@ -132,11 +116,7 @@ const ProjectTaskView = function () {
         </button>
       </div>
       {showAddTaskForm && (
-        <AddTaskForm
-          selectedProject={project}
-          onCancel={() => setShowAddTaskForm(false)}
-          onSave={(newTask) => handleAddTask(newTask)}
-        />
+        <TaskCreator onClose={() => setShowAddTaskForm(false)} />
       )}
       {toast && (
         <Toast
