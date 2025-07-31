@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Toast from "./Toast";
 import fetcher from "../lib/api";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, X, Plus } from "lucide-react";
 
 const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
   // Data sources
@@ -23,7 +23,6 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
   const [features, setFeatures] = useState([]);
   const [contributors, setContributors] = useState(""); // override (optional)
   const [hoursPerDay, setHoursPerDay] = useState(4); // default sensible focus
-  const [numTasks, setNumTasks] = useState(10); // desired number of tasks
   const [includeWeekends, setIncludeWeekends] = useState(false);
   const [focus, setFocus] = useState("balance"); // generation bias
 
@@ -43,7 +42,7 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
     })();
   }, []);
 
-  // When project changes, load sprints for that project
+  // When project changes, load sprints & members for that project
   useEffect(() => {
     if (!projectId) {
       setSprints([]);
@@ -53,12 +52,15 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
     }
     (async () => {
       try {
-        const spList = projects.filter(
+        const project = projects.filter(
           (p) => p._id.toString() === projectId.toString()
-        )[0].sprints;
+        )[0];
+        const spList = project.sprints;
+        const membersCount = project.members.length;
         setSprints(spList || []);
         setSprintId("");
         setSprintName("");
+        setContributors(membersCount);
       } catch (e) {
         setToast({ type: "error", message: "Failed to load sprints." });
       }
@@ -89,12 +91,10 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
     if (!projectId) return "Please select a project.";
     if (!sprintId) return "Please select a sprint.";
     if (features.length === 0) return "Add at least one feature/goal.";
-    if (numTasks <= 0) return "Number of tasks must be at least 1.";
     if (hoursPerDay < 0) return "Hours per day cannot be negative.";
     if (contributors && Number(contributors) < 1)
       return "Contributors must be at least 1.";
     return null;
-    // Note: due date will be derived from the sprint on the backend.
   };
 
   const handleGenerate = async () => {
@@ -112,23 +112,18 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
         projectId,
         sprintId,
         goals: features, // user-entered core features
-        contributorsOverride: contributors ? Number(contributors) : undefined,
+        contributers: contributors ? Number(contributors) : undefined,
         hoursPerDay: Number(hoursPerDay), // per contributor
-        numTasks: Number(numTasks),
         includeWeekends: !!includeWeekends,
-        focus, // "balance" | "frontend" | "backend" | "bugs" | "docs-tests"
-        // Backend can derive sprint start/end; dueDate: sprintEnd - 1 day (your BE rule)
+        focus,
       };
-
-      // Adjust to your chosen endpoint
       const result = await fetcher("/ai/tasks/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       // Let parent handle toast/refresh/close
-      await onSuccess(result);
+      onSuccess({ message: `Generated ${result.taskCount} tasks!` });
     } catch (e) {
       setToast({ type: "error", message: e?.message || "Generation failed." });
     } finally {
@@ -244,15 +239,15 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
                   addFeaturesFromInput();
                 }
               }}
-              placeholder="Type a feature and press Enter (or paste comma/newline-separated)"
+              placeholder="Feature…  ↵ or comma"
               className="flex-1 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-teal-500 focus:border-teal-500 transition"
             />
             <button
               type="button"
               onClick={addFeaturesFromInput}
-              className="px-4 py-2 bg-zinc-800 text-white rounded-md border border-zinc-700 hover:bg-zinc-700"
+              className="p-2 bg-zinc-800 text-white rounded-md border border-zinc-700 hover:bg-zinc-700"
             >
-              Add
+              <Plus />
             </button>
           </div>
           {features.length > 0 && (
@@ -275,11 +270,27 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
           )}
         </div>
 
+        <div>
+          <label className="block text-sm font-medium text-white mb-1">
+            Focus
+          </label>
+          <select
+            value={focus}
+            onChange={(e) => setFocus(e.target.value)}
+            className="w-full bg-zinc-800 text-white px-3 py-2 rounded-md border border-zinc-700"
+          >
+            <option value="balance">Balanced</option>
+            <option value="frontend">Frontend heavy</option>
+            <option value="backend">Backend heavy</option>
+            <option value="bugs">Bugs & refactors</option>
+            <option value="docs-tests">Docs & tests</option>
+          </select>
+        </div>
         {/* Generation parameters */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="flex gap-3">
           <div>
             <label className="block text-sm font-medium text-white mb-1">
-              Contributors (override)
+              Contributors
             </label>
             <input
               type="number"
@@ -287,16 +298,13 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
               placeholder="e.g., 3"
               value={contributors}
               onChange={(e) => setContributors(e.target.value)}
-              className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-teal-500 focus:border-teal-500 transition"
+              className="no-spin w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-teal-500 focus:border-teal-500 transition"
             />
-            <p className="text-xs text-gray-400 mt-1">
-              Optional — use this if members aren’t invited yet.
-            </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-white mb-1">
-              Hours per day (per contributor)
+              Hrs/day each
             </label>
             <input
               type="number"
@@ -304,46 +312,14 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
               step="0.5"
               value={hoursPerDay}
               onChange={(e) => setHoursPerDay(e.target.value)}
-              className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-teal-500 focus:border-teal-500 transition"
+              className="no-spin w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-teal-500 focus:border-teal-500 transition"
             />
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Number of tasks
-            </label>
-            <input
-              type="number"
-              min="1"
-              value={numTasks}
-              onChange={(e) => setNumTasks(e.target.value)}
-              className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-teal-500 focus:border-teal-500 transition"
-            />
-          </div>
-
-      
         </div>
 
         {/* Focus + Weekends */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Focus
-            </label>
-            <select
-              value={focus}
-              onChange={(e) => setFocus(e.target.value)}
-              className="w-full bg-zinc-800 text-white px-3 py-2 rounded-md border border-zinc-700"
-            >
-              <option value="balance">Balanced</option>
-              <option value="frontend">Frontend heavy</option>
-              <option value="backend">Backend heavy</option>
-              <option value="bugs">Bugs & refactors</option>
-              <option value="docs-tests">Docs & tests</option>
-            </select>
-          </div>
-
-          <label className="flex items-center gap-2 mt-6">
+        <div className="">
+          <label className="flex items-center gap-2 ">
             <input
               type="checkbox"
               className="accent-teal-500"
@@ -357,17 +333,17 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
         </div>
 
         {/* Actions */}
-        <div className="w-full flex justify-end gap-3 pt-2">
+        <div className="w-full flex justify-end gap-3 mt-2">
           <button
             onClick={onClose}
-            className="px-5 py-1 bg-zinc-700 hover:bg-zinc-600 rounded-2xl"
+            className="px-5 py-1.5 bg-zinc-700 hover:bg-zinc-600 rounded-2xl"
             disabled={loading}
           >
             Cancel
           </button>
           <button
             onClick={handleGenerate}
-            className="px-7 py-1 bg-teal-700 rounded-2xl font-bold hover:bg-teal-600 disabled:opacity-60"
+            className="px-7 py-1.5 bg-teal-700 rounded-2xl font-bold hover:bg-teal-600 disabled:opacity-60"
             disabled={loading}
           >
             {loading ? "Generating..." : "Generate"}
