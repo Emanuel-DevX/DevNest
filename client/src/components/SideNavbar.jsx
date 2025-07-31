@@ -127,9 +127,17 @@ const SideNavbar = function ({ setExpand }) {
           >
             Projects
           </h2>
-          <div className="px-4 pb-4 max-h-80 overflow-auto hide-scrollbar">
-            <ProjectBar collapsed={collapsed} />
-          </div>
+          <button
+            onClick={() => {
+              if (isMobile) {
+                setCollapsed(true);
+              }
+            }}
+          >
+            <div className="px-4 pb-4 max-h-80 overflow-auto hide-scrollbar">
+              <ProjectBar collapsed={collapsed} />
+            </div>
+          </button>
           <button
             title={"Create a new project"}
             onClick={() => {
