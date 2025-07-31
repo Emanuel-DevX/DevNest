@@ -18,39 +18,47 @@ const ProjectTaskView = function () {
   const { project, refreshProject } = useOutletContext();
 
   useEffect(() => {
-    async function filterCurrent() {
-      const currSp = project.sprints.filter((sp) => sp.isCurrent)[0];
-      if (currSp !== undefined) {
+    // set default sprint (only when project changes and no selection yet)
+    if (!project?.sprints) return;
+
+    if (!currentSprintId) {
+      const currSp = project.sprints.find((sp) => sp.isCurrent);
+      if (currSp) {
         setCurrentSprint(currSp);
-        setCurrentSprintId(currSp._id);
+        setCurrentSprintId(currSp._id?.toString());
+      } else {
+        setCurrentSprint({});
+        setCurrentSprintId(null);
       }
     }
-    filterCurrent();
   }, []);
+  useEffect(() => {
+    // whenever sprintId or project.sprints change, update currentSprint
+    if (!project?.sprints) return;
+
+    let currSp;
+    if (currentSprintId) {
+      currSp = project.sprints.find(
+        (sp) => sp._id?.toString() === String(currentSprintId)
+      );
+    }
+    setCurrentSprint(currSp ?? {});
+  }, [project?.sprints, currentSprintId]);
 
   useEffect(() => {
-    const fetchSprintTasks = async () => {
+    // fetch tasks when project or sprint id changes
+    if (!project?._id) return;
+    (async () => {
       try {
         let url = `/projects/${project._id}/tasks`;
-        if (currentSprintId) {
-          url += `?sprintId=${currentSprintId}`;
-        }
+        if (currentSprintId) url += `?sprintId=${currentSprintId}`;
         const res = await fetcher(url);
         setTasks(res);
-        if (currentSprintId) {
-          const sp = project.sprints?.find((sp) => sp._id === currentSprintId);
-          setCurrentSprint(sp || {});
-        } else {
-          setCurrentSprint({});
-        }
       } catch (err) {
         console.error(err);
       }
-    };
-    if (project) {
-      fetchSprintTasks();
-    }
-  }, [currentSprintId, project]);
+    })();
+  }, [project?._id, currentSprintId]);
 
   return (
     <>
@@ -86,7 +94,7 @@ const ProjectTaskView = function () {
                   setCurrentSprintId(null);
                   setCurrentSprint({});
                 }}
-                key={Math.random()}
+                key={"all-sprints"}
                 className="p-1 px-2 w-full flex items-start text-sm hover:bg-zinc-900 hover:text-teal-400"
               >
                 All

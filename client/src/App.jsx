@@ -10,7 +10,7 @@ import Tasks from "./pages/tasks/Tasks";
 import Project from "./pages/project/Project";
 import ProjectTaskView from "./pages/project/projectTasks/ProjectTaskView";
 import NotesList from "./pages/notes/NotesList";
-import ProjectSettings from "./pages/project/ProjectSettings";
+import ProjectSettings from "./pages/project/settings/ProjectSettings";
 import SprintManagement from "./pages/project/sprint/SprintManagement";
 function App() {
   const location = useLocation();
