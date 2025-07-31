@@ -3,8 +3,8 @@ import Toast from "./Toast";
 import DarkDatePicker from "./DatePicker";
 import { ChevronDown } from "lucide-react";
 import fetcher from "../lib/api";
-const AddTaskForm = function ({ selectedProject, onClose }) {
-  const [error, setError] = useState(null);
+const AddTaskForm = function ({ onClose, onSuccess, currentProject }) {
+  const [toast, setToast] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
@@ -20,9 +20,12 @@ const AddTaskForm = function ({ selectedProject, onClose }) {
     const fetchOwnedProjects = async () => {
       const res = await fetcher("/projects/owned");
       setProjectList(res);
-      if (res.some((p) => p._id === selectedProject._id)) {
-        setProjectName(selectedProject.name);
-        setProjectId(selectedProject._id);
+      const match = res.find(
+        (p) => p._id.toString() === String(currentProject)
+      );
+      if (match) {
+        setProjectName(match.name);
+        setProjectId(match._id);
       }
     };
     fetchOwnedProjects();
@@ -36,7 +39,10 @@ const AddTaskForm = function ({ selectedProject, onClose }) {
   const validateInput = () => {
     const trimmedTitle = title.trim();
     if (trimmedTitle.length < 3) {
-      setError("Title must be at least 3 characters.");
+      setToast({
+        message: "Title must be at least 3 characters.",
+        type: "error",
+      });
       return;
     }
     const newTask = {
@@ -59,12 +65,10 @@ const AddTaskForm = function ({ selectedProject, onClose }) {
         body: JSON.stringify(newTask),
       };
       await fetcher(url, options);
-      setToast({ message: "Task added" });
-      setShowAddTaskForm(false);
-      await refreshProject();
+      onSuccess({ message: "Task Added" });
     } catch (err) {
       console.error(err.message);
-      setToast({ message: err.message || "Could not add task", type: error });
+      setToast({ message: err.message || "Could not add task", type: "error" });
     }
   };
 
@@ -199,8 +203,12 @@ const AddTaskForm = function ({ selectedProject, onClose }) {
         </div>
       </div>
 
-      {error && (
-        <Toast type="error" message={error} onClose={() => setError(null)} />
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
       )}
     </>
   );

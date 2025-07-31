@@ -116,7 +116,15 @@ const ProjectTaskView = function () {
         </button>
       </div>
       {showAddTaskForm && (
-        <TaskCreator onClose={() => setShowAddTaskForm(false)} />
+        <TaskCreator
+          onClose={() => setShowAddTaskForm(false)}
+          onSuccess={async (toast) => {
+            setShowAddTaskForm(false);
+            setToast(toast);
+            await refreshProject();
+          }}
+          currentProject={project._id}
+        />
       )}
       {toast && (
         <Toast
