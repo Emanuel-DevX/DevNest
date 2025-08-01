@@ -166,7 +166,8 @@ const updateTaskInfo = async (req, res) => {
       .json({ message: "Project and Task IDs are required" });
   }
   try {
-    const { participants, dueDate, title, description, duration, actualTime } = req.body;
+    const { participants, dueDate, title, description, duration, actualTime } =
+      req.body;
     const updates = {};
     if (participants != null) updates.participants = participants;
     if (dueDate != null) updates.dueDate = new Date(dueDate);
@@ -174,7 +175,7 @@ const updateTaskInfo = async (req, res) => {
     if (description != null) updates.description = description;
     if (duration != null) updates.duration = duration;
     if (actualTime != null) updates.actualTime = actualTime;
-    
+
     await Task.updateOne({ _id: taskId }, updates);
     return res.status(200).json({ message: "Successfully updated task info" });
   } catch (err) {
@@ -211,6 +212,26 @@ const deleteTask = async (req, res) => {
   }
 };
 
+const getTasksByDate = async (req, res) => {
+  const userId = req.user.id;
+  const date = new Date(req.query.date);
+  if (isNaN(date)) {
+    return res.status(400).json({ message: "Invalid date" });
+  }
+
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const tasks = await Task.find({
+    participants: { $in: userId },
+    dueDate: { $gte: startOfDay, $lte: endOfDay },
+  }).populate("participants", "name email _id");
+  return res.status(200).json(tasks);
+};
+
 module.exports = {
   addTask,
   addToCalendar,
@@ -218,4 +239,5 @@ module.exports = {
   updateTaskCompletion,
   updateTaskInfo,
   deleteTask,
+  getTasksByDate,
 };
