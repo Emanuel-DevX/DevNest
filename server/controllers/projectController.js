@@ -99,20 +99,21 @@ const getProjectInfo = async (req, res) => {
 
 const deleteProject = async (req, res) => {
   const projectId = req.params.projectId;
-  const userId = req.user.id;
   if (!projectId) {
     return res
       .status(401)
       .json({ message: "Project ID is required to delete a project" });
   }
   try {
-    const deleted = await Project.deleteOne({ _id: projectId, owner: userId });
+    const deleted = await Project.deleteOne({ _id: projectId });
     if (deleted.deletedCount === 0) {
       return res
         .status(404)
         .status(404)
         .json({ message: "Project not found or not owned by user" });
     }
+    await Membership.deleteMany({ projectId });
+    await Task.deleteMany({ projectId });
     return res.status(200).json({ message: "Project successfully deleted" });
   } catch (err) {
     return res
