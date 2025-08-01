@@ -50,6 +50,7 @@ const ProjectSettings = function () {
         body: JSON.stringify(patch),
       });
       await refreshProject();
+      setToast({ message: "Saved!", type: "success" });
     } catch (err) {}
   };
 
@@ -58,8 +59,10 @@ const ProjectSettings = function () {
   const handleRemoveMember = async (memberId) => {};
 
   const handleInvite = async () => {
-    const res = await fetcher(`/projects/${project._id}/invites`);
-    setInviteLink(res.link);
+    console.log("Clicked invite");
+    const res = await fetcher(`/projects/${project._id}/invite`);
+    const baseURL = "http://localhost:4000/invite/";
+    setInviteLink(baseURL + res.token);
   };
 
   const handleDeleteProject = async () => {

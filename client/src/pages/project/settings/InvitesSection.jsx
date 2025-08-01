@@ -27,7 +27,7 @@ function InvitesSection({ isAdmin, onInvite, inviteLink }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <button
-            onClick={() => onInvite}
+            onClick={onInvite}
             className="border px-2 p-2 mb-2 rounded-2xl border-zinc-800 text-sm text-teal-400 hover:bg-zinc-900"
           >
             Generate Invite Link
