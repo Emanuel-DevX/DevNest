@@ -5,7 +5,53 @@ import fetcher from "../../lib/api";
 
 const InviteAcceptancePage = () => {
   const { token } = useParams();
+  const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(true);
+  const [accepting, setAccepting] = useState(false);
+  const [inviteData, setInviteData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchInviteData = async () => {
+      try {
+        setLoading(true);
+        const res = await fetcher(`/invites/${token}`);
+
+        setInviteData(res);
+      } catch (err) {
+        setError("Failed to load invite information");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (token) {
+      fetchInviteData();
+    } else {
+      setError("Invalid invite link");
+      setLoading(false);
+    }
+  }, [token]);
+
+  const handleAcceptInvite = async () => {
+    try {
+      setAccepting(true);
+
+      const res = await fetcher(`/invites/${token}/accept`, {
+        method: "POST",
+      });
+      navigate(`/project/${res.projectId}`);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setAccepting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    navigate("/dashboard");
+  };
 
   if (loading) {
     return (
