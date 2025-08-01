@@ -1,6 +1,7 @@
 const Task = require("../models/Task");
 const Sprint = require("../models/Sprint");
 const User = require("../models/User");
+const TaskSchedule = require("../models/TaskSchedule")
 
 // PATCH /tasks/:taskId/calendar
 const addToCalendar = async (req, res) => {
@@ -229,7 +230,28 @@ const getTasksByDate = async (req, res) => {
     participants: { $in: userId },
     dueDate: { $gte: startOfDay, $lte: endOfDay },
   }).populate("participants", "name email _id");
-  return res.status(200).json(tasks);
+
+  const taskIds = tasks.map((task) => task._id);
+
+  const schedules = await TaskSchedule.find({
+    userId,
+    taskId: { $in: taskIds },
+  }).lean();
+
+  const scheduledMap = new Map();
+  for (const s of schedules) {
+    scheduledMap.set(s.taskId.toString(), s);
+  }
+
+  const merged = tasks.map((task) => {
+    const schedule = scheduledMap.get(task._id.toString());
+    return {
+      ...task,
+      userSchedule: schedule || null,
+    };
+  });
+
+  return res.status(200).json(merged);
 };
 
 module.exports = {
