@@ -55,7 +55,19 @@ const ProjectSettings = function () {
     } catch (err) {}
   };
 
-  const handleChangeRole = async (memberId, role) => {};
+  const handleChangeRole = async (memberId, role) => {
+    try {
+      const options = {
+        body: JSON.stringify({ role }),
+        method: "PATCH",
+      };
+      const url = `/projects/${project._id}/members/${memberId}`;
+      await fetcher(url, options);
+      refreshProject();
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   const handleRemoveMember = async (memberId) => {
     try {
@@ -74,7 +86,13 @@ const ProjectSettings = function () {
   };
 
   const handleDeleteProject = async () => {
-    console.log("Delete project");
+    try {
+      const url = `/projects/${project._id}`;
+      const res = await fetcher(url, { method: "DELETE" });
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err.message);
+    }
   };
 
   const handleLeaveProject = async () => {
