@@ -12,6 +12,7 @@ import ProjectTaskView from "./pages/project/projectTasks/ProjectTaskView";
 import NotesList from "./pages/notes/NotesList";
 import ProjectSettings from "./pages/project/settings/ProjectSettings";
 import SprintManagement from "./pages/project/sprint/SprintManagement";
+import InviteAcceptancePage from "./pages/invite/InviteAcceptance";
 function App() {
   const location = useLocation();
   const [expand, setExpand] = useState(false);
@@ -45,6 +46,10 @@ function App() {
                   <Route path="notes" element={<NotesList />} />
                   <Route path="settings" element={<ProjectSettings />} />
                 </Route>
+                <Route
+                  path="invite/:token"
+                  element={<InviteAcceptancePage />}
+                />
               </Routes>
             </div>
           </main>
