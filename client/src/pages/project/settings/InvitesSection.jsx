@@ -1,8 +1,7 @@
 import SectionCard from "../../../components/SectionCard";
-import { LinkIcon, Copy , Shield } from "lucide-react";
+import { Link as LinkIcon, Shield, Copy } from "lucide-react";
+import { useState } from "react";
 function InvitesSection({ isAdmin, onInvite, inviteLink }) {
-  const [email, setEmail] = useState("");
-
   if (!isAdmin) {
     return (
       <SectionCard
@@ -27,39 +26,16 @@ function InvitesSection({ isAdmin, onInvite, inviteLink }) {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm mb-1 text-zinc-300">
-            Invite by email
-          </label>
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
-                className="w-full rounded-md border border-zinc-700 bg-transparent pl-9 pr-3 py-2 focus:outline-none focus:ring focus:ring-teal-600"
-              />
-            </div>
-            <button
-              onClick={() => {
-                if (!email.trim()) return;
-                onInvite(email.trim());
-                setEmail("");
-              }}
-              className="rounded-lg bg-teal-600 px-3 py-2 text-sm font-semibold hover:bg-teal-500"
-            >
-              Send
-            </button>
-          </div>
-          <p className="mt-2 text-xs text-zinc-500">
-            Recipients will get an email with an accept link.
-          </p>
-        </div>
-
-        <div>
+          <button
+            onClick={onInvite}
+            className="border px-2 p-1 rounded-2xl border-zinc-800 text-sm text-teal-400"
+          >
+            Generate Invite Link
+          </button>
           <label className="block text-sm mb-1 text-zinc-300">
             Invite link
           </label>
+
           <div className="flex gap-2">
             <input
               readOnly
