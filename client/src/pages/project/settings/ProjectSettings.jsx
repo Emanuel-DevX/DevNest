@@ -7,7 +7,7 @@ import MembersSection from "./MembersSection";
 import GeneralSettings from "./General";
 import DangerZone from "./DangerZone";
 import { getCurrentUser } from "../../../lib/auth";
-
+import fetcher from "../../../lib/api";
 
 const isAdminRole = (role) => role === "owner" || role === "admin";
 
@@ -38,8 +38,45 @@ function SettingsSubNav() {
 }
 
 const ProjectSettings = function () {
+  const [inviteLink, setInviteLink] = useState("");
 
+  const { project, refreshProject } = useOutletContext();
+  const currentUserId = getCurrentUser().id;
 
+  const handleSaveGeneral = async (patch) => {
+    try {
+      await fetcher(`/projects/${project._id}`, {
+        method: "PUT",
+        body: JSON.stringify(patch),
+      });
+      await refreshProject();
+    } catch (err) {}
+  };
+
+  const handleChangeRole = async (memberId, role) => {};
+
+  const handleRemoveMember = async (memberId) => {};
+
+  const handleInvite = async () => {
+    const res = await fetcher(`/projects/${project._id}/invites`);
+    setInviteLink(res.link);
+  };
+
+  const handleDeleteProject = async () => {
+    // confirm modal → await fetcher(DELETE) → navigate away
+    console.log("Delete project");
+  };
+
+  const handleLeaveProject = async () => {
+    // confirm → await fetcher(POST /leave) → navigate
+    console.log("Leave project");
+  };
+
+  const me = project.members.find(
+    (m) => m.userId.toString() === currentUserId.toString()
+  );
+  console.log("me", me, project);
+  const iAmAdmin = isAdminRole(me?.role ?? "member");
 
   return (
     <div className="mx-auto max-w-6xl md:w-full w-[20rem] md:px-4 py-6 md:py-8 ">
