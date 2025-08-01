@@ -1,6 +1,8 @@
 const crypto = require("crypto");
 const Membership = require("../models/Membership");
 const Project = require("../models/Project");
+const Task = require("../models/Task");
+
 const Invite = require("../models/Invite");
 
 const getInviteToken = async (req, res) => {
@@ -15,7 +17,7 @@ const getInviteToken = async (req, res) => {
       project: projectId,
       role: "member",
       createdBy: userId,
-      expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 7, 
+      expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 7,
     });
 
     return res
@@ -62,4 +64,18 @@ const acceptInvite = async (req, res) => {
 
   return res.status(201).json({ ok: true, projectId: invite.project });
 };
-module.exports = { getInviteToken, getInviteInfo, acceptInvite };
+
+const removeMember = async (req, res) => {
+  const projectId = String(req.params.projectId);
+  const memberId = String(req.params.memberId);
+
+  const mem = await Membership.deleteOne({ projectId, userId: memberId });
+  if (mem.deletedCount !== 1)
+    return res.status(404).json({ message: "Membership not found" });
+
+  await Task.updateMany({ projectId }, { $pull: { participants: memberId } });
+
+  return res.status(200).json({ message: "Successfully removed member" });
+};
+
+module.exports = { getInviteToken, getInviteInfo, acceptInvite, removeMember };
