@@ -1,4 +1,18 @@
+import { useState } from "react";
+import { Circle, CheckCircle, User, Calendar, Clock } from "lucide-react";
 const TaskCard = function ({ task }) {
+  const [isCompleted, setIsCompleted] = useState(false);
+  const getStatusColor = () => {
+    if (isCompleted) return "text-green-400";
+    if (true) return "text-red-400";
+    return "text-teal-400";
+  };
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   return (
     <div className="relative border border-gray-700/30 bg-gradient-to-br from-zinc-800/50 to-gray-900/50 backdrop-blur-sm p-4 rounded-xl">
       {/* Status Badge */}
@@ -10,13 +24,13 @@ const TaskCard = function ({ task }) {
       <div className="flex items-center gap-3">
         <button
           onClick={() => {
-            handleDone(!isComplete);
+            handleDone(!isCompleted);
             if (!isParticipant) return;
-            setIsComplete(!isComplete);
+            setIsCompleted(!isCompleted);
           }}
           className=""
         >
-          {isComplete ? (
+          {isCompleted ? (
             <CheckCircle className="text-green-400 w-5 h-5" />
           ) : (
             <Circle className="text-gray-400 hover:text-teal-400 w-5 h-5" />
@@ -81,3 +95,5 @@ const TaskCard = function ({ task }) {
     </div>
   );
 };
+
+export default TaskCard;
