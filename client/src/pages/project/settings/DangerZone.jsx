@@ -1,3 +1,5 @@
+import { Trash2, LogOut } from "lucide-react";
+import SectionCard from "../../../components/SectionCard";
 function DangerZone({ isAdmin, onDelete, onLeave }) {
   return (
     <SectionCard
@@ -40,4 +42,4 @@ function DangerZone({ isAdmin, onDelete, onLeave }) {
   );
 }
 
-export default DangerZone
+export default DangerZone;
