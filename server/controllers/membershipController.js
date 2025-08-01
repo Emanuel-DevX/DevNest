@@ -12,10 +12,10 @@ const getInviteToken = async (req, res) => {
 
     await Invite.create({
       token: inviteToken,
-      projectId,
+      project: projectId,
       role: "member",
       createdBy: userId,
-      expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 7, // 1 day
+      expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 7, 
     });
 
     return res
@@ -28,4 +28,38 @@ const getInviteToken = async (req, res) => {
   }
 };
 
-module.exports = { getInviteToken };
+const getInviteInfo = async (req, res) => {
+  const token = req.params.token;
+  const inviteInfo = await Invite.findOne({ token })
+    .populate("project", "name description")
+    .populate("createdBy", "name email");
+  return res.status(200).json(inviteInfo);
+};
+
+const acceptInvite = async (req, res) => {
+  const token = req.params.token;
+  const userId = req.user.id;
+  const invite = await Invite.findOne({ token });
+  if (!invite) return res.status(404).json({ error: "Invite not found" });
+  if (invite.expiresAt < new Date())
+    return res.status(410).json({ error: "Invite expired" });
+
+  // If already member:
+  const exists = await Membership.findOne({
+    projectId: invite.project,
+    userId: userId,
+  });
+  if (exists)
+    return res
+      .status(200)
+      .json({ message: "Already a member", projectId: exists.projectId });
+
+  await Membership.create({
+    projectId: invite.project,
+    userId: userId,
+    role: "member",
+  });
+
+  return res.status(201).json({ ok: true, projectId: invite.project });
+};
+module.exports = { getInviteToken, getInviteInfo, acceptInvite };
