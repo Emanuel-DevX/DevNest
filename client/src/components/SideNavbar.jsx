@@ -49,11 +49,7 @@ const SideNavbar = function ({ setExpand }) {
     },
     { name: "Notes", icon: <Notebook size={20} />, path: "/notes" },
     { name: "Tasks", icon: <CheckSquare size={20} />, path: "/tasks" },
-    {
-      name: "Settings",
-      icon: <Settings size={20} />,
-      path: "/settings",
-    },
+
     {
       name: "Notifications",
       icon: hasUnread ? (

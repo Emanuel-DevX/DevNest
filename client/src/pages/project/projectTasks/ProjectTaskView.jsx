@@ -58,7 +58,13 @@ const ProjectTaskView = function () {
         console.error(err);
       }
     })();
-  }, [project?._id, currentSprintId]);
+  }, [project, currentSprintId]);
+
+  const handleSuccess = async (toast) => {
+    setShowAddTaskForm(false);
+    setToast(toast);
+    await refreshProject();
+  };
 
   return (
     <>
@@ -126,11 +132,7 @@ const ProjectTaskView = function () {
       {showAddTaskForm && (
         <TaskCreator
           onClose={() => setShowAddTaskForm(false)}
-          onSuccess={async (toast) => {
-            setShowAddTaskForm(false);
-            setToast(toast);
-            await refreshProject();
-          }}
+          onSuccess={handleSuccess}
           currentProject={project._id}
         />
       )}
