@@ -13,7 +13,7 @@ const membershipSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["owner", "editor", "admin"],
+      enum: ["owner", "member", "admin"],
       default: "editor",
     },
     pinned: {

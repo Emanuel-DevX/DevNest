@@ -5,8 +5,16 @@ const inviteSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  projectId: { type: mongoose.Schema.Types.ObjectId, required: true },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, required: true },
+  project: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "Project",
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
   expiresAt: { type: Date, required: true },
 });
 
