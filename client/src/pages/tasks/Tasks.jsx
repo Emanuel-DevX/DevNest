@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChevronDown, Calendar, Clock, List } from "lucide-react";
 import MonthView from "./MonthView";
 import WeeklyView from "./WeeklyView";
-import DailyView from "./DailyView";
+import DailyView from "./daily/DailyView";
 
 
 const views = {
