@@ -28,5 +28,9 @@ router.get("/:projectId/tasks", getTasksByProject);
 router.patch("/:projectId/tasks/:taskId", updateTaskInfo)
 router.delete("/:projectId/tasks/:taskId", deleteTask);
 
+// Membership Routes
+router.get("/:projectId/invite", getInvite
+  
+)
 
 module.exports = router;

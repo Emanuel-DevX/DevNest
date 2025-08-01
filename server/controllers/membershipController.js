@@ -18,7 +18,9 @@ const getInviteToken = async (req, res) => {
       expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 7, // 1 day
     });
 
-    return res.status(201).json({ link });
+    return res
+      .status(201)
+      .json({ token: inviteToken, message: "Invitation created" });
   } catch (err) {
     return res
       .status(500)
