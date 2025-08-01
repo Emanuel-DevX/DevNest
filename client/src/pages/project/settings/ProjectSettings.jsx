@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Settings, Users, Link as LinkIcon, Trash2 } from "lucide-react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 
 import InvitesSection from "./InvitesSection";
 import MembersSection from "./MembersSection";
@@ -41,6 +41,7 @@ const ProjectSettings = function () {
   const [inviteLink, setInviteLink] = useState("");
 
   const { project, refreshProject } = useOutletContext();
+  const navigate = useNavigate();
   const currentUserId = getCurrentUser().id;
 
   const handleSaveGeneral = async (patch) => {
@@ -56,29 +57,39 @@ const ProjectSettings = function () {
 
   const handleChangeRole = async (memberId, role) => {};
 
-  const handleRemoveMember = async (memberId) => {};
+  const handleRemoveMember = async (memberId) => {
+    try {
+      const url = `/projects/${project._id}/members/${memberId}`;
+      await fetcher(url, { method: "DELETE" });
+      await refreshProject();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleInvite = async () => {
-    console.log("Clicked invite");
     const res = await fetcher(`/projects/${project._id}/invite`);
     const baseURL = "http://localhost:4000/invite/";
     setInviteLink(baseURL + res.token);
   };
 
   const handleDeleteProject = async () => {
-    // confirm modal → await fetcher(DELETE) → navigate away
     console.log("Delete project");
   };
 
   const handleLeaveProject = async () => {
-    // confirm → await fetcher(POST /leave) → navigate
-    console.log("Leave project");
+    try {
+      const url = `/projects/${project._id}/members/${currentUserId}`;
+      await fetcher(url, { method: "DELETE" });
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const me = project.members.find(
     (m) => m.userId.toString() === currentUserId.toString()
   );
-  console.log("me", me, project);
   const iAmAdmin = isAdminRole(me?.role ?? "member");
 
   return (

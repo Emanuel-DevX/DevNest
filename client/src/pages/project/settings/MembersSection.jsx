@@ -6,7 +6,6 @@ function MembersSection({ project, currentUserId, onChangeRole, onRemove }) {
     () => project.members.find((m) => m.userId === currentUserId),
     [currentUserId, project.members]
   );
-  console.log(project);
   const isAdminRole = (role) => role === "owner" || role === "admin";
 
   const iAmAdmin = isAdminRole(me?.role ?? "member");
@@ -51,7 +50,7 @@ function MembersSection({ project, currentUserId, onChangeRole, onRemove }) {
                     {iAmAdmin && m.role !== "owner" ? (
                       <select
                         value={m.role}
-                        onChange={(e) => onChangeRole(m._id, e.target.value)}
+                        onChange={(e) => onChangeRole(m.userId, e.target.value)}
                         className="bg-zinc-800 border border-zinc-700 rounded-md px-3 py-1.5 text-sm text-zinc-200 hover:bg-zinc-700 focus:ring focus:ring-teal-300 outline-0 transition-colors"
                       >
                         <option value="owner" disabled>
@@ -59,7 +58,6 @@ function MembersSection({ project, currentUserId, onChangeRole, onRemove }) {
                         </option>
                         <option value="admin">Admin</option>
                         <option value="member">Member</option>
-                        <option value="viewer">Viewer</option>
                       </select>
                     ) : (
                       <span className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-zinc-800 text-zinc-300 capitalize">
@@ -73,7 +71,7 @@ function MembersSection({ project, currentUserId, onChangeRole, onRemove }) {
                     m.role !== "owner" &&
                     m._id !== currentUserId && (
                       <button
-                        onClick={() => onRemove(m._id)}
+                        onClick={() => onRemove(m.userId)}
                         className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-400 border border-red-400/30 rounded-md hover:bg-red-400/10 hover:border-red-400/50 transition-colors focus:ring-2 focus:ring-red-400/20 focus:outline-none"
                       >
                         Remove
