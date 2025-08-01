@@ -12,6 +12,8 @@ const dashboardRoutes = require("./routes/dashboard");
 const sprintRoutes = require("./routes/sprint");
 const taskRoutes = require("./routes/task");
 const aiRoutes = require("./routes/ai");
+const inviteRoutes = require("./routes/invites");
+
 // const devRoutes = require("./routes/dev");
 
 const app = express();
@@ -37,6 +39,7 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/sprints", sprintRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/ai", aiRoutes);
+app.use("/invites", inviteRoutes);
 // app.use("/dev", devRoutes);
 
 app.listen(PORT, () => {
