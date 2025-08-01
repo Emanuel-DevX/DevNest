@@ -1,5 +1,6 @@
 import SectionCard from "../../../components/SectionCard";
 import { Settings } from "lucide-react";
+import { useState } from "react";
 function GeneralSettings({ project, onSave }) {
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description);
@@ -30,11 +31,11 @@ function GeneralSettings({ project, onSave }) {
           />
         </div>
         <div>
-          <label className="block text-sm mb-1 text-zinc-300">Slug</label>
+          <label className="block text-sm mb-1 text-zinc-300">Project ID</label>
           <input
-            value={project.slug}
+            value={project._id}
             readOnly
-            className="w-full rounded-md border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-zinc-500"
+            className="w-full rounded-md border outline-0 border-zinc-800 bg-zinc-950/50 px-3 py-2 text-zinc-500"
           />
         </div>
         <div className="md:col-span-2">
