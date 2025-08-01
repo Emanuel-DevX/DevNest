@@ -77,5 +77,19 @@ const removeMember = async (req, res) => {
 
   return res.status(200).json({ message: "Successfully removed member" });
 };
+const updateMember = async (req, res) => {
+  const {role} = req.body;
+  const projectId = req.params.projectId;
+  const memberId = req.params.memberId;
 
-module.exports = { getInviteToken, getInviteInfo, acceptInvite, removeMember };
+  await Membership.updateOne({ projectId, userId: memberId }, { role });
+  return res.status(200).json({ message: "successfully updated member role" });
+};
+
+module.exports = {
+  getInviteToken,
+  getInviteInfo,
+  acceptInvite,
+  removeMember,
+  updateMember,
+};

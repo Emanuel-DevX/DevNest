@@ -14,7 +14,11 @@ const {
   updateTaskInfo,
   deleteTask,
 } = require("../controllers/taskController");
-const { getInviteToken, removeMember } = require("../controllers/membershipController");
+const {
+  getInviteToken,
+  removeMember,
+  updateMember
+} = require("../controllers/membershipController");
 
 const router = express.Router();
 
@@ -36,6 +40,7 @@ router.delete("/:projectId/tasks/:taskId", deleteTask);
 
 // Membership Routes
 router.get("/:projectId/invite", getInviteToken);
-router.delete("/:projectId/members/memberId", removeMember);
+router.delete("/:projectId/members/:memberId", removeMember);
+router.patch("/:projectId/members/:memberId", updateMember);
 
 module.exports = router;
