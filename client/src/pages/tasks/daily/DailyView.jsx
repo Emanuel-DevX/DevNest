@@ -30,7 +30,7 @@ const DailyView = () => {
   };
 
   // Fetch tasks for selected date
-  const fetchDailyTasks = async (date) => {
+  const fetchDailyTasks = async (date = selectedDate) => {
     try {
       setLoading(true);
       const formattedDate = formatDateForAPI(date);
@@ -128,6 +128,7 @@ const DailyView = () => {
               key={task._id}
               onUpdate={() => fetchDailyTasks(selectedDate)}
               task={task}
+              date={selectedDate}
             />
           ))
         ) : (

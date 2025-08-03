@@ -25,7 +25,7 @@ const TaskScheduleSchema = new mongoose.Schema({
     interval: String,
     occurrences: [
       {
-        date: Date,
+        date: { type: String }, // format: "YYYY-MM-DD",
         done: Boolean,
       },
     ],

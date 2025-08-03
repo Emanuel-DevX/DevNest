@@ -114,6 +114,7 @@ const getTasksByProject = async (req, res) => {
     });
   }
 };
+const formatDateOnly = (date) => new Date(date).toISOString().split("T")[0];
 
 const updateTaskCompletion = async (req, res) => {
   const taskId = req.params.taskId;
@@ -126,7 +127,7 @@ const updateTaskCompletion = async (req, res) => {
   }
 
   try {
-    const { complete } = req.body;
+    const { complete, date } = req.body;
     const task = await Task.findById(taskId);
 
     if (!task) {
@@ -145,13 +146,13 @@ const updateTaskCompletion = async (req, res) => {
     const schedule = await TaskSchedule.findOne({ taskId, userId });
 
     if (schedule?.recurring?.isRecurring && date) {
-      const dateStr = new Date(date).toISOString().split("T")[0];
+      const dateStr = formatDateOnly(date); // "2025-08-05"
 
       const updated = await TaskSchedule.findOneAndUpdate(
         {
           taskId,
           userId,
-          "recurring.occurrences.date": new Date(dateStr),
+          "recurring.occurrences.date": dateStr,
         },
         {
           $set: {
@@ -259,12 +260,13 @@ const getTasksByDate = async (req, res) => {
   })
     .populate("participants", "name email _id")
     .lean();
+  const dateStr = formatDateOnly(date); // from query param
 
   const schedules = await TaskSchedule.find({
     userId,
     $or: [
       { scheduledAt: { $gte: startOfDay, $lte: endOfDay } },
-      { "recurring.occurrences.date": { $gte: startOfDay, $lte: endOfDay } },
+      { "recurring.occurrences.date": dateStr },
     ],
   }).lean();
 
@@ -306,7 +308,7 @@ function generateOccurrences(startDate, endDate, pattern) {
   let current = new Date(startDate);
 
   while (current <= new Date(endDate)) {
-    occurrences.push({ date: new Date(current), done: false });
+    occurrences.push({ date:formatDateOnly(current), done: false });
 
     if (pattern === "daily") {
       current.setDate(current.getDate() + 1);

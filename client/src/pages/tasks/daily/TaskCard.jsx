@@ -2,11 +2,29 @@ import { useState } from "react";
 import { Circle, CheckCircle, Clock, MoreVertical } from "lucide-react";
 import CustomizeTaskSchedule from "./CustomizeTaskSchedule";
 import fetcher from "../../../lib/api";
-const TaskCard = function ({ task, onUpdate }) {
-  const [isCompleted, setIsCompleted] = useState(false);
+
+function isTaskComplete(task, targateDate) {
+  const target = new Date(targateDate);
+  const targetDateStr = target.toLocaleDateString("en-CA");
+  const schedule = task.userSchedule;
+
+  if (schedule?.recurring?.isRecurring) {
+    const match = schedule.recurring.occurrences.find((o) => {
+      const occDateStr = new Date(o.date).toISOString().split("T")[0];
+      return occDateStr === targetDateStr;
+    });
+    return match?.done || false;
+  }
+
+  // Fallback to task.completed if no schedule
+  return task.completed || false;
+}
+
+const TaskCard = function ({ task, onUpdate, date }) {
   const [customMenuOpen, setCustomMenuOpen] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [editScheduleOpen, setEditScheduleOpen] = useState(false);
+  const [isComplete, setIsComplete] = useState(isTaskComplete(task, date));
 
   const start = new Date(task.userSchedule.scheduledAt);
   const durationMs = task.userSchedule.duration * 60 * 1000;
@@ -21,6 +39,18 @@ const TaskCard = function ({ task, onUpdate }) {
     minute: "2-digit",
     hour12: true,
   });
+  const handleTaskCompletion = async () => {
+    try {
+      const url = `/tasks/${task._id}/complete`;
+      const options = {
+        body: JSON.stringify({ complete: isComplete, date }),
+        method: "PATCH",
+      };
+      await fetcher(url, options);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   const handleUpdateSchedule = async (taskSchedule) => {
     try {
@@ -84,13 +114,12 @@ const TaskCard = function ({ task, onUpdate }) {
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
-              handleDone(!isCompleted);
-              if (!isParticipant) return;
-              setIsCompleted(!isCompleted);
+              handleTaskCompletion(!isComplete);
+              setIsComplete(!isComplete);
             }}
             className=""
           >
-            {isCompleted ? (
+            {isComplete ? (
               <CheckCircle className="text-green-400 w-5 h-5" />
             ) : (
               <Circle className="text-gray-400 hover:text-teal-400 w-5 h-5" />
@@ -98,13 +127,13 @@ const TaskCard = function ({ task, onUpdate }) {
           </button>
           <div className="flex-1 mt-2 min-w-0">
             <h4
-              className={`text-lg font-semibold mb-1 ${isCompleted ? "text-gray-400 line-through" : "text-white"}`}
+              className={`text-lg font-semibold mb-1 ${isComplete ? "text-gray-400 line-through" : "text-white"}`}
             >
               {task.title}
             </h4>
             {task.description && (
               <p
-                className={`text-sm ${isCompleted ? "text-gray-500" : "text-gray-300"}`}
+                className={`text-sm ${isComplete ? "text-gray-500" : "text-gray-300"}`}
               >
                 {task.description}
               </p>
