@@ -229,7 +229,7 @@ const getTasksByDate = async (req, res) => {
   const tasks = await Task.find({
     participants: { $in: userId },
     dueDate: { $gte: startOfDay, $lte: endOfDay },
-  }).populate("participants", "name email _id");
+  }).populate("participants", "name email _id").lean();
 
   const taskIds = tasks.map((task) => task._id);
 

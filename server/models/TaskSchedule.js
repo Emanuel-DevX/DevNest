@@ -19,5 +19,16 @@ const TaskScheduleSchema = new mongoose.Schema({
     type: Number,
     default: 1,
   },
+  recurring: {
+    isRecurring: { type: Boolean, default: false },
+    startDate: Date,
+    interval: Number, // every X days
+    occurrences: [
+      {
+        date: Date,
+        done: Boolean,
+      },
+    ],
+  },
 });
-export default mongoose.model("TaskSchedule", TaskScheduleSchema);
+module.exports = mongoose.model("TaskSchedule", TaskScheduleSchema);
