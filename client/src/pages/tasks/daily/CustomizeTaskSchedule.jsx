@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChevronDown, Clock, Calendar, Repeat } from "lucide-react";
 
 const CustomizeTaskSchedule = function ({ task, onSave, onClose }) {
-  const [duration, setDuration] = useState(task?.duration || 30);
+  const [duration, setDuration] = useState(30);
   const [scheduledDate, setScheduledDate] = useState(
     task?.dueDate
       ? new Date(task.dueDate).toISOString().split("T")[0]

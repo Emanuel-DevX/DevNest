@@ -7,10 +7,19 @@ const TaskCard = function ({ task, onUpdate }) {
   const [customMenuOpen, setCustomMenuOpen] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [editScheduleOpen, setEditScheduleOpen] = useState(false);
-  const startTime = new Date(task.scheduledAt).toLocaleTimeString("en-GB", {
+
+  const start = new Date(task.userSchedule.scheduledAt);
+  const durationMs = task.userSchedule.duration * 60 * 1000;
+  const end = new Date(start.getTime() + durationMs);
+  const startTime = new Date(start).toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
-    hour12: false, // 24h
+    hour12: true,
+  });
+  const endTime = end.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
   });
 
   const handleUpdateSchedule = async (taskSchedule) => {
@@ -21,12 +30,13 @@ const TaskCard = function ({ task, onUpdate }) {
         method: "PUT",
       };
       const res = await fetcher(url, options);
-      console.log(res)
+      console.log(res);
       await onUpdate();
     } catch (err) {
       console.error(err.message);
     }
   };
+  console.log(task);
 
   return (
     <>
@@ -109,7 +119,7 @@ const TaskCard = function ({ task, onUpdate }) {
             <div className="flex items-center gap-1.5 text-gray-400">
               <span> {startTime}</span>
               {" - "}
-              <span> {task.endTime || "13:00"}</span>
+              <span> {endTime}</span>
             </div>
           </div>
         </div>
