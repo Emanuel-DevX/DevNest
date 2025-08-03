@@ -68,7 +68,6 @@ const DailyView = () => {
   useEffect(() => {
     fetchDailyTasks(selectedDate);
   }, [selectedDate]);
-console.log(tasks)
   return (
     <div className="flex flex-col gap-4">
       {/* Header with date navigation */}
@@ -124,7 +123,13 @@ console.log(tasks)
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-300"></div>
           </div>
         ) : tasks.length > 0 ? (
-          tasks.map((task) => <TaskCard key={task._id} task={task} />)
+          tasks.map((task) => (
+            <TaskCard
+              key={task._id}
+              onUpdate={() => fetchDailyTasks(selectedDate)}
+              task={task}
+            />
+          ))
         ) : (
           <div className="text-center py-8">
             <Calendar className="h-12 w-12 text-zinc-600 mx-auto mb-3" />

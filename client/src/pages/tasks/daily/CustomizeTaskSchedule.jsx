@@ -15,7 +15,6 @@ const CustomizeTaskSchedule = function ({ task, onSave, onClose }) {
     new Date().toISOString().split("T")[0]
   );
 
-
   // Generate time options with 30-minute intervals
   const generateTimeOptions = () => {
     const times = [];
@@ -38,11 +37,13 @@ const CustomizeTaskSchedule = function ({ task, onSave, onClose }) {
   const timeOptions = generateTimeOptions();
 
   const handleSave = () => {
+    const [hours, minutes] = scheduledTime.split(":").map(Number);
+    const dateObj = new Date(scheduledDate);
+    dateObj.setHours(hours, minutes, 0, 0);
     const scheduleData = {
       taskId: task._id,
       duration: Math.floor(Number(duration)),
-      scheduledDate: new Date(scheduledDate),
-      scheduledTime,
+      scheduledDate: dateObj,
       isRecurring,
       recurrencePattern: isRecurring ? recurrencePattern : null,
       recurrenceEndDate: isRecurring ? new Date(recurrenceEndDate) : null,

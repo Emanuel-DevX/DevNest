@@ -1,29 +1,33 @@
 import { useState } from "react";
-import {
-  Circle,
-  CheckCircle,
-  User,
-  Calendar,
-  Clock,
-  MoreVertical,
-} from "lucide-react";
+import { Circle, CheckCircle, Clock, MoreVertical } from "lucide-react";
 import CustomizeTaskSchedule from "./CustomizeTaskSchedule";
-const TaskCard = function ({ task }) {
+import fetcher from "../../../lib/api";
+const TaskCard = function ({ task, onUpdate }) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [customMenuOpen, setCustomMenuOpen] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [editScheduleOpen, setEditScheduleOpen] = useState(false);
-  const getStatusColor = () => {
-    if (isCompleted) return "text-green-400";
-    if (true) return "text-red-400";
-    return "text-teal-400";
+  const startTime = new Date(task.scheduledAt).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false, // 24h
+  });
+
+  const handleUpdateSchedule = async (taskSchedule) => {
+    try {
+      const url = `/tasks/${task._id}/schedule`;
+      const options = {
+        body: JSON.stringify({ ...taskSchedule }),
+        method: "PUT",
+      };
+      const res = await fetcher(url, options);
+      console.log(res)
+      await onUpdate();
+    } catch (err) {
+      console.error(err.message);
+    }
   };
-  const formatDate = (dateString) =>
-    new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+
   return (
     <>
       <div className="relative border border-gray-700/30 bg-gradient-to-br from-zinc-800/50 to-gray-900/50 backdrop-blur-sm p-4 rounded-xl">
@@ -103,14 +107,20 @@ const TaskCard = function ({ task }) {
           <div className="flex gap-1.5 items-center">
             <Clock className="w-4 h-4" />
             <div className="flex items-center gap-1.5 text-gray-400">
-              <span> {task.startTime || "12:00"}</span>
+              <span> {startTime}</span>
               {" - "}
               <span> {task.endTime || "13:00"}</span>
             </div>
           </div>
         </div>
       </div>
-      {editScheduleOpen && <CustomizeTaskSchedule task={task} />}
+      {editScheduleOpen && (
+        <CustomizeTaskSchedule
+          task={task}
+          onClose={() => setEditScheduleOpen(false)}
+          onSave={handleUpdateSchedule}
+        />
+      )}
     </>
   );
 };
