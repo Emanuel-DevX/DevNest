@@ -18,7 +18,7 @@ const DailyView = () => {
     return date.toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
     });
   };
@@ -85,7 +85,7 @@ console.log(tasks)
           )}
         </div>
         <div className="flex items-center justify-center py-4 ">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <button
               onClick={goToPreviousDay}
               className="p-2 text-zinc-400 hover:text-teal-300 hover:bg-zinc-700 rounded-md transition-colors"
