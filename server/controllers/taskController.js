@@ -283,7 +283,60 @@ function generateOccurrences(startDate, endDate, pattern) {
   return occurrences;
 }
 
+const customizeTaskSchedule = async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+    const userId = req.user.id;
+    const {
+      duration,
+      scheduledDate,
+      isRecurring,
+      recurrencePattern,
+      recurrenceEndDate,
+    } = req.body;
 
+    let occurrences = [];
+
+    if (isRecurring) {
+      if (!recurrencePattern || !recurrenceEndDate) {
+        return res.status(400).json({
+          message:
+            "recurrencePattern and recurrenceEndDate are required for recurring tasks",
+        });
+      }
+
+      occurrences = generateOccurrences(
+        scheduledDate,
+        recurrenceEndDate,
+        recurrencePattern
+      );
+    }
+
+    const updates = {
+      taskId,
+      userId,
+      scheduledAt: scheduledDate,
+      duration,
+      recurring: {
+        isRecurring,
+        startDate: scheduledDate,
+        interval: recurrencePattern,
+        occurrences,
+      },
+    };
+
+    const taskSchedule = await TaskSchedule.findOneAndUpdate(
+      { userId, taskId },
+      updates,
+      { new: true, upsert: true, setDefaultsOnInsert }
+    );
+
+    return res.status(201).json(taskSchedule);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
 
 module.exports = {
   addTask,
