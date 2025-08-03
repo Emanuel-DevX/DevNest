@@ -22,7 +22,7 @@ const TaskScheduleSchema = new mongoose.Schema({
   recurring: {
     isRecurring: { type: Boolean, default: false },
     startDate: Date,
-    interval: Number, // every X days
+    interval: String,
     occurrences: [
       {
         date: Date,

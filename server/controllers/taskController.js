@@ -226,6 +226,7 @@ const getTasksByDate = async (req, res) => {
   const endOfDay = new Date(date);
   endOfDay.setHours(23, 59, 59, 999);
 
+  // 1. Find normal assigned tasks with dueDate
   const tasks = await Task.find({
     participants: { $in: userId },
     dueDate: { $gte: startOfDay, $lte: endOfDay },
@@ -233,28 +234,47 @@ const getTasksByDate = async (req, res) => {
     .populate("participants", "name email _id")
     .lean();
 
-  const taskIds = tasks.map((task) => task._id);
-
   const schedules = await TaskSchedule.find({
     userId,
-    taskId: { $in: taskIds },
+    $or: [
+      { scheduledAt: { $gte: startOfDay, $lte: endOfDay } },
+      { "recurring.occurrences.date": { $gte: startOfDay, $lte: endOfDay } },
+    ],
   }).lean();
 
-  const scheduledMap = new Map();
+  const taskIdsFromSchedules = schedules.map((s) => s.taskId.toString());
+  const scheduleMap = new Map();
+
   for (const s of schedules) {
-    scheduledMap.set(s.taskId.toString(), s);
+    scheduleMap.set(s.taskId.toString(), s);
   }
 
-  const merged = tasks.map((task) => {
-    const schedule = scheduledMap.get(task._id.toString());
-    return {
-      ...task,
-      userSchedule: schedule || null,
-    };
-  });
+  // Merge existing tasks from Task model
+  const taskIdSet = new Set(tasks.map((t) => t._id.toString()));
+  const merged = tasks.map((task) => ({
+    ...task,
+    userSchedule: scheduleMap.get(task._id.toString()) || null,
+  }));
+
+  //  Add tasks from schedule if they’re not already in the list
+  for (const schedule of schedules) {
+    const taskIdStr = schedule.taskId.toString();
+    if (!taskIdSet.has(taskIdStr)) {
+      const task = await Task.findById(taskIdStr)
+        .populate("participants", "name email _id")
+        .lean();
+      if (task) {
+        merged.push({
+          ...task,
+          userSchedule: schedule,
+        });
+      }
+    }
+  }
 
   return res.status(200).json(merged);
 };
+
 
 function generateOccurrences(startDate, endDate, pattern) {
   const occurrences = [];
@@ -328,7 +348,7 @@ const customizeTaskSchedule = async (req, res) => {
     const taskSchedule = await TaskSchedule.findOneAndUpdate(
       { userId, taskId },
       updates,
-      { new: true, upsert: true, setDefaultsOnInsert }
+      { new: true, upsert: true, setDefaultsOnInsert: true }
     );
 
     return res.status(201).json(taskSchedule);
