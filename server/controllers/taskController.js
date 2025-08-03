@@ -1,7 +1,7 @@
 const Task = require("../models/Task");
 const Sprint = require("../models/Sprint");
 const User = require("../models/User");
-const TaskSchedule = require("../models/TaskSchedule")
+const TaskSchedule = require("../models/TaskSchedule");
 
 // PATCH /tasks/:taskId/calendar
 const addToCalendar = async (req, res) => {
@@ -229,7 +229,9 @@ const getTasksByDate = async (req, res) => {
   const tasks = await Task.find({
     participants: { $in: userId },
     dueDate: { $gte: startOfDay, $lte: endOfDay },
-  }).populate("participants", "name email _id").lean();
+  })
+    .populate("participants", "name email _id")
+    .lean();
 
   const taskIds = tasks.map((task) => task._id);
 
@@ -253,6 +255,19 @@ const getTasksByDate = async (req, res) => {
 
   return res.status(200).json(merged);
 };
+
+function generateOccurrences(startDate, intervalDays, count) {
+  const occurrences = [];
+  let current = new Date(startDate);
+  for (let i = 0; i < count; i++) {
+    occurrences.push({ date: new Date(current), done: false });
+    current.setDate(current.getDate() + intervalDays);
+  }
+  return occurrences;
+}
+
+const customizeTaskSchedule = async (res, req) => {
+
 
 module.exports = {
   addTask,
