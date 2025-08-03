@@ -256,17 +256,33 @@ const getTasksByDate = async (req, res) => {
   return res.status(200).json(merged);
 };
 
-function generateOccurrences(startDate, intervalDays, count) {
+function generateOccurrences(startDate, endDate, pattern) {
   const occurrences = [];
   let current = new Date(startDate);
-  for (let i = 0; i < count; i++) {
+
+  while (current <= new Date(endDate)) {
     occurrences.push({ date: new Date(current), done: false });
-    current.setDate(current.getDate() + intervalDays);
+
+    if (pattern === "daily") {
+      current.setDate(current.getDate() + 1);
+    } else if (pattern === "weekly") {
+      current.setDate(current.getDate() + 7);
+    } else if (pattern === "monthly") {
+      const currentDate = current.getDate();
+      current.setMonth(current.getMonth() + 1);
+
+      // Handle overflow (e.g. Jan 31 -> Feb 28 or Mar 3)
+      while (current.getDate() < currentDate) {
+        current.setDate(current.getDate() + 1);
+      }
+    } else {
+      throw new Error("Unsupported recurrence pattern");
+    }
   }
+
   return occurrences;
 }
 
-const customizeTaskSchedule = async (res, req) => {
 
 
 module.exports = {
