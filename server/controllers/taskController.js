@@ -142,6 +142,32 @@ const updateTaskCompletion = async (req, res) => {
         message: "You need to be a participant of this task to mark it as done",
       });
     }
+    const schedule = await TaskSchedule.findOne({ taskId, userId });
+
+    if (schedule?.recurring?.isRecurring && date) {
+      const dateStr = new Date(date).toISOString().split("T")[0];
+
+      const updated = await TaskSchedule.findOneAndUpdate(
+        {
+          taskId,
+          userId,
+          "recurring.occurrences.date": new Date(dateStr),
+        },
+        {
+          $set: {
+            "recurring.occurrences.$.done": complete,
+          },
+        },
+        { new: true }
+      );
+
+      return res.status(200).json({
+        message: `Marked recurring task as ${
+          complete ? "done" : "not done"
+        } for ${dateStr}`,
+        schedule: updated,
+      });
+    }
 
     task.completed = complete;
     task.status = complete ? "completed" : "pending";
@@ -274,7 +300,6 @@ const getTasksByDate = async (req, res) => {
 
   return res.status(200).json(merged);
 };
-
 
 function generateOccurrences(startDate, endDate, pattern) {
   const occurrences = [];
