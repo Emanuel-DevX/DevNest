@@ -346,4 +346,5 @@ module.exports = {
   updateTaskInfo,
   deleteTask,
   getTasksByDate,
+  customizeTaskSchedule,
 };
