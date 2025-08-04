@@ -39,10 +39,11 @@ function App() {
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/tasks" element={<Tasks />}>
+                  <Route index element={<Navigate to="daily" replace />} />
+
                   <Route path="daily" element={<DailyView />} />
                   {/* <Route path="weekly" element={<WeeklyView />} />
                   <Route path="monthly" element={<MonthView />} /> */}
-                  <Route index element={<DailyView />} />
                 </Route>
                 <Route path="/project/:id" element={<Project />}>
                   <Route index element={<Navigate to="tasks" replace />} />

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { ChevronDown, Calendar, Clock, List } from "lucide-react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
-import MonthView from "./MonthView";
-import WeeklyView from "./WeeklyView";
+import MonthView from "./monthly/MonthView";
+import WeeklyView from "./weekly/WeeklyView";
 import DailyView from "./daily/DailyView";
 
 const views = {
@@ -31,6 +31,7 @@ const Tasks = function () {
   const location = useLocation();
 
   const currentViewKey = location.pathname.split("/").pop(); // "daily"
+  console.log(location.pathname)
   const currentView = views[currentViewKey] || views["daily"];
   const CurrentIcon = currentView.icon;
 
