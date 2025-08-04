@@ -116,7 +116,6 @@ const TaskCard = function ({ task, onUpdate, date }) {
 
         {/* Info Row */}
         <div className="flex flex-col md:flex-row justify-between flex-wrap  text-sm mt-4">
-          {(task.dueDate.toString())}
           <div className="flex gap-1.5 items-center">
             <Clock className="w-4 h-4" />
             <div className="flex items-center gap-1.5 text-gray-400">
