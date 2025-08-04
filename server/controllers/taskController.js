@@ -243,7 +243,7 @@ const deleteTask = async (req, res) => {
 const getTasksByRange = async (req, res) => {
   const userId = req.user.id;
   const { startDate, endDate } = req.query;
-  console.log(startDate, endDate)
+  console.log(startDate, endDate);
 
   if (!startDate || !endDate) {
     return res
@@ -258,15 +258,14 @@ const getTasksByRange = async (req, res) => {
     return res.status(400).json({ message: "Invalid date format" });
   }
 
-
-  // 1. Find normal assigned tasks with dueDate
+  // Find normal assigned tasks with dueDate
   const tasks = await Task.find({
     participants: { $in: userId },
     dueDate: { $gte: start, $lte: end },
   })
     .populate("participants", "name email _id")
     .lean();
-
+  const allSchedules = await TaskSchedule.find();
   const schedules = await TaskSchedule.find({
     userId,
     $or: [
@@ -280,7 +279,7 @@ const getTasksByRange = async (req, res) => {
       },
     ],
   }).lean();
-  
+
   const taskIdsFromSchedules = schedules.map((s) => s.taskId.toString());
   const scheduleMap = new Map();
 
@@ -314,13 +313,12 @@ const getTasksByRange = async (req, res) => {
   return res.status(200).json(merged);
 };
 
-
 function generateOccurrences(startDate, endDate, pattern) {
   const occurrences = [];
   let current = new Date(startDate);
 
   while (current <= new Date(endDate)) {
-    occurrences.push({ date: formatDateOnly(current), done: false });
+    occurrences.push(formatDateOnly(current));
 
     if (pattern === "daily") {
       current.setDate(current.getDate() + 1);
@@ -354,7 +352,14 @@ const customizeTaskSchedule = async (req, res) => {
       recurrenceEndDate,
     } = req.body;
 
-    let occurrences = [];
+    if (!scheduledDate) {
+      return res.status(400).json({ message: "Scheduled date is required" });
+    }
+
+    // Delete existing schedules for this user-task
+    await TaskSchedule.deleteMany({ taskId, userId });
+
+    const schedulesToInsert = [];
 
     if (isRecurring) {
       if (!recurrencePattern || !recurrenceEndDate) {
@@ -364,33 +369,36 @@ const customizeTaskSchedule = async (req, res) => {
         });
       }
 
-      occurrences = generateOccurrences(
+      const occurrenceDates = generateOccurrences(
         scheduledDate,
         recurrenceEndDate,
         recurrencePattern
       );
+
+      for (const date of occurrenceDates) {
+        schedulesToInsert.push({
+          taskId,
+          userId,
+          scheduledAt: new Date(date),
+          duration,
+          done: false,
+        });
+      }
+    } else {
+      // Single schedule
+      schedulesToInsert.push({
+        taskId,
+        userId,
+        scheduledAt: new Date(scheduledDate),
+        duration,
+        done: false,
+      });
     }
 
-    const updates = {
-      taskId,
-      userId,
-      scheduledAt: scheduledDate,
-      duration,
-      recurring: {
-        isRecurring,
-        startDate: scheduledDate,
-        interval: recurrencePattern,
-        occurrences,
-      },
-    };
+    const inserted = await TaskSchedule.insertMany(schedulesToInsert);
+    console.log(inserted)
 
-    const taskSchedule = await TaskSchedule.findOneAndUpdate(
-      { userId, taskId },
-      updates,
-      { new: true, upsert: true, setDefaultsOnInsert: true }
-    );
-
-    return res.status(201).json(taskSchedule);
+    return res.status(201).json(inserted);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error" });
