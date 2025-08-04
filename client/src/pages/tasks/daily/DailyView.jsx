@@ -2,11 +2,30 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import TaskCard from "./TaskCard";
 import fetcher from "../../../lib/api";
+import { useSearchParams } from "react-router-dom";
 
 const DailyView = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const getInitialDate = () => {
+    const urlDate = searchParams.get("date");
+    return urlDate ? new Date(urlDate) : new Date();
+  };
+  const [selectedDate, setSelectedDate] = useState(getInitialDate());
+  useEffect(() => {
+    const formatted = formatDateForAPI(selectedDate);
+    setSearchParams({ date: formatted });
+  }, [selectedDate]);
+
+  useEffect(() => {
+    const urlDate = searchParams.get("date");
+    if (urlDate) {
+      const parsed = new Date(urlDate);
+      if (!isNaN(parsed)) setSelectedDate(parsed);
+    }
+  }, [searchParams]);
 
   // Format date for API call (YYYY-MM-DD)
   const formatDateForAPI = (date) => {

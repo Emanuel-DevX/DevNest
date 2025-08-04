@@ -13,6 +13,7 @@ import NotesList from "./pages/notes/NotesList";
 import ProjectSettings from "./pages/project/settings/ProjectSettings";
 import SprintManagement from "./pages/project/sprint/SprintManagement";
 import InviteAcceptancePage from "./pages/invite/InviteAcceptance";
+import DailyView from "./pages/tasks/daily/DailyView";
 function App() {
   const location = useLocation();
   const [expand, setExpand] = useState(false);
@@ -37,7 +38,12 @@ function App() {
             >
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/tasks" element={<Tasks />} />
+                <Route path="/tasks" element={<Tasks />}>
+                  <Route path="daily" element={<DailyView />} />
+                  {/* <Route path="weekly" element={<WeeklyView />} />
+                  <Route path="monthly" element={<MonthView />} /> */}
+                  <Route index element={<DailyView />} />
+                </Route>
                 <Route path="/project/:id" element={<Project />}>
                   <Route index element={<Navigate to="tasks" replace />} />
 

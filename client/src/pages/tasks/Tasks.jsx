@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { ChevronDown, Calendar, Clock, List } from "lucide-react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+
 import MonthView from "./MonthView";
 import WeeklyView from "./WeeklyView";
 import DailyView from "./daily/DailyView";
-
 
 const views = {
   daily: {
@@ -24,18 +25,19 @@ const views = {
 };
 
 const Tasks = function () {
-  const [view, setView] = useState("daily");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const currentView = views[view];
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const currentViewKey = location.pathname.split("/").pop(); // "daily"
+  const currentView = views[currentViewKey] || views["daily"];
   const CurrentIcon = currentView.icon;
 
   return (
     <div className="font-inter  min-h-screen text-white">
       <div className="flex justify-between items-center pb-6">
-        <h1 className="text-2xl font-bold ">
-          {currentView.label} Tasks
-        </h1>
+        <h1 className="text-2xl font-bold ">{currentView.label} Tasks</h1>
 
         {/* Dropdown Button */}
         <div className="relative">
@@ -61,11 +63,11 @@ const Tasks = function () {
                   <button
                     key={key}
                     onClick={() => {
-                      setView(key);
+                      navigate(`/tasks/${key}${location.search}`); // preserve ?date=
                       setIsDropdownOpen(false);
                     }}
                     className={`w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-teal-400/20 first:rounded-t-lg last:rounded-b-lg transition-colors
-                      ${view === key ? "bg-teal-400/10 " : "text-white"}
+                      ${true ? "bg-teal-400/10 " : "text-white"}
                     `}
                   >
                     <IconComponent className="w-4 h-4" />
@@ -87,7 +89,9 @@ const Tasks = function () {
       )}
 
       {/* Current View */}
-      <div className="min-h-0">{currentView.component}</div>
+      <div className="min-h-0">
+        <Outlet />
+      </div>
     </div>
   );
 };
