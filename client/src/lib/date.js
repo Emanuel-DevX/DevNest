@@ -48,3 +48,21 @@ export const isSameDay = (d1, d2) => {
     a.getDate() === b.getDate()
   );
 };
+
+export const generateTimeOptions = (intervalMinutes = 30) => {
+  const times = [];
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += intervalMinutes) {
+      const timeString = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+      const displayTime = new Date(
+        `2000-01-01T${timeString}`
+      ).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+      times.push({ value: timeString, display: displayTime });
+    }
+  }
+  return times;
+};
