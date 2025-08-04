@@ -54,8 +54,7 @@ export default function TaskCard({
     if (isOverdue) return "text-red-400";
     return "text-teal-400";
   };
-  console.log(task)
-
+  
   return (
     <>
       <div className="relative border border-gray-700/30 bg-gradient-to-br from-zinc-800/50 to-gray-900/50 backdrop-blur-sm p-4 rounded-xl">

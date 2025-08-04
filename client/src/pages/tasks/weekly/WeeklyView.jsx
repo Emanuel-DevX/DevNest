@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import WeeklyTaskCard from "./WeeklyTaskCard"; // Adjust the import based on your structure
 import fetcher from "../../../lib/api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   getStartOfWeek,
   getLocalDateString,
@@ -14,6 +14,7 @@ const WeeklyView = () => {
   const [tasksByDate, setTasksByDate] = useState({});
   const [weekDates, setWeekDates] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [selectedWeekStart, setSelectedWeekStart] = useState(() => {
     const param = searchParams.get("date");
     if (param) {
@@ -24,7 +25,8 @@ const WeeklyView = () => {
   });
   useEffect(() => {
     const weekStartStr = getLocalDateString(selectedWeekStart);
-    setSearchParams({ date: weekStartStr });
+    // setSearchParams({ date: weekStartStr });
+    navigate(`?date=${weekStartStr}`);
   }, [selectedWeekStart]);
 
   useEffect(() => {
@@ -47,9 +49,26 @@ const WeeklyView = () => {
       // Group tasks by date (assuming tasks have .dueDate)
       const grouped = {};
       tasks.forEach((task) => {
-        const date = new Date(task.dueDate).toISOString().split("T")[0];
-        if (!grouped[date]) grouped[date] = [];
-        grouped[date].push(task);
+        const schedule = task.userSchedule;
+
+        // Recurring task (with list of occurrences)
+        if (
+          schedule?.recurring?.isRecurring &&
+          Array.isArray(schedule.recurring.occurrences)
+        ) {
+          schedule.recurring.occurrences.forEach((occ) => {
+            const localDateStr = getLocalDateString(new Date(occ.date));
+            if (!grouped[localDateStr]) grouped[localDateStr] = [];
+            grouped[localDateStr].push({ ...task, ...occ }); // merge occ info into task if needed
+          });
+        }
+
+        // One-time task
+        else {
+          const localDateStr = getLocalDateString(new Date(task.dueDate));
+          if (!grouped[localDateStr]) grouped[localDateStr] = [];
+          grouped[localDateStr].push(task);
+        }
       });
 
       setTasksByDate(grouped);
@@ -63,12 +82,17 @@ const WeeklyView = () => {
     nextWeek.setDate(nextWeek.getDate() + 7);
     setSelectedWeekStart(nextWeek);
   };
+  const goToPrevioustWeek = () => {
+    const prevWeek = new Date(selectedWeekStart);
+    prevWeek.setDate(prevWeek.getDate() - 7);
+    setSelectedWeekStart(prevWeek);
+  };
 
   return (
     <div className="w-full">
       <div className="text-white text-lg font-semibold mb-4 flex items-center justify-center gap-2">
         <button
-          onClick={() => {}}
+          onClick={goToPrevioustWeek}
           className="p-2 text-zinc-400 hover:text-teal-300 hover:bg-zinc-700 rounded-md transition-colors"
           aria-label="Next day"
         >
@@ -91,15 +115,19 @@ const WeeklyView = () => {
         </button>
       </div>{" "}
       {/* Desktop View */}
-      <div className="hidden md:flex gap-2">
+      <div className="hidden gap-2 lg:grid grid-cols-7">
         {weekDates.map((d) => {
           const key = getLocalDateString(d);
           return (
             <div
+              onClick={() => {
+                const formatted = getLocalDateString(d); // → "2025-08-07"
+                navigate(`/tasks/daily?date=${formatted}`);
+              }}
               key={key}
-              className="flex-1 w-1/7  bg-zinc-800 p-1 py-3 rounded-xl shadow-sm"
+              className=" cursor-pointer   bg-zinc-900 p-1 py-3 rounded-xl shadow-sm"
             >
-              <h4 className="text-white text-sm font-medium mb-2 text-center">
+              <h4 className="text-teal-300 text-sm font-medium mb-2 text-center">
                 {formatDate(d)}
               </h4>
               <div className="flex flex-col gap-2">
@@ -116,12 +144,19 @@ const WeeklyView = () => {
         })}
       </div>
       {/* Mobile View */}
-      <div className="md:hidden flex flex-col gap-4">
+      <div className="lg:hidden flex flex-col gap-3">
         {weekDates.map((d) => {
           const key = getLocalDateString(d);
           return (
-            <div key={key} className="bg-zinc-800 p-4 rounded-xl shadow-sm">
-              <h4 className="text-white text-base font-semibold mb-2">
+            <div
+              onClick={() => {
+                const formatted = getLocalDateString(d); // → "2025-08-07"
+                navigate(`/tasks/daily?date=${formatted}`);
+              }}
+              key={key}
+              className="bg-zinc-900 py-3 p-2 rounded-xl shadow-sm"
+            >
+              <h4 className="text-teal-300 text-base font-semibold mb-2">
                 {formatDate(d)}
               </h4>
               <div className="flex flex-col gap-2">

@@ -18,9 +18,9 @@ const CustomizeTaskSchedule = function ({ task, onSave, onClose }) {
   const timeOptions = generateTimeOptions();
 
   const handleSave = () => {
-    const [hours, minutes] = scheduledTime.split(":").map(Number);
-    const dateObj = new Date(scheduledDate);
-    dateObj.setHours(hours, minutes, 0, 0);
+    const datetimeString = `${scheduledDate}T${scheduledTime}`; // e.g., "2025-08-04T09:00"
+    const dateObj = new Date(datetimeString); // This interprets as local time
+
     const scheduleData = {
       taskId: task._id,
       duration: Math.floor(Number(duration)),

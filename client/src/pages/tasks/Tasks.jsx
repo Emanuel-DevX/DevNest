@@ -66,8 +66,8 @@ const Tasks = function () {
                       navigate(`/tasks/${key}`); // preserve ?date=
                       setIsDropdownOpen(false);
                     }}
-                    className={`w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-teal-400/20 first:rounded-t-lg last:rounded-b-lg transition-colors
-                      ${true ? "bg-teal-400/10 " : "text-white"}
+                    className={`w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-800 first:rounded-t-lg last:rounded-b-lg transition-colors
+                      ${currentViewKey === key ? " bg-zinc-900 text-teal-300" : "text-white bg-zinc-950"}
                     `}
                   >
                     <IconComponent className="w-4 h-4" />

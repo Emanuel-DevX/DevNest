@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import TaskCard from "./TaskCard";
 import fetcher from "../../../lib/api";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getLocalDateString, getDateRangeForAPI } from "../../../lib/date";
 
 const DailyView = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const getInitialDate = () => {
     const urlDate = searchParams.get("date");
@@ -21,8 +22,9 @@ const DailyView = () => {
   const [selectedDate, setSelectedDate] = useState(getInitialDate());
   useEffect(() => {
     const formatted = getLocalDateString(selectedDate);
-    setSearchParams({ date: formatted });
-  }, [selectedDate]);
+    // setSearchParams({ date: formatted });
+    navigate(`?date=${formatted}`, { replace: true });
+  }, [selectedDate, searchParams]);
 
   // Format date for display
   const formatDateForDisplay = (date) => {
