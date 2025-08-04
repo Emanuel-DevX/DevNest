@@ -121,13 +121,11 @@ const updateTaskCompletion = async (req, res) => {
   const userId = req.user.id;
 
   if (!taskId) {
-    return res
-      .status(400)
-      .json({ message: "Task ID is required to mark a task as done" });
+    return res.status(400).json({ message: "Task ID is required" });
   }
 
   try {
-    const { complete, date } = req.body;
+    const { complete, scheduleId } = req.body;
     const task = await Task.findById(taskId);
 
     if (!task) {
@@ -143,30 +141,22 @@ const updateTaskCompletion = async (req, res) => {
         message: "You need to be a participant of this task to mark it as done",
       });
     }
-    const schedule = await TaskSchedule.findOne({ taskId, userId });
-
-    if (schedule?.recurring?.isRecurring && date) {
-      const dateStr = formatDateOnly(date); // "2025-08-05"
-
-      const updated = await TaskSchedule.findOneAndUpdate(
-        {
-          taskId,
-          userId,
-          "recurring.occurrences.date": dateStr,
-        },
-        {
-          $set: {
-            "recurring.occurrences.$.done": complete,
-          },
-        },
+    if (scheduleId) {
+      const schedule = await TaskSchedule.findOneAndUpdate(
+        { _id: scheduleId, taskId, userId }, // ensure ownership & correct task
+        { $set: { done: !!complete } },
         { new: true }
       );
 
+      if (!schedule) {
+        return res
+          .status(404)
+          .json({ message: "Schedule occurrence not found" });
+      }
+
       return res.status(200).json({
-        message: `Marked recurring task as ${
-          complete ? "done" : "not done"
-        } for ${dateStr}`,
-        schedule: updated,
+        message: "Schedule completion updated",
+        userSchedule: schedule,
       });
     }
 
