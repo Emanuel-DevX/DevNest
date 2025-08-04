@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import WeeklyTaskCard from "./WeeklyTaskCard"; // Adjust the import based on your structure
 import fetcher from "../../../lib/api";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import {
   getStartOfWeek,
@@ -55,18 +56,39 @@ const WeeklyView = () => {
     };
 
     fetchTasks();
-  }, []);
+  }, [selectedWeekStart]);
+
+  const goToNextWeek = () => {
+    const nextWeek = new Date(selectedWeekStart);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    setSelectedWeekStart(nextWeek);
+  };
 
   return (
     <div className="w-full">
-      <div className="text-white text-lg font-semibold mb-4">
-        Week of{" "}
-        {selectedWeekStart.toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        })}
+      <div className="text-white text-lg font-semibold mb-4 flex items-center justify-center gap-2">
+        <button
+          onClick={() => {}}
+          className="p-2 text-zinc-400 hover:text-teal-300 hover:bg-zinc-700 rounded-md transition-colors"
+          aria-label="Next day"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <h2>
+          Week of{" "}
+          {selectedWeekStart.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </h2>
+        <button
+          onClick={goToNextWeek}
+          className="p-2 text-zinc-400 hover:text-teal-300 hover:bg-zinc-700 rounded-md transition-colors"
+          aria-label="Next day"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>{" "}
       {/* Desktop View */}
       <div className="hidden md:flex gap-2">
