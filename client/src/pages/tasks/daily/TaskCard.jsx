@@ -46,7 +46,6 @@ const TaskCard = function ({ task, onUpdate, date }) {
       console.error(err.message);
     }
   };
-  console.log(task);
 
   return (
     <>
