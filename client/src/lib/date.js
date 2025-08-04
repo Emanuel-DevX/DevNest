@@ -10,18 +10,8 @@ export const getLocalDateString = (date = new Date()) => {
   return `${year}-${month}-${day}`;
 };
 export const isTaskCompleteOnDate = (task, targetDate) => {
-  const targetDateStr = getLocalDateString(targetDate);
-
   const schedule = task.userSchedule;
-  if (schedule?.recurring?.isRecurring) {
-    const match = schedule.recurring.occurrences.find((occurrence) => {
-      // Compare date strings directly to avoid timezone issues
-      return occurrence.date === targetDateStr;
-    });
-    return match?.done || false;
-  }
-
-  return task.completed || false;
+  return schedule?.done || task.completed || false;
 };
 
 export const getTimeRangeString = (startDate, durationMinutes) => {
