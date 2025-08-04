@@ -258,56 +258,41 @@ const getTasksByRange = async (req, res) => {
     return res.status(400).json({ message: "Invalid date format" });
   }
 
-  // Find normal assigned tasks with dueDate
-  const tasks = await Task.find({
-    participants: { $in: userId },
-    dueDate: { $gte: start, $lte: end },
-  })
-    .populate("participants", "name email _id")
-    .lean();
-  const allSchedules = await TaskSchedule.find();
   const schedules = await TaskSchedule.find({
     userId,
-    $or: [
-      { scheduledAt: { $gte: start, $lte: end } },
-      {
-        "recurring.occurrences": {
-          $elemMatch: {
-            date: { $gte: formatDateOnly(start), $lte: formatDateOnly(end) },
-          },
-        },
-      },
-    ],
+    $or: [{ scheduledAt: { $gte: start, $lte: end } }],
   }).lean();
 
-  const taskIdsFromSchedules = schedules.map((s) => s.taskId.toString());
-  const scheduleMap = new Map();
+  const scheduledTaskIds = new Set(schedules.map((s) => s.taskId.toString()));
 
-  for (const s of schedules) {
-    scheduleMap.set(s.taskId.toString(), s);
-  }
+  // Get only tasks NOT already scheduled
+  const fallbackTasks = await Task.find({
+    participants: { $in: userId },
+    dueDate: { $gte: start, $lte: end },
+    _id: { $nin: Array.from(scheduledTaskIds) },
+  }).lean();
 
-  // Merge existing tasks from Task model
-  const taskIdSet = new Set(tasks.map((t) => t._id.toString()));
-  const merged = tasks.map((task) => ({
-    ...task,
-    userSchedule: scheduleMap.get(task._id.toString()) || null,
-  }));
+  const merged = [];
 
-  //  Add tasks from schedule if they’re not already in the list
+  //Merge scheduled Tasks
   for (const schedule of schedules) {
-    const taskIdStr = schedule.taskId.toString();
-    if (!taskIdSet.has(taskIdStr)) {
-      const task = await Task.findById(taskIdStr)
-        .populate("participants", "name email _id")
-        .lean();
-      if (task) {
-        merged.push({
-          ...task,
-          userSchedule: schedule,
-        });
-      }
+    const { _id, scheduledAt, duration, done } = schedule;
+    const task = await Task.findById(schedule.taskId)
+      .populate("participants", "name email _id")
+      .lean();
+    if (task) {
+      merged.push({
+        ...task,
+        userSchedule: { _id, scheduledAt, duration, done },
+      });
     }
+  }
+  // Add fallback tasks (without schedule)
+  for (const task of fallbackTasks) {
+    merged.push({
+      ...task,
+      userSchedule: null,
+    });
   }
 
   return res.status(200).json(merged);
@@ -396,7 +381,7 @@ const customizeTaskSchedule = async (req, res) => {
     }
 
     const inserted = await TaskSchedule.insertMany(schedulesToInsert);
-    console.log(inserted)
+    console.log(inserted);
 
     return res.status(201).json(inserted);
   } catch (err) {
