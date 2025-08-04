@@ -31,7 +31,6 @@ const Tasks = function () {
   const location = useLocation();
 
   const currentViewKey = location.pathname.split("/").pop(); // "daily"
-  console.log(location.pathname)
   const currentView = views[currentViewKey] || views["daily"];
   const CurrentIcon = currentView.icon;
 

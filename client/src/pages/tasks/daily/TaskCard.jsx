@@ -2,51 +2,31 @@ import { useState } from "react";
 import { Circle, CheckCircle, Clock, MoreVertical } from "lucide-react";
 import CustomizeTaskSchedule from "./CustomizeTaskSchedule";
 import fetcher from "../../../lib/api";
-
-function isTaskComplete(task, targateDate) {
-  const target = new Date(targateDate);
-  const targetDateStr = target.toLocaleDateString("en-CA");
-  const schedule = task.userSchedule;
-
-  if (schedule?.recurring?.isRecurring) {
-    const match = schedule.recurring.occurrences.find((o) => {
-      const occDateStr = new Date(o.date).toISOString().split("T")[0];
-      return occDateStr === targetDateStr;
-    });
-    return match?.done || false;
-  }
-
-  // Fallback to task.completed if no schedule
-  return task.completed || false;
-}
+import { getTimeRangeString, isTaskCompleteOnDate } from "../../../lib/date";
 
 const TaskCard = function ({ task, onUpdate, date }) {
   const [customMenuOpen, setCustomMenuOpen] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [editScheduleOpen, setEditScheduleOpen] = useState(false);
-  const [isComplete, setIsComplete] = useState(isTaskComplete(task, date));
+  const [isComplete, setIsComplete] = useState(
+    isTaskCompleteOnDate(task, date)
+  );
 
-  const start = new Date(task.userSchedule?.scheduledAt);
-  const durationMs = task.userSchedule?.duration * 60 * 1000;
-  const end = new Date(start.getTime() + durationMs);
-  const startTime = new Date(start).toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-  const endTime = end.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
+  const { startTime, endTime } = getTimeRangeString(
+    task.userSchedule?.scheduledAt,
+    task.userSchedule?.duration
+  );
   const handleTaskCompletion = async () => {
     try {
+      const newCompleteValue = !isComplete;
+      setIsComplete(newCompleteValue);
       const url = `/tasks/${task._id}/complete`;
       const options = {
-        body: JSON.stringify({ complete: isComplete, date }),
+        body: JSON.stringify({ complete: newCompleteValue, date }),
         method: "PATCH",
       };
       await fetcher(url, options);
+      await onUpdate();
     } catch (err) {
       console.error(err.message);
     }
@@ -112,13 +92,7 @@ const TaskCard = function ({ task, onUpdate, date }) {
 
         {/* Title and Description */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => {
-              handleTaskCompletion(!isComplete);
-              setIsComplete(!isComplete);
-            }}
-            className=""
-          >
+          <button onClick={handleTaskCompletion} className="">
             {isComplete ? (
               <CheckCircle className="text-green-400 w-5 h-5" />
             ) : (
@@ -146,8 +120,9 @@ const TaskCard = function ({ task, onUpdate, date }) {
           <div className="flex gap-1.5 items-center">
             <Clock className="w-4 h-4" />
             <div className="flex items-center gap-1.5 text-gray-400">
-              <span> {startTime === "Invalid Date" ? "Unscheduled": `${startTime} -` }</span>
-              <span> {endTime === "Invalid Date" ?"":endTime}</span>
+              <span> {startTime || "Unscheduled"}</span>
+              {startTime && <span>-</span>}
+              <span>{endTime}</span>
             </div>
           </div>
         </div>

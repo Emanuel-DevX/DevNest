@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import TaskCard from "./TaskCard";
 import fetcher from "../../../lib/api";
 import { useSearchParams } from "react-router-dom";
+import { getLocalDateString } from "../../../lib/date";
 
 const DailyView = () => {
   const [tasks, setTasks] = useState([]);
@@ -11,26 +12,19 @@ const DailyView = () => {
 
   const getInitialDate = () => {
     const urlDate = searchParams.get("date");
-    return urlDate ? new Date(urlDate) : new Date();
+    if (!urlDate) return new Date(); // fallback to today
+    const [year, month, day] = urlDate.split("-").map(Number);
+    if (!year || !month || !day) return new Date();
+    return new Date(year, month - 1, day); // local date
   };
+
   const [selectedDate, setSelectedDate] = useState(getInitialDate());
   useEffect(() => {
-    const formatted = formatDateForAPI(selectedDate);
+    const formatted = getLocalDateString(selectedDate);
     setSearchParams({ date: formatted });
   }, [selectedDate]);
 
-  useEffect(() => {
-    const urlDate = searchParams.get("date");
-    if (urlDate) {
-      const parsed = new Date(urlDate);
-      if (!isNaN(parsed)) setSelectedDate(parsed);
-    }
-  }, [searchParams]);
 
-  // Format date for API call (YYYY-MM-DD)
-  const formatDateForAPI = (date) => {
-    return date.toISOString().split("T")[0];
-  };
 
   // Format date for display
   const formatDateForDisplay = (date) => {
@@ -52,7 +46,7 @@ const DailyView = () => {
   const fetchDailyTasks = async (date = selectedDate) => {
     try {
       setLoading(true);
-      const formattedDate = formatDateForAPI(date);
+      const formattedDate = getLocalDateString(date);
       const res = await fetcher(`/tasks/daily?date=${formattedDate}`);
 
       setTasks(res);

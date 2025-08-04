@@ -1,38 +1,19 @@
 import { useState } from "react";
 import { ChevronDown, Clock, Calendar, Repeat } from "lucide-react";
+import { getLocalDateString, generateTimeOptions } from "../../../lib/date";
 
 const CustomizeTaskSchedule = function ({ task, onSave, onClose }) {
   const [duration, setDuration] = useState(30);
   const [scheduledDate, setScheduledDate] = useState(
     task?.dueDate
-      ? new Date(task.dueDate).toISOString().split("T")[0]
-      : new Date().toISOString().split("T")[0]
+      ? getLocalDateString(new Date(task.dueDate))
+      : getLocalDateString()
   );
   const [scheduledTime, setScheduledTime] = useState("09:00");
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurrencePattern, setRecurrencePattern] = useState("daily");
-  const [recurrenceEndDate, setRecurrenceEndDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
-
-  // Generate time options with 30-minute intervals
-  const generateTimeOptions = () => {
-    const times = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const timeString = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
-        const displayTime = new Date(
-          `2000-01-01T${timeString}`
-        ).toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "2-digit",
-          hour12: true,
-        });
-        times.push({ value: timeString, display: displayTime });
-      }
-    }
-    return times;
-  };
+  const [recurrenceEndDate, setRecurrenceEndDate] =
+    useState(getLocalDateString());
 
   const timeOptions = generateTimeOptions();
 
@@ -104,7 +85,7 @@ const CustomizeTaskSchedule = function ({ task, onSave, onClose }) {
           <input
             type="date"
             value={scheduledDate}
-            min={new Date().toISOString().split("T")[0]}
+            min={getLocalDateString()}
             onChange={(e) => setScheduledDate(e.target.value)}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           />
