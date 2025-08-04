@@ -4,12 +4,12 @@ const router = express.Router();
 const {
   addToCalendar,
   updateTaskCompletion,
-  getTasksByDate,
   customizeTaskSchedule,
+  getTasksByRange,
 } = require("../controllers/taskController");
 
 router.patch("/:taskId/complete", updateTaskCompletion);
 router.patch("/:taskId/calendar", addToCalendar);
 router.put("/:taskId/schedule", customizeTaskSchedule);
-router.get("/daily", getTasksByDate);
+router.get("/range", getTasksByRange);
 module.exports = router;

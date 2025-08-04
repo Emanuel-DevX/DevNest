@@ -240,36 +240,47 @@ const deleteTask = async (req, res) => {
   }
 };
 
-const getTasksByDate = async (req, res) => {
+const getTasksByRange = async (req, res) => {
   const userId = req.user.id;
-  const date = new Date(req.query.date);
-  if (isNaN(date)) {
-    return res.status(400).json({ message: "Invalid date" });
+  const { startDate, endDate } = req.query;
+  console.log(startDate, endDate)
+
+  if (!startDate || !endDate) {
+    return res
+      .status(400)
+      .json({ message: "Start and end dates are required" });
   }
 
-  const startOfDay = new Date(date);
-  startOfDay.setHours(0, 0, 0, 0);
+  const start = new Date(startDate);
+  const end = new Date(endDate);
 
-  const endOfDay = new Date(date);
-  endOfDay.setHours(23, 59, 59, 999);
+  if (isNaN(start) || isNaN(end)) {
+    return res.status(400).json({ message: "Invalid date format" });
+  }
+
 
   // 1. Find normal assigned tasks with dueDate
   const tasks = await Task.find({
     participants: { $in: userId },
-    dueDate: { $gte: startOfDay, $lte: endOfDay },
+    dueDate: { $gte: start, $lte: end },
   })
     .populate("participants", "name email _id")
     .lean();
-  const dateStr = formatDateOnly(date); // from query param
 
   const schedules = await TaskSchedule.find({
     userId,
     $or: [
-      { scheduledAt: { $gte: startOfDay, $lte: endOfDay } },
-      { "recurring.occurrences.date": dateStr },
+      { scheduledAt: { $gte: start, $lte: end } },
+      {
+        "recurring.occurrences": {
+          $elemMatch: {
+            date: { $gte: formatDateOnly(start), $lte: formatDateOnly(end) },
+          },
+        },
+      },
     ],
   }).lean();
-
+  
   const taskIdsFromSchedules = schedules.map((s) => s.taskId.toString());
   const scheduleMap = new Map();
 
@@ -303,12 +314,13 @@ const getTasksByDate = async (req, res) => {
   return res.status(200).json(merged);
 };
 
+
 function generateOccurrences(startDate, endDate, pattern) {
   const occurrences = [];
   let current = new Date(startDate);
 
   while (current <= new Date(endDate)) {
-    occurrences.push({ date:formatDateOnly(current), done: false });
+    occurrences.push({ date: formatDateOnly(current), done: false });
 
     if (pattern === "daily") {
       current.setDate(current.getDate() + 1);
@@ -392,6 +404,6 @@ module.exports = {
   updateTaskCompletion,
   updateTaskInfo,
   deleteTask,
-  getTasksByDate,
+  getTasksByRange,
   customizeTaskSchedule,
 };

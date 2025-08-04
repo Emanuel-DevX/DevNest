@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Circle, CheckCircle, Clock, MoreVertical } from "lucide-react";
 import CustomizeTaskSchedule from "./CustomizeTaskSchedule";
 import fetcher from "../../../lib/api";
-import { getTimeRangeString, isTaskCompleteOnDate } from "../../../lib/date";
+import { getTimeRangeString, isTaskCompleteOnDate, toLocalDateOnly } from "../../../lib/date";
 
 const TaskCard = function ({ task, onUpdate, date }) {
   const [customMenuOpen, setCustomMenuOpen] = useState(false);
@@ -116,6 +116,7 @@ const TaskCard = function ({ task, onUpdate, date }) {
 
         {/* Info Row */}
         <div className="flex flex-col md:flex-row justify-between flex-wrap  text-sm mt-4">
+          {(task.dueDate.toString())}
           <div className="flex gap-1.5 items-center">
             <Clock className="w-4 h-4" />
             <div className="flex items-center gap-1.5 text-gray-400">

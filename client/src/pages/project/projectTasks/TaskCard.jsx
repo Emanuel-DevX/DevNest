@@ -54,6 +54,7 @@ export default function TaskCard({
     if (isOverdue) return "text-red-400";
     return "text-teal-400";
   };
+  console.log(task)
 
   return (
     <>
@@ -154,7 +155,7 @@ export default function TaskCard({
             <div className="flex items-center gap-1.5">
               <Calendar className={`w-4 h-4 ${getStatusColor()}`} />
               <span className={getStatusColor()}>
-                {formatDate(task.dueDate)}
+                {formatDate((task.dueDate))}
               </span>
             </div>
             {/* Participants */}

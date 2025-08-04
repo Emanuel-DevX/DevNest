@@ -20,7 +20,7 @@ const WeeklyView = () => {
       setWeekDates(week);
 
       const tasks = await fetcher(
-        `/tasks/weekly?start=${startOfWeek.toISOString().split("T")[0]}`
+        `/tasks/weekly?start=${getLocalDateString(startOfWeek)}`
       );
 
       // Group tasks by date (assuming tasks have .dueDate)
