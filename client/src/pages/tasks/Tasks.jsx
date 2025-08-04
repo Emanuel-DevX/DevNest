@@ -63,7 +63,7 @@ const Tasks = function () {
                   <button
                     key={key}
                     onClick={() => {
-                      navigate(`/tasks/${key}${location.search}`); // preserve ?date=
+                      navigate(`/tasks/${key}`); // preserve ?date=
                       setIsDropdownOpen(false);
                     }}
                     className={`w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-teal-400/20 first:rounded-t-lg last:rounded-b-lg transition-colors

@@ -3,13 +3,7 @@ import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import TaskCard from "./TaskCard";
 import fetcher from "../../../lib/api";
 import { useSearchParams } from "react-router-dom";
-import {
-  getLocalDateString,
-  getUTCDayRange,
-  toUTCDateStringLuxon,
-  toUTCDateString,
-  getDateRangeForAPI,
-} from "../../../lib/date";
+import { getLocalDateString, getDateRangeForAPI } from "../../../lib/date";
 
 const DailyView = () => {
   const [tasks, setTasks] = useState([]);
