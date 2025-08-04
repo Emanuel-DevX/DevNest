@@ -26,8 +26,8 @@ const TaskCard = function ({ task, onUpdate, date }) {
   const [editScheduleOpen, setEditScheduleOpen] = useState(false);
   const [isComplete, setIsComplete] = useState(isTaskComplete(task, date));
 
-  const start = new Date(task.userSchedule.scheduledAt);
-  const durationMs = task.userSchedule.duration * 60 * 1000;
+  const start = new Date(task.userSchedule?.scheduledAt);
+  const durationMs = task.userSchedule?.duration * 60 * 1000;
   const end = new Date(start.getTime() + durationMs);
   const startTime = new Date(start).toLocaleTimeString("en-GB", {
     hour: "2-digit",
@@ -146,9 +146,8 @@ const TaskCard = function ({ task, onUpdate, date }) {
           <div className="flex gap-1.5 items-center">
             <Clock className="w-4 h-4" />
             <div className="flex items-center gap-1.5 text-gray-400">
-              <span> {startTime}</span>
-              {" - "}
-              <span> {endTime}</span>
+              <span> {startTime === "Invalid Date" ? "Unscheduled": `${startTime} -` }</span>
+              <span> {endTime === "Invalid Date" ?"":endTime}</span>
             </div>
           </div>
         </div>
