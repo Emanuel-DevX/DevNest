@@ -1,3 +1,5 @@
+const { generateTaskPrompt } = require("../lib/generateTaskPrompt");
+const { askGemini } = require("../lib/gemini");
 const Project = require("../models/Project");
 const Sprint = require("../models/Sprint");
 
@@ -60,4 +62,17 @@ const getPromptParams = async (req) => {
   };
 };
 
-module.exports = { getPromptParams };
+const generateTasksFromAI = async (req, res) => {
+  try {
+    const params = await getPromptParams(req);
+    const prompt = generateTaskPrompt(params);
+
+    const tasks = await askGemini(prompt);
+    return res.status(200).json({ tasks });
+  } catch (err) {
+    console.error("Error generating tasks:", err.message);
+    return res.status(500).json({ message: err.message || "Internal error" });
+  }
+};
+
+module.exports = { getPromptParams, generateTasksFromAI };
