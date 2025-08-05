@@ -13,6 +13,7 @@ import {
 
 const Profile = function () {
   
+
   return (
     <div className="max-w-2xl w-[20rem] md:w-auto mx-auto lg:px-4 py-10">
       {/* Header Card */}
