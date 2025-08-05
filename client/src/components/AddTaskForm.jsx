@@ -3,11 +3,11 @@ import Toast from "./Toast";
 import DarkDatePicker from "./DatePicker";
 import { ChevronDown } from "lucide-react";
 import fetcher from "../lib/api";
-const AddTaskForm = function ({ onClose, onSuccess, currentProject }) {
+const AddTaskForm = function ({ onClose, onSuccess, currentProject, date }) {
   const [toast, setToast] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState(new Date());
+  const [dueDate, setDueDate] = useState(date ? new Date(date) : new Date());
   const [duration, setDuration] = useState("");
   const [projectId, setProjectId] = useState("");
   const [projectName, setProjectName] = useState("");

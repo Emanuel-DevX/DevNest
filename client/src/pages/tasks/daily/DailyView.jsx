@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, PlusCircle } from "lucide-react";
 import TaskCard from "./TaskCard";
 import fetcher from "../../../lib/api";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getLocalDateString, getDateRangeForAPI, formatDateForDisplay, isToday } from "../../../lib/date";
+import {
+  getLocalDateString,
+  getDateRangeForAPI,
+  formatDateForDisplay,
+  isToday,
+} from "@/lib/date";
+import TaskCreator from "@/components/TaskCreateTabs";
 
 const DailyView = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [taskCreaterOpen, setTaskCreaterOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -25,8 +32,6 @@ const DailyView = () => {
     // setSearchParams({ date: formatted });
     navigate(`?date=${formatted}`, { replace: true });
   }, [selectedDate, searchParams]);
-
-
 
   // Fetch tasks for selected date
   const fetchDailyTasks = async (date = selectedDate) => {
@@ -74,79 +79,100 @@ const DailyView = () => {
     fetchDailyTasks(selectedDate);
   }, [selectedDate]);
   return (
-    <div className="flex flex-col gap-4">
-      {/* Header with date navigation */}
-      <div className="border p-2 rounded-xl border-zinc-800 flex items-center justify-center relative">
-        <div className="absolute top-1 right-1 flex items-center gap-4">
-          {!isToday(selectedDate) && (
-            <button
-              onClick={goToToday}
-              className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-teal-400 bg-teal-400/10 hover:bg-teal-400/20 rounded-md transition-colors"
-            >
-              <Calendar className="h-3 w-3" />
-              Today
-            </button>
-          )}
-        </div>
-        <div className="flex items-center justify-center py-4 ">
-          <div className="flex items-center gap-1">
-            <button
-              onClick={goToPreviousDay}
-              className="p-2 text-zinc-400 hover:text-teal-300 hover:bg-zinc-700 rounded-md transition-colors"
-              aria-label="Previous day"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
+    <>
+      <div className="flex flex-col gap-4 relative min-h-[85vh]">
+        {/* Header with date navigation */}
+        <div className="border p-2 rounded-xl border-zinc-800 flex items-center justify-center relative">
+          <div className="absolute top-1 right-1 flex items-center gap-4">
+            {!isToday(selectedDate) && (
+              <button
+                onClick={goToToday}
+                className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-teal-400 bg-teal-400/10 hover:bg-teal-400/20 rounded-md transition-colors"
+              >
+                <Calendar className="h-3 w-3" />
+                Today
+              </button>
+            )}
+          </div>
+          <div className="flex items-center justify-center py-4 ">
+            <div className="flex items-center gap-1">
+              <button
+                onClick={goToPreviousDay}
+                className="p-2 text-zinc-400 hover:text-teal-300 hover:bg-zinc-700 rounded-md transition-colors"
+                aria-label="Previous day"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
 
-            <div className="px-4 py-2  rounded-md min-w-0">
-              <p className="text-sm font-medium text-white text-center whitespace-nowrap">
-                {formatDateForDisplay(selectedDate)}
-                {isToday(selectedDate) && (
-                  <span className="text-xs text-teal-400 text-center">
-                    {" "}
-                    (Today)
-                  </span>
-                )}
+              <div className="px-4 py-2  rounded-md min-w-0">
+                <p className="text-sm font-medium text-white text-center whitespace-nowrap">
+                  {formatDateForDisplay(selectedDate)}
+                  {isToday(selectedDate) && (
+                    <span className="text-xs text-teal-400 text-center">
+                      {" "}
+                      (Today)
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <button
+                onClick={goToNextDay}
+                className="p-2 text-zinc-400 hover:text-teal-300 hover:bg-zinc-700 rounded-md transition-colors"
+                aria-label="Next day"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Tasks list */}
+        <div className="space-y-3">
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-300"></div>
+            </div>
+          ) : tasks.length > 0 ? (
+            tasks.map((task) => (
+              <TaskCard
+                key={task._id}
+                onUpdate={() => fetchDailyTasks(selectedDate)}
+                task={task}
+                date={selectedDate}
+              />
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <Calendar className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
+              <p className="text-zinc-400 text-sm">
+                No tasks scheduled for{" "}
+                {isToday(selectedDate) ? "today" : "this day"}
               </p>
             </div>
-
-            <button
-              onClick={goToNextDay}
-              className="p-2 text-zinc-400 hover:text-teal-300 hover:bg-zinc-700 rounded-md transition-colors"
-              aria-label="Next day"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
+          )}
         </div>
+        <button
+          onClick={() => {
+            setTaskCreaterOpen(true);
+          }}
+          className="z-50 fixed bottom-10 lg:right-68 right-4 flex items-center gap-2 bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 py-2 rounded-full shadow-lg transition-colors"
+        >
+          <PlusCircle className="w-5 h-5" />
+          Add Task
+        </button>
       </div>
-
-      {/* Tasks list */}
-      <div className="space-y-3">
-        {loading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-300"></div>
-          </div>
-        ) : tasks.length > 0 ? (
-          tasks.map((task) => (
-            <TaskCard
-              key={task._id}
-              onUpdate={() => fetchDailyTasks(selectedDate)}
-              task={task}
-              date={selectedDate}
-            />
-          ))
-        ) : (
-          <div className="text-center py-8">
-            <Calendar className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-400 text-sm">
-              No tasks scheduled for{" "}
-              {isToday(selectedDate) ? "today" : "this day"}
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
+      {taskCreaterOpen && (
+        <TaskCreator
+          date={selectedDate}
+          onClose={() => setTaskCreaterOpen(false)}
+          onSuccess={async () => {
+            await fetchDailyTasks();
+            setTaskCreaterOpen(false);
+          }}
+        />
+      )}
+    </>
   );
 };
 

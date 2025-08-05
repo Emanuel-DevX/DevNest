@@ -2,7 +2,7 @@ import { useState } from "react";
 import AddTask from "./AddTaskForm";
 import AiTaskGen from "./AiTaskGenForm";
 
-export default function TaskCreator({ onClose, onSuccess, currentProject }) {
+export default function TaskCreator({ onClose, onSuccess, currentProject, date }) {
   const [activeTab, setActiveTab] = useState("add"); // "add" or "ai"
 
   return (
@@ -36,6 +36,7 @@ export default function TaskCreator({ onClose, onSuccess, currentProject }) {
         <div className="">
           {activeTab === "add" ? (
             <AddTask
+            date={date}
               onClose={onClose}
               onSuccess={onSuccess}
               currentProject={currentProject}
