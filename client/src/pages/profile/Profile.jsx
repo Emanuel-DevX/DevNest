@@ -10,6 +10,8 @@ import {
   Shield,
   Calendar,
 } from "lucide-react";
+import { getCurrentUser } from "@/lib/auth";
+import fetcher from "@/lib/api";
 
 const Profile = function () {
   const [user, setUser] = useState(null);
@@ -18,22 +20,14 @@ const Profile = function () {
   const [saveAnimation, setSaveAnimation] = useState(false);
 
   useEffect(() => {
-    // Mock user data - replace with actual getCurrentUser()
-    const u = {
-      name: "Alex Johnson",
-      email: "alex.johnson@example.com",
-      work: "Senior Developer at TechCorp",
-      school: "MIT Computer Science",
-      joinDate: "2023-08-15",
-      avatar: null,
-    };
+    const user = getCurrentUser();
 
-    if (u) {
-      setUser(u);
+    if (user) {
+      setUser(user);
       setFormData({
-        name: u.name || "",
-        work: u.work || "",
-        school: u.school || "",
+        name: user.name || "",
+        work: user.work || "",
+        school: user.school || "",
       });
     }
   }, []);
@@ -45,12 +39,12 @@ const Profile = function () {
   const handleSave = async () => {
     try {
       setSaveAnimation(true);
-      // TODO: send PATCH request to backend API to update user info
-      console.log("Saving", formData);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      const url = `/user/${user.id}`;
+      const options = {
+        method: "PATCH",
+        body: JSON.stringify(formData),
+      };
+      await fetcher(url, options);
       setUser((prev) => ({ ...prev, ...formData }));
       setEditMode(false);
     } catch (err) {
@@ -171,7 +165,7 @@ const Profile = function () {
       </div>
 
       {/* Details Card */}
-      <div className="bg-gradient-to-br from-zinc-900/80 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+      <div className="bg-gradient-to-br from-zinc-900/80 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl lg:p-8 p-3 shadow-2xl relative overflow-hidden">
         {/* Subtle background pattern */}
         <div className="absolute inset-0 opacity-5">
           <div
@@ -191,7 +185,7 @@ const Profile = function () {
           <div className="grid gap-6">
             {/* Email Field */}
             <div className="group">
-              <label className="block text-slate-400 text-sm font-medium mb-2 flex items-center gap-2">
+              <label className=" text-slate-400 text-sm font-medium mb-2 flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 Email Address
               </label>
@@ -210,7 +204,7 @@ const Profile = function () {
 
             {/* Name Field */}
             <div className="group">
-              <label className="block text-slate-400 text-sm font-medium mb-2 flex items-center gap-2">
+              <label className=" text-slate-400 text-sm font-medium mb-2 flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Full Name
               </label>
@@ -229,7 +223,7 @@ const Profile = function () {
 
             {/* Work Field */}
             <div className="group">
-              <label className="block text-slate-400 text-sm font-medium mb-2 flex items-center gap-2">
+              <label className=" text-slate-400 text-sm font-medium mb-2 flex items-center gap-2">
                 <Briefcase className="w-4 h-4" />
                 Work
                 <span className="text-xs text-slate-500 ml-1">(Optional)</span>
@@ -250,7 +244,7 @@ const Profile = function () {
 
             {/* School Field */}
             <div className="group">
-              <label className="block text-slate-400 text-sm font-medium mb-2 flex items-center gap-2">
+              <label className="text-slate-400 text-sm font-medium mb-2 flex items-center gap-2">
                 <GraduationCap className="w-4 h-4" />
                 Education
                 <span className="text-xs text-slate-500 ml-1">(Optional)</span>
@@ -301,7 +295,7 @@ const Profile = function () {
 
           {/* Danger Zone */}
           <div className="mt-10 pt-6 border-t border-red-900/30">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center justify-between">
               <div>
                 <h3 className="text-red-400 font-semibold">Danger Zone</h3>
                 <p className="text-slate-500 text-sm mt-1">
@@ -310,7 +304,7 @@ const Profile = function () {
               </div>
               <button
                 onClick={handleDeleteAccount}
-                className="group px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:text-red-300 transition-all duration-200 flex items-center gap-2"
+                className="group w-44 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:text-red-300 transition-all duration-200 flex items-center gap-2"
               >
                 <Trash2 className="w-4 h-4 group-hover:animate-pulse" />
                 Delete Account
