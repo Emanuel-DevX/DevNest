@@ -46,29 +46,23 @@ const WeeklyView = () => {
         `/tasks/range?startDate=${startDate}&endDate=${endDate}`
       );
 
-      // Group tasks by date (assuming tasks have .dueDate)
       const grouped = {};
       tasks.forEach((task) => {
-        const schedule = task.userSchedule;
+        const when = task.userSchedule?.scheduledAt || task.dueDate; // Date string
+        if (!when) return; // skip if neither exists
 
-        // Recurring task (with list of occurrences)
-        if (
-          schedule?.recurring?.isRecurring &&
-          Array.isArray(schedule.recurring.occurrences)
-        ) {
-          schedule.recurring.occurrences.forEach((occ) => {
-            const localDateStr = getLocalDateString(new Date(occ.date));
-            if (!grouped[localDateStr]) grouped[localDateStr] = [];
-            grouped[localDateStr].push({ ...task, ...occ }); // merge occ info into task if needed
-          });
-        }
+        const localKey = getLocalDateString(new Date(when)); // "YYYY-MM-DD" in local tz
+        if (!grouped[localKey]) grouped[localKey] = [];
+        grouped[localKey].push(task);
+      });
 
-        // One-time task
-        else {
-          const localDateStr = getLocalDateString(new Date(task.dueDate));
-          if (!grouped[localDateStr]) grouped[localDateStr] = [];
-          grouped[localDateStr].push(task);
-        }
+      // Sort each day by start time
+      Object.keys(grouped).forEach((k) => {
+        grouped[k].sort((a, b) => {
+          const aWhen = a.userSchedule?.scheduledAt || a.dueDate;
+          const bWhen = b.userSchedule?.scheduledAt || b.dueDate;
+          return new Date(aWhen) - new Date(bWhen);
+        });
       });
 
       setTasksByDate(grouped);

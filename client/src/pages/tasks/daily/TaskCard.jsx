@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Circle, CheckCircle, Clock, MoreVertical } from "lucide-react";
 import CustomizeTaskSchedule from "./CustomizeTaskSchedule";
 import fetcher from "../../../lib/api";
-import { getTimeRangeString, isTaskCompleteOnDate, toLocalDateOnly } from "../../../lib/date";
+import {
+  getTimeRangeString,
+  isTaskCompleteOnDate,
+  toLocalDateOnly,
+} from "../../../lib/date";
 
 const TaskCard = function ({ task, onUpdate, date }) {
   const [customMenuOpen, setCustomMenuOpen] = useState(false);
@@ -22,16 +26,20 @@ const TaskCard = function ({ task, onUpdate, date }) {
       setIsComplete(newCompleteValue);
       const url = `/tasks/${task._id}/complete`;
       const options = {
-        body: JSON.stringify({ complete: newCompleteValue, date }),
+        body: JSON.stringify({
+          complete: newCompleteValue,
+          scheduleId: task.userSchedule?._id,
+        }),
         method: "PATCH",
       };
+      console.log(options)
       await fetcher(url, options);
       await onUpdate();
     } catch (err) {
       console.error(err.message);
     }
   };
-  console.log(task)
+  console.log(task);
 
   const handleUpdateSchedule = async (taskSchedule) => {
     try {
