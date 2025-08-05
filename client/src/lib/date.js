@@ -127,18 +127,80 @@ export const getDateRangeForAPI = (startDate, endDate) => {
   return { startDate: start, endDate: end };
 };
 
-  // Format date for display
-  export const formatDateForDisplay = (date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+// Format date for display
+export const formatDateForDisplay = (date) => {
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 
-  // Check if selected date is today
-  export const isToday = (date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
+// Check if selected date is today
+export const isToday = (date) => {
+  const today = new Date();
+  return date.toDateString() === today.toDateString();
+};
+
+export const getMonthRangeUTC = (date) => {
+  // start of month (local)
+  const startLocal = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    1,
+    0,
+    0,
+    0,
+    0
+  );
+  // end of month (local)
+  const endLocal = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    0,
+    23,
+    59,
+    59,
+    999
+  );
+  return {
+    startDate: startLocal.toISOString(),
+    endDate: endLocal.toISOString(),
   };
+};
+
+// Get calendar data
+export const getCalendarData = (currentDate) => {
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  // First day of the month
+  const firstDay = new Date(year, month, 1);
+  // Last day of the month
+  const lastDay = new Date(year, month + 1, 0);
+
+  // Get day of week (0 = Sunday, 1 = Monday, etc.)
+  // Convert to our format where Monday = 0
+  const startDay = (firstDay.getDay() + 6) % 7;
+
+  const daysInMonth = lastDay.getDate();
+  const calendarDays = [];
+
+  // Add empty cells for days before the first day of the month
+  for (let i = 0; i < startDay; i++) {
+    calendarDays.push(null);
+  }
+
+  // Add all days of the month
+  for (let day = 1; day <= daysInMonth; day++) {
+    calendarDays.push(day);
+  }
+
+  // Fill remaining cells to complete the grid (35 cells = 5 rows × 7 days)
+  while (calendarDays.length < 35) {
+    calendarDays.push(null);
+  }
+
+  return calendarDays;
+};
