@@ -10,7 +10,7 @@ import {
   Shield,
   Calendar,
 } from "lucide-react";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, saveCurrentUser } from "@/lib/auth";
 import fetcher from "@/lib/api";
 
 const Profile = function () {
@@ -39,13 +39,14 @@ const Profile = function () {
   const handleSave = async () => {
     try {
       setSaveAnimation(true);
-      const url = `/user/${user.id}`;
+      const url = `/users/${user.id}`;
       const options = {
         method: "PATCH",
         body: JSON.stringify(formData),
       };
-      await fetcher(url, options);
+      const res = await fetcher(url, options);
       setUser((prev) => ({ ...prev, ...formData }));
+      saveCurrentUser(res.user);
       setEditMode(false);
     } catch (err) {
       console.error("Error updating profile:", err);

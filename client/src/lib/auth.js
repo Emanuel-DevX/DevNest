@@ -1,4 +1,4 @@
-const API_BASE =import.meta.env.VITE_PUBLIC_API_URL;
+const API_BASE = import.meta.env.VITE_PUBLIC_API_URL;
 // Login: redirect to backend OAuth
 export function login() {
   if (isAuthenticated()) {
@@ -54,4 +54,9 @@ export function getToken() {
   if (typeof window === "undefined") return false;
 
   return localStorage.getItem("devnest_token");
+}
+
+export function saveCurrentUser(user) {
+  if (typeof window === "undefined") return false;
+  localStorage.setItem("devnest_user", JSON.stringify(user));
 }
