@@ -1,52 +1,77 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import fetcher from "../../../lib/api";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   getLocalDateString,
   getMonthRangeUTC,
   getCalendarData,
-  isToday,
 } from "@/lib/date";
 const MonthView = function () {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const [searchParams, setSearchParams] = useSearchParams();
+  const days = useMemo(
+    () => ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    []
+  );
   const [tasksByDate, setTasksByDate] = useState({}); // { "YYYY-MM-DD": Task[] }
-
-  // Get tasks for a specific calendar cell (day number)
-  const getTasksForDate = (day) => {
-    if (!day) return [];
-    const key = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return tasksByDate[key] || [];
+  const navigate = useNavigate();
+  useEffect(() => {
+    const m = searchParams.get("month");
+    if (!m) {
+      const now = new Date();
+      setMonth(new Date(now.getFullYear(), now.getMonth(), 1), {
+        replace: true,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const currentDate = useMemo(() => {
+    const m = searchParams.get("month"); // "YYYY-MM"
+    if (!m) return new Date();
+    const [y, mm] = m.split("-").map(Number);
+    if (!y || !mm) return new Date();
+    return new Date(y, mm - 1, 1);
+  }, [searchParams]);
+  const setMonth = (date, opts = {}) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    setSearchParams({ month: `${y}-${m}` }, opts); // opts: { replace: true } if desired
   };
 
   // Navigate months
   const previousMonth = () => {
-    setCurrentDate(
+    setMonth(
       new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
     );
   };
 
   const nextMonth = () => {
-    setCurrentDate(
+    setMonth(
       new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
     );
   };
 
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const monthNames = useMemo(
+    () => [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+    []
+  );
 
-  const calendarDays = getCalendarData(currentDate);
+  const calendarDays = useMemo(
+    () => getCalendarData(currentDate),
+    [currentDate]
+  );
 
   useEffect(() => {
     const fetchMonth = async () => {
@@ -86,6 +111,7 @@ const MonthView = function () {
 
     fetchMonth();
   }, [currentDate]);
+  const todayKey = getLocalDateString(new Date());
 
   return (
     <div className="w-full max-w-screen-lg mx-auto overflow-hidden mt-2">
@@ -120,15 +146,25 @@ const MonthView = function () {
       {/* Calendar Grid */}
       <main className="grid grid-cols-7  gap-px w-full">
         {calendarDays.map((day, index) => {
-          const dayTasks = getTasksForDate(day);
-          const isCurrentDay = isToday(new Date(day));
+          const key =
+            day &&
+            `${currentDate.getFullYear()}-${String(
+              currentDate.getMonth() + 1
+            ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          const dayTasks = day ? tasksByDate[key] || [] : [];
+          const isCurrentDay = day && key === todayKey;
 
           return (
             <div
+              onClick={() => {
+                if (!day) return;
+                // navigate to Daily for this cell's date
+                navigate(`/tasks/daily?date=${key}`);
+              }}
               key={index}
               className={`ring ring-emerald-300/10 h-32 md:h-36 p-[1px] overflow-hidden relative hover:text-white text-teal-400
-                ${day ? "hover:bg-teal-500/10 hover:text-white" : "bg-zinc-900/50"}
-                ${isCurrentDay ? "bg-emerald-500/10" : ""}
+                ${day ? "hover:bg-teal-500/10 hover:text-white cursor-pointer" : "bg-zinc-900/50"}
+                ${isCurrentDay ? "bg-emerald-500/15 text-white font-bold" : ""}
               `}
             >
               {day && (
@@ -144,15 +180,20 @@ const MonthView = function () {
 
                   {/* Tasks */}
                   <div className="space-y-px ">
-                    {dayTasks.map((task) => (
-                      <div
-                        key={task._id + task.scheduledAt?.toString()}
-                        className="text-xs  px-1 py-0.5 rounded truncate leading-tight"
-                        title={task.title}
-                      >
-                        {task.title}
-                      </div>
-                    ))}
+                    {dayTasks.map((task) => {
+                      const when =
+                        task.userSchedule?.scheduledAt || task.dueDate || "";
+
+                      return (
+                        <div
+                          key={`${task._id}-${when}`}
+                          className="text-xs  px-1 py-0.5 rounded truncate leading-tight"
+                          title={task.title}
+                        >
+                          {task.title}
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Show count if too many tasks */}
