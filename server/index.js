@@ -13,6 +13,8 @@ const sprintRoutes = require("./routes/sprint");
 const taskRoutes = require("./routes/task");
 const aiRoutes = require("./routes/ai");
 const inviteRoutes = require("./routes/invites");
+const userRoutes = require("./routes/user");
+
 
 // const devRoutes = require("./routes/dev");
 
@@ -40,6 +42,7 @@ app.use("/sprints", sprintRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/ai", aiRoutes);
 app.use("/invites", inviteRoutes);
+app.use("/users", userRoutes)
 // app.use("/dev", devRoutes);
 
 app.listen(PORT, () => {
