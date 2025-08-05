@@ -81,7 +81,9 @@ const ProjectSettings = function () {
 
   const handleInvite = async () => {
     const res = await fetcher(`/projects/${project._id}/invite`);
-    const baseURL = "http://localhost:4000/invite/";
+    // const baseURL = "http://localhost:4000/invite/";
+    const baseURL = "https://devnest.molla.dev/invite/";
+
     setInviteLink(baseURL + res.token);
   };
 
