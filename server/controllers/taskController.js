@@ -1,38 +1,7 @@
 const Task = require("../models/Task");
 const Sprint = require("../models/Sprint");
-const User = require("../models/User");
+const TaskSchedule = require("../models/TaskSchedule");
 
-// PATCH /tasks/:taskId/calendar
-const addToCalendar = async (req, res) => {
-  const { taskId } = req.params;
-  const userId = req.user.id;
-  const { startTime } = req.body;
-
-  if (!startTime) {
-    return res.status(400).json({ message: "Start time is required" });
-  }
-
-  try {
-    const task = await Task.findById(taskId);
-    if (!task) return res.status(404).json({ message: "Task not found" });
-
-    const participant = task.participants.find(
-      (p) => p.user.toString() === userId
-    );
-
-    if (!participant)
-      return res.status(403).json({ message: "You are not a participant" });
-
-    participant.addedToCalendar = true;
-    participant.startTime = new Date(startTime);
-    await task.save();
-
-    res.status(200).json({ message: "Task added to calendar", task });
-  } catch (err) {
-    console.error("Calendar error:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
 
 //POST /projects/:projectId/tasks
 const addTask = async (req, res) => {
@@ -113,19 +82,18 @@ const getTasksByProject = async (req, res) => {
     });
   }
 };
+const formatDateOnly = (date) => new Date(date).toISOString().split("T")[0];
 
 const updateTaskCompletion = async (req, res) => {
   const taskId = req.params.taskId;
   const userId = req.user.id;
 
   if (!taskId) {
-    return res
-      .status(400)
-      .json({ message: "Task ID is required to mark a task as done" });
+    return res.status(400).json({ message: "Task ID is required" });
   }
 
   try {
-    const { complete } = req.body;
+    const { complete, scheduleId } = req.body;
     const task = await Task.findById(taskId);
 
     if (!task) {
@@ -139,6 +107,24 @@ const updateTaskCompletion = async (req, res) => {
     if (!isParticipant) {
       return res.status(401).json({
         message: "You need to be a participant of this task to mark it as done",
+      });
+    }
+    if (scheduleId) {
+      const schedule = await TaskSchedule.findOneAndUpdate(
+        { _id: scheduleId, taskId, userId }, // ensure ownership & correct task
+        { $set: { done: !!complete } },
+        { new: true }
+      );
+
+      if (!schedule) {
+        return res
+          .status(404)
+          .json({ message: "Schedule occurrence not found" });
+      }
+
+      return res.status(200).json({
+        message: "Schedule completion updated",
+        userSchedule: schedule,
       });
     }
 
@@ -166,7 +152,8 @@ const updateTaskInfo = async (req, res) => {
       .json({ message: "Project and Task IDs are required" });
   }
   try {
-    const { participants, dueDate, title, description, duration, actualTime } = req.body;
+    const { participants, dueDate, title, description, duration, actualTime } =
+      req.body;
     const updates = {};
     if (participants != null) updates.participants = participants;
     if (dueDate != null) updates.dueDate = new Date(dueDate);
@@ -174,7 +161,7 @@ const updateTaskInfo = async (req, res) => {
     if (description != null) updates.description = description;
     if (duration != null) updates.duration = duration;
     if (actualTime != null) updates.actualTime = actualTime;
-    
+
     await Task.updateOne({ _id: taskId }, updates);
     return res.status(200).json({ message: "Successfully updated task info" });
   } catch (err) {
@@ -211,11 +198,162 @@ const deleteTask = async (req, res) => {
   }
 };
 
+const getTasksByRange = async (req, res) => {
+  const userId = req.user.id;
+  const { startDate, endDate } = req.query;
+
+  if (!startDate || !endDate) {
+    return res
+      .status(400)
+      .json({ message: "Start and end dates are required" });
+  }
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (isNaN(start) || isNaN(end)) {
+    return res.status(400).json({ message: "Invalid date format" });
+  }
+
+  const schedules = await TaskSchedule.find({
+    userId,
+    $or: [{ scheduledAt: { $gte: start, $lte: end } }],
+  }).lean();
+
+  const scheduledTaskIds = new Set(schedules.map((s) => s.taskId.toString()));
+
+  // Get only tasks NOT already scheduled
+  const fallbackTasks = await Task.find({
+    participants: { $in: userId },
+    dueDate: { $gte: start, $lte: end },
+    _id: { $nin: Array.from(scheduledTaskIds) },
+  }).lean();
+
+  const merged = [];
+
+  //Merge scheduled Tasks
+  for (const schedule of schedules) {
+    const { _id, scheduledAt, duration, done } = schedule;
+    const task = await Task.findById(schedule.taskId)
+      .populate("participants", "name email _id")
+      .lean();
+    if (task) {
+      merged.push({
+        ...task,
+        userSchedule: { _id, scheduledAt, duration, done },
+      });
+    }
+  }
+  // Add fallback tasks (without schedule)
+  for (const task of fallbackTasks) {
+    merged.push({
+      ...task,
+      userSchedule: null,
+    });
+  }
+
+  return res.status(200).json(merged);
+};
+
+function generateOccurrences(startDate, endDate, pattern) {
+  const occurrences = [];
+  let current = new Date(startDate);
+
+  while (current <= new Date(endDate)) {
+    occurrences.push(new Date(current));
+
+    if (pattern === "daily") {
+      current.setDate(current.getDate() + 1);
+    } else if (pattern === "weekly") {
+      current.setDate(current.getDate() + 7);
+    } else if (pattern === "monthly") {
+      const currentDate = current.getDate();
+      current.setMonth(current.getMonth() + 1);
+
+      // Handle overflow (e.g. Jan 31 -> Feb 28 or Mar 3)
+      while (current.getDate() < currentDate) {
+        current.setDate(current.getDate() + 1);
+      }
+    } else {
+      throw new Error("Unsupported recurrence pattern");
+    }
+  }
+
+  return occurrences;
+}
+
+const customizeTaskSchedule = async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+    const userId = req.user.id;
+    const {
+      duration,
+      scheduledDate,
+      isRecurring,
+      recurrencePattern,
+      recurrenceEndDate,
+    } = req.body;
+
+    if (!scheduledDate) {
+      return res.status(400).json({ message: "Scheduled date is required" });
+    }
+
+    // Delete existing schedules for this user-task
+    await TaskSchedule.deleteMany({ taskId, userId });
+
+    const schedulesToInsert = [];
+
+    if (isRecurring) {
+      if (!recurrencePattern || !recurrenceEndDate) {
+        return res.status(400).json({
+          message:
+            "recurrencePattern and recurrenceEndDate are required for recurring tasks",
+        });
+      }
+
+      const occurrenceDates = generateOccurrences(
+        scheduledDate,
+        recurrenceEndDate,
+        recurrencePattern
+      );
+      console.log(occurrenceDates);
+
+      for (const date of occurrenceDates) {
+        schedulesToInsert.push({
+          taskId,
+          userId,
+          scheduledAt: new Date(date),
+          duration,
+          done: false,
+        });
+      }
+    } else {
+      // Single schedule
+      schedulesToInsert.push({
+        taskId,
+        userId,
+        scheduledAt: scheduledDate,
+        duration,
+        done: false,
+      });
+    }
+
+    const inserted = await TaskSchedule.insertMany(schedulesToInsert);
+    // console.log(inserted);
+
+    return res.status(201).json(inserted);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   addTask,
-  addToCalendar,
   getTasksByProject,
   updateTaskCompletion,
   updateTaskInfo,
   deleteTask,
+  getTasksByRange,
+  customizeTaskSchedule,
 };

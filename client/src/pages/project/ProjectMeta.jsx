@@ -80,7 +80,7 @@ const ProjectMeta = function ({ project }) {
                 <div className="p-2">
                   <button
                     onClick={() => {
-                      window.location.href = `/project/${project._id}/settings/members`;
+                      window.location.href = `/project/${project._id}/settings/#members`;
                       setIsDropdownOpen(false);
                     }}
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm font-bold hover:bg-teal-500/10 rounded-md transition-colors duration-200"

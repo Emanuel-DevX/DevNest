@@ -45,7 +45,7 @@ const ProjectLayout = () => {
           className={({ isActive }) =>
             `pb-2 px-2 ${
               isActive
-                ? "border-b-2 border-teal-400 text-teal-300"
+                ? "border-b-2 border-purple-400 text-purple-300"
                 : "text-gray-400"
             }`
           }
@@ -67,11 +67,7 @@ const ProjectLayout = () => {
         <NavLink
           to="settings"
           className={({ isActive }) =>
-            `pb-2 px-2 ${
-              isActive
-                ? "border-b-2 border-purple-400 text-purple-300"
-                : "text-gray-400"
-            }`
+            `pb-2 px-2 ${isActive ? "border-b-2 border-green-400 text-green-300" : "text-gray-400"}`
           }
         >
           Settings

@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown, User, Settings, LogOut } from "lucide-react";
 import { login, logout, isAuthenticated, getCurrentUser } from "../lib/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthButton() {
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [loading, setLoading] = useState(true); // add loading
-  const dropdownRef = useRef(null); // 👈 reference for the dropdown
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null); // reference for the dropdown
 
   useEffect(() => {
     if (typeof window !== "undefined" && isAuthenticated()) {
@@ -50,11 +52,15 @@ export default function AuthButton() {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => setIsDropdownOpen((prev) => !prev)}
         className="flex items-center gap-3 px-4 py-2 hover:bg-slate-800/50 rounded-lg transition-all duration-200 group"
       >
         <img
-          src={user.image}
+          src={
+            user.image ||
+            "https://images.unsplash.com/photo-1511367461989-f85a21fda167?q=80&w=1631&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          }
           alt={user.name}
           className="w-6 h-6 rounded-full ring-2 ring-teal-500/50"
         />
@@ -87,13 +93,15 @@ export default function AuthButton() {
 
           {/* Menu Items */}
           <div className="py-2">
-            <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-teal-900 hover:text-white transition-colors duration-150 flex items-center gap-3">
+            <button
+              onClick={() => {
+                setIsDropdownOpen(false);
+                navigate("/profile");
+              }}
+              className="w-full px-4 py-2 text-left text-gray-300 hover:bg-teal-900 hover:text-white transition-colors duration-150 flex items-center gap-3"
+            >
               <User className="w-4 h-4" />
               Profile
-            </button>
-            <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-teal-900 hover:text-white transition-colors duration-150 flex items-center gap-3">
-              <Settings className="w-4 h-4" />
-              Settings
             </button>
           </div>
 

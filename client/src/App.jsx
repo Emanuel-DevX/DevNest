@@ -10,8 +10,13 @@ import Tasks from "./pages/tasks/Tasks";
 import Project from "./pages/project/Project";
 import ProjectTaskView from "./pages/project/projectTasks/ProjectTaskView";
 import NotesList from "./pages/notes/NotesList";
-import ProjectSettings from "./pages/project/ProjectSettings";
+import ProjectSettings from "./pages/project/settings/ProjectSettings";
 import SprintManagement from "./pages/project/sprint/SprintManagement";
+import InviteAcceptancePage from "./pages/invite/InviteAcceptance";
+import DailyView from "./pages/tasks/daily/DailyView";
+import WeeklyView from "./pages/tasks/weekly/WeeklyView";
+import MonthView from "./pages/tasks/monthly/MonthView";
+import Profile from "./pages/profile/Profile";
 function App() {
   const location = useLocation();
   const [expand, setExpand] = useState(false);
@@ -36,7 +41,13 @@ function App() {
             >
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/tasks" element={<Tasks />} />
+                <Route path="/tasks" element={<Tasks />}>
+                  <Route index element={<Navigate to="daily" replace />} />
+
+                  <Route path="daily" element={<DailyView />} />
+                  <Route path="weekly" element={<WeeklyView />} />
+                  <Route path="monthly" element={<MonthView />} />
+                </Route>
                 <Route path="/project/:id" element={<Project />}>
                   <Route index element={<Navigate to="tasks" replace />} />
 
@@ -45,6 +56,11 @@ function App() {
                   <Route path="notes" element={<NotesList />} />
                   <Route path="settings" element={<ProjectSettings />} />
                 </Route>
+                <Route
+                  path="invite/:token"
+                  element={<InviteAcceptancePage />}
+                />
+                <Route path="/profile" element={<Profile />} />
               </Routes>
             </div>
           </main>

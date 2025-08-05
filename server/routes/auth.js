@@ -38,6 +38,9 @@ router.get(
         email: user.email,
         image: user.image,
         id: user._id,
+        joinDate: user.createdAt,
+        school: user.school || "",
+        work: user.work || "",
       })
     )}`;
 
