@@ -126,3 +126,19 @@ export const getDateRangeForAPI = (startDate, endDate) => {
 
   return { startDate: start, endDate: end };
 };
+
+  // Format date for display
+  export const formatDateForDisplay = (date) => {
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  // Check if selected date is today
+  export const isToday = (date) => {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };

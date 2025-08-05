@@ -32,14 +32,12 @@ const TaskCard = function ({ task, onUpdate, date }) {
         }),
         method: "PATCH",
       };
-      console.log(options)
       await fetcher(url, options);
       await onUpdate();
     } catch (err) {
       console.error(err.message);
     }
   };
-  console.log(task);
 
   const handleUpdateSchedule = async (taskSchedule) => {
     try {
@@ -48,8 +46,7 @@ const TaskCard = function ({ task, onUpdate, date }) {
         body: JSON.stringify({ ...taskSchedule }),
         method: "PUT",
       };
-      const res = await fetcher(url, options);
-      console.log(res);
+      await fetcher(url, options);
       await onUpdate();
     } catch (err) {
       console.error(err.message);

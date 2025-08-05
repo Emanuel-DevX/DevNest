@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import TaskCard from "./TaskCard";
 import fetcher from "../../../lib/api";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getLocalDateString, getDateRangeForAPI } from "../../../lib/date";
+import { getLocalDateString, getDateRangeForAPI, formatDateForDisplay, isToday } from "../../../lib/date";
 
 const DailyView = () => {
   const [tasks, setTasks] = useState([]);
@@ -26,21 +26,7 @@ const DailyView = () => {
     navigate(`?date=${formatted}`, { replace: true });
   }, [selectedDate, searchParams]);
 
-  // Format date for display
-  const formatDateForDisplay = (date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
 
-  // Check if selected date is today
-  const isToday = (date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
-  };
 
   // Fetch tasks for selected date
   const fetchDailyTasks = async (date = selectedDate) => {
@@ -50,7 +36,6 @@ const DailyView = () => {
         selectedDate,
         selectedDate
       );
-      console.log("Fetching with:", startDate, endDate);
 
       const res = await fetcher(
         `/tasks/range?startDate=${startDate}&endDate=${endDate}`
