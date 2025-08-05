@@ -48,4 +48,27 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { getUserById, updateUser };
+const deleteUser = async (req, res) => {
+  const id = req.params.id;
+  const userId = req.user.id;
+  if (String(id) !== String(userId)) {
+    return res
+      .status(403)
+      .json({ message: "User not authorized to delete this account" });
+  }
+  try {
+    const deletedUser = await User.deleteOne({ _id: userId });
+    if (deletedUser.deletedCount < 1) {
+      return res.status(404).json({ message: `User with id ${id} not found` });
+    }
+    return res
+      .status(200)
+      .json({ message: `Successfully deleted user with id: ${id}` });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Could not delete user", error: err.message });
+  }
+};
+
+module.exports = { getUserById, updateUser, deleteUser };
