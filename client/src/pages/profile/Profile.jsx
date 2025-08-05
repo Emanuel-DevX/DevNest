@@ -12,7 +12,99 @@ import {
 } from "lucide-react";
 
 const Profile = function () {
-  
+  const [user, setUser] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({ name: "", work: "", school: "" });
+  const [saveAnimation, setSaveAnimation] = useState(false);
+
+  useEffect(() => {
+    // Mock user data - replace with actual getCurrentUser()
+    const u = {
+      name: "Alex Johnson",
+      email: "alex.johnson@example.com",
+      work: "Senior Developer at TechCorp",
+      school: "MIT Computer Science",
+      joinDate: "2023-08-15",
+      avatar: null,
+    };
+
+    if (u) {
+      setUser(u);
+      setFormData({
+        name: u.name || "",
+        work: u.work || "",
+        school: u.school || "",
+      });
+    }
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaveAnimation(true);
+      // TODO: send PATCH request to backend API to update user info
+      console.log("Saving", formData);
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setUser((prev) => ({ ...prev, ...formData }));
+      setEditMode(false);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+    } finally {
+      setSaveAnimation(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+    if (!confirm) return;
+    try {
+      // TODO: send DELETE request to backend to remove user
+      console.log("Deleting account...");
+      // logout();
+    } catch (err) {
+      console.error("Error deleting account:", err);
+    }
+  };
+
+  const getInitials = (name) => {
+    return (
+      name
+        ?.split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase() || "U"
+    );
+  };
+
+  const formatJoinDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+    });
+  };
+
+  if (!user)
+    return (
+      <div className="max-w-xl mx-auto px-4 py-10">
+        <div className="bg-gradient-to-br from-zinc-900/50 to-slate-900/50 border border-slate-700/50 rounded-xl p-8 animate-pulse">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-16 h-16 bg-zinc-700 rounded-full"></div>
+            <div className="space-y-2">
+              <div className="h-6 bg-zinc-700 rounded w-32"></div>
+              <div className="h-4 bg-zinc-700 rounded w-48"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <div className="max-w-2xl w-[20rem] md:w-auto mx-auto lg:px-4 py-10">
