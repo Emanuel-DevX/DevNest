@@ -16,6 +16,7 @@ import InviteAcceptancePage from "./pages/invite/InviteAcceptance";
 import DailyView from "./pages/tasks/daily/DailyView";
 import WeeklyView from "./pages/tasks/weekly/WeeklyView";
 import MonthView from "./pages/tasks/monthly/MonthView";
+import Profile from "./pages/profile/Profile";
 function App() {
   const location = useLocation();
   const [expand, setExpand] = useState(false);
@@ -59,6 +60,7 @@ function App() {
                   path="invite/:token"
                   element={<InviteAcceptancePage />}
                 />
+                <Route path="/profile" element={<Profile />} />
               </Routes>
             </div>
           </main>
