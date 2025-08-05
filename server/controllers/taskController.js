@@ -1,39 +1,7 @@
 const Task = require("../models/Task");
 const Sprint = require("../models/Sprint");
-const User = require("../models/User");
 const TaskSchedule = require("../models/TaskSchedule");
 
-// PATCH /tasks/:taskId/calendar
-const addToCalendar = async (req, res) => {
-  const { taskId } = req.params;
-  const userId = req.user.id;
-  const { startTime } = req.body;
-
-  if (!startTime) {
-    return res.status(400).json({ message: "Start time is required" });
-  }
-
-  try {
-    const task = await Task.findById(taskId);
-    if (!task) return res.status(404).json({ message: "Task not found" });
-
-    const participant = task.participants.find(
-      (p) => p.user.toString() === userId
-    );
-
-    if (!participant)
-      return res.status(403).json({ message: "You are not a participant" });
-
-    participant.addedToCalendar = true;
-    participant.startTime = new Date(startTime);
-    await task.save();
-
-    res.status(200).json({ message: "Task added to calendar", task });
-  } catch (err) {
-    console.error("Calendar error:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
 
 //POST /projects/:projectId/tasks
 const addTask = async (req, res) => {
@@ -233,7 +201,6 @@ const deleteTask = async (req, res) => {
 const getTasksByRange = async (req, res) => {
   const userId = req.user.id;
   const { startDate, endDate } = req.query;
-  console.log(startDate, endDate);
 
   if (!startDate || !endDate) {
     return res
@@ -293,7 +260,7 @@ function generateOccurrences(startDate, endDate, pattern) {
   let current = new Date(startDate);
 
   while (current <= new Date(endDate)) {
-    occurrences.push(formatDateOnly(current));
+    occurrences.push(new Date(current));
 
     if (pattern === "daily") {
       current.setDate(current.getDate() + 1);
@@ -349,6 +316,7 @@ const customizeTaskSchedule = async (req, res) => {
         recurrenceEndDate,
         recurrencePattern
       );
+      console.log(occurrenceDates);
 
       for (const date of occurrenceDates) {
         schedulesToInsert.push({
@@ -364,14 +332,14 @@ const customizeTaskSchedule = async (req, res) => {
       schedulesToInsert.push({
         taskId,
         userId,
-        scheduledAt: new Date(scheduledDate),
+        scheduledAt: scheduledDate,
         duration,
         done: false,
       });
     }
 
     const inserted = await TaskSchedule.insertMany(schedulesToInsert);
-    console.log(inserted);
+    // console.log(inserted);
 
     return res.status(201).json(inserted);
   } catch (err) {
@@ -382,7 +350,6 @@ const customizeTaskSchedule = async (req, res) => {
 
 module.exports = {
   addTask,
-  addToCalendar,
   getTasksByProject,
   updateTaskCompletion,
   updateTaskInfo,
