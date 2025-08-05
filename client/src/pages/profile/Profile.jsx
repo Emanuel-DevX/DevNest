@@ -10,7 +10,7 @@ import {
   Shield,
   Calendar,
 } from "lucide-react";
-import { getCurrentUser, saveCurrentUser } from "@/lib/auth";
+import { getCurrentUser, saveCurrentUser, logout } from "@/lib/auth";
 import fetcher from "@/lib/api";
 
 const Profile = function () {
@@ -61,9 +61,8 @@ const Profile = function () {
     );
     if (!confirm) return;
     try {
-      // TODO: send DELETE request to backend to remove user
-      console.log("Deleting account...");
-      // logout();
+      await fetcher(`/users/${user.id}`, { method: "DELETE" });
+      logout();
     } catch (err) {
       console.error("Error deleting account:", err);
     }
