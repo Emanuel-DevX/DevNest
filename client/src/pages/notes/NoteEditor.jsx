@@ -1,21 +1,44 @@
-// components/SimpleNoteEditor.jsx
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import MarkdownViewer from "@/components/sample/MarkdownViewer";
+import { useSelector } from "react-redux";
+import fetcher from "@/lib/api";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
-export default function SimpleNoteEditor({
+export default function NoteEditor({
   initialNote = { title: "", content: "" },
-  onSave,
   saving = false,
   showPreview = true,
+  mode = "create",
+  noteId = null,
 }) {
+  const projectList = useSelector((state) => state.project.projectList);
   const [title, setTitle] = useState(initialNote.title || "");
   const [content, setContent] = useState(initialNote.content || "");
   const [preview, setPreview] = useState(showPreview);
+  const [selectedProject, setSelectedProject] = useState({});
+  const { refresh } = useOutletContext();
+  const navigate = useNavigate()
 
   async function handleSubmit(e) {
     e.preventDefault();
-    await onSave?.({ title, content });
+    let url = `/projects/${selectedProject._id}/notes`;
+    const options = {
+      body: JSON.stringify({ title, content }),
+    };
+    if (mode === "edit") {
+      options.method = "PUT";
+      url += `/${noteId}`;
+    } else {
+      options.method = "POST";
+    }
+    try {
+      await fetcher(url, options);
+      await refresh();
+       navigate(-1);
+    } catch (err) {
+      console.error("Could not create/update note", err.message);
+    }
   }
 
   // tiny helpers to insert markdown tokens (optional but handy)
@@ -35,13 +58,36 @@ export default function SimpleNoteEditor({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      {/* Title */}
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="w-full bg-zinc-800 text-white p-2 rounded border outline-0 focus:ring-1 ring-teal-400 border-zinc-700"
-        placeholder="Note title"
-      />
+      <div className="flex gap-2 flex-col md:flex-row">
+        {/* Title */}
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full bg-zinc-800 text-white p-2 rounded border outline-0 focus:ring-1 ring-teal-400 border-zinc-700"
+          placeholder="Note title"
+        />
+        {/* Project Selector */}
+        <select
+          value={selectedProject?._id || ""}
+          onChange={(e) => {
+            const project = projectList.find((p) => p._id === e.target.value);
+            if (project) {
+              setSelectedProject({
+                name: project.name,
+                _id: project._id,
+              });
+            }
+          }}
+          className="bg-zinc-800 text-white p-2 rounded border border-zinc-700 outline-0 focus:ring-1 ring-teal-400"
+        >
+          <option value="">Select Project</option>
+          {projectList.map((project) => (
+            <option key={project._id} value={project._id}>
+              {project.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Tiny toolbar (bold, list, code block) */}
       <div className="flex items-center gap-2">
@@ -78,7 +124,12 @@ export default function SimpleNoteEditor({
             onClick={() => setPreview((p) => !p)}
             className="px-2 py-1 text-sm rounded border border-zinc-700 flex items-center"
           >
-            {preview ? <EyeOff className="h-4 text-red-400" /> : <Eye className="text-teal-400 h-4" />} Preview
+            {preview ? (
+              <EyeOff className="h-4 text-red-400" />
+            ) : (
+              <Eye className="text-teal-400 h-4" />
+            )}{" "}
+            Preview
           </button>
           <button
             type="submit"
@@ -99,7 +150,7 @@ export default function SimpleNoteEditor({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={18}
-          className="w-full bg-zinc-800 text-white p-3 focus:ring-1 ring-teal-300 outline-0 rounded border border-zinc-700 font-mono tab-size-4"
+          className="w-full bg-zinc-800 text-white p-3 focus:ring-1 ring-teal-300 outline-0 rounded border border-zinc-700 font-mono tab-size-4 custom-scrollbar"
           placeholder="Write markdown here…"
           spellCheck="false"
         />
