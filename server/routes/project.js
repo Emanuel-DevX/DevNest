@@ -17,8 +17,14 @@ const {
 const {
   getInviteToken,
   removeMember,
-  updateMember
+  updateMember,
 } = require("../controllers/membershipController");
+
+const {
+  getNoteById,
+  createNote,
+  getAllNotes,
+} = require("../controllers/noteControllers");
 
 const router = express.Router();
 
@@ -43,11 +49,10 @@ router.get("/:projectId/invite", getInviteToken);
 router.delete("/:projectId/members/:memberId", removeMember);
 router.patch("/:projectId/members/:memberId", updateMember);
 
-
 //Note Routes
 
-router.get("/:projectId/notes", getAllNotes)
+router.get("/:projectId/notes", getAllNotes);
 router.get("/:projectId/notes/:noteId", getNoteById);
-router.post("/:projectId/notes", createNote)
+router.post("/:projectId/notes", createNote);
 
 module.exports = router;

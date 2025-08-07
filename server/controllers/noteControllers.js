@@ -27,13 +27,33 @@ const getAllNotes = async (req, res) => {
     const notes = await Note.find({ projectId });
     return res.status(200).json(notes);
   } catch (err) {
-    return res
-      .status(500)
-      .json({
-        message: "Could not fetch notes for the given project",
-        error: err.message,
-      });
+    return res.status(500).json({
+      message: "Could not fetch notes for the given project",
+      error: err.message,
+    });
   }
 };
 
-module.exports = { createNote, getAllNotes };
+const getNoteById = async (req, res) => {
+  const { projectId, noteId } = req.params;
+  if (!projectId || !noteId) {
+    return res
+      .status(400)
+      .json({ message: "projectId and noteId are required" });
+  }
+  try {
+    const note = Note.findById(noteId);
+    if (note.length < 1) {
+      return res
+        .status(400)
+        .json({ message: "Could not find note with given id" });
+    }
+    return res.status(200).json(note[0]);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Could not get note", error: err.message });
+  }
+};
+
+module.exports = { createNote, getAllNotes, getNoteById };
