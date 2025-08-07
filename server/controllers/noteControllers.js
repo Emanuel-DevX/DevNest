@@ -21,5 +21,19 @@ const createNote = async (req, res) => {
   }
 };
 
+const getAllNotes = async (req, res) => {
+  const projectId = req.params.projectId;
+  try {
+    const notes = await Note.find({ projectId });
+    return res.status(200).json(notes);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({
+        message: "Could not fetch notes for the given project",
+        error: err.message,
+      });
+  }
+};
 
-module.exports ={createNote,}
+module.exports = { createNote, getAllNotes };
