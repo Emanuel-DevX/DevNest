@@ -14,6 +14,8 @@ const taskRoutes = require("./routes/task");
 const aiRoutes = require("./routes/ai");
 const inviteRoutes = require("./routes/invites");
 const userRoutes = require("./routes/user");
+const noteRoutes = require("./routes/note");
+
 
 
 // const devRoutes = require("./routes/dev");
@@ -43,6 +45,8 @@ app.use("/tasks", taskRoutes);
 app.use("/ai", aiRoutes);
 app.use("/invites", inviteRoutes);
 app.use("/users", userRoutes)
+app.use("/notes", noteRoutes);
+
 // app.use("/dev", devRoutes);
 
 app.listen(PORT, () => {

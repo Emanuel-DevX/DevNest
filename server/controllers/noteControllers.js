@@ -21,7 +21,7 @@ const createNote = async (req, res) => {
   }
 };
 
-const getAllNotes = async (req, res) => {
+const getProjectNotes = async (req, res) => {
   const projectId = req.params.projectId;
   try {
     const notes = await Note.find({ projectId });
@@ -56,4 +56,16 @@ const getNoteById = async (req, res) => {
   }
 };
 
-module.exports = { createNote, getAllNotes, getNoteById };
+const getUserNotes = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const notes = await Note.find({ author: userId });
+    return res.status(200).json(notes);
+  } catch (err) {
+    return res.status(500).json({
+      message: "Could not fetch notes for the given user",
+      error: err.message,
+    });
+  }
+};
+module.exports = { createNote, getProjectNotes, getNoteById, getUserNotes };

@@ -23,7 +23,7 @@ const {
 const {
   getNoteById,
   createNote,
-  getAllNotes,
+  getProjectNotes,
 } = require("../controllers/noteControllers");
 const checkProjectMembership = require("../middlewares/checkProjectMembership");
 
@@ -33,7 +33,7 @@ router.post("/", createProject);
 router.get("/", getAllProjects);
 router.get("/owned", getOwnedProjects);
 
-router.use("/:projectId", checkProjectMembership)
+router.use("/:projectId", checkProjectMembership);
 
 router.get("/:projectId", getProjectInfo);
 router.delete("/:projectId", deleteProject);
@@ -55,7 +55,7 @@ router.patch("/:projectId/members/:memberId", updateMember);
 
 //Note Routes
 
-router.get("/:projectId/notes", getAllNotes);
+router.get("/:projectId/notes", getProjectNotes);
 router.get("/:projectId/notes/:noteId", getNoteById);
 router.post("/:projectId/notes", createNote);
 
