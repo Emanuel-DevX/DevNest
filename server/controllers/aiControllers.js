@@ -2,6 +2,8 @@ const generateTaskPrompt = require("../lib/generateTaskPrompt");
 const askGemini = require("../lib/gemini");
 const Project = require("../models/Project");
 const Sprint = require("../models/Sprint");
+const Task = require("../models/Task");
+
 const { extractJSONBlock } = require("../lib/utils");
 
 const getPromptParams = async (req) => {
@@ -65,16 +67,27 @@ const getPromptParams = async (req) => {
 
 const generateTasksFromAI = async (req, res) => {
   try {
+    const projectId = req.body.projectId;
+    const userId = req.user.id;
     const params = await getPromptParams(req);
     const prompt = generateTaskPrompt(params);
 
     const tasksString = await askGemini(prompt);
     const cleaned = extractJSONBlock(tasksString);
-    const tasks = JSON.parse(cleaned);
+    const tasksArr = JSON.parse(cleaned);
 
-   
+    const tasks = tasksArr.map((task) => ({
+      ...task,
+      dueDate: new Date(task.dueDate),
+      projectId,
+      creator: userId,
+      participants: [],
+    }));
+    const newTasks = await Task.insertMany(tasks);
+    console.log(newTasks.length, "tasks created")
+    console.log(newTasks)
 
-    return res.status(200).json({ tasks });
+    return res.status(200).json({ newTasks });
   } catch (err) {
     console.error("Error generating tasks:", err.message);
     return res.status(500).json({ message: err.message || "Internal error" });
