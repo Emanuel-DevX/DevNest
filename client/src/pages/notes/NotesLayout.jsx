@@ -2,6 +2,7 @@
 import { Outlet, useParams, Link } from "react-router-dom";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import fetcher from "../../lib/api";
+import { Plus } from "lucide-react";
 
 export default function NotesLayout() {
     const [notes, setNotes] = useState([]);
@@ -38,9 +39,10 @@ export default function NotesLayout() {
         <h1 className="text-xl font-semibold text-teal-400">My Notes</h1>
         <Link
           to={`/notes/new`}
-          className="px-3 py-1 rounded bg-teal-600 text-white"
+          className="pl-2 pr-3 py-1 rounded bg-zinc-900 text-teal-400 font-bold flex items-center gap-1"
         >
-          + New
+        <Plus className="h-5"/>
+           New
         </Link>
       </header>
 
