@@ -43,4 +43,11 @@ router.get("/:projectId/invite", getInviteToken);
 router.delete("/:projectId/members/:memberId", removeMember);
 router.patch("/:projectId/members/:memberId", updateMember);
 
+
+//Note Routes
+
+router.get("/:projectId/notes", getAllNotes)
+router.get("/:projectId/notes/:noteId", getNoteById);
+router.post("/:projectId/notes", createNote)
+
 module.exports = router;
