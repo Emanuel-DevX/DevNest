@@ -25,12 +25,16 @@ const {
   createNote,
   getAllNotes,
 } = require("../controllers/noteControllers");
+const checkProjectMembership = require("../middlewares/checkProjectMembership");
 
 const router = express.Router();
 
 router.post("/", createProject);
 router.get("/", getAllProjects);
 router.get("/owned", getOwnedProjects);
+
+router.use("/:projectId", checkProjectMembership)
+
 router.get("/:projectId", getProjectInfo);
 router.delete("/:projectId", deleteProject);
 router.put("/:projectId", updateProject);
