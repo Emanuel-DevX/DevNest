@@ -57,6 +57,8 @@ ${contributors} contributor(s), ${hoursPerContributor} hours per member (total a
 ⚠️ Only return the JSON array — no extra text, explanation, or markdown. 
 Make sure the list is reasonable for the time limit and avoids overlapping work. 
 Break larger features into multiple sequential tasks if needed.
+Return only a raw JSON array of task objects. Do not include any markdown or explanation.
+
 
 Ready? Generate now.
   `.trim();

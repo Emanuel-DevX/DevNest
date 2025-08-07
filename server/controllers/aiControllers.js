@@ -1,7 +1,8 @@
-const { generateTaskPrompt } = require("../lib/generateTaskPrompt");
-const { askGemini } = require("../lib/gemini");
+const generateTaskPrompt = require("../lib/generateTaskPrompt");
+const askGemini = require("../lib/gemini");
 const Project = require("../models/Project");
 const Sprint = require("../models/Sprint");
+const { extractJSONBlock } = require("../lib/utils");
 
 const getPromptParams = async (req) => {
   const {
@@ -67,7 +68,12 @@ const generateTasksFromAI = async (req, res) => {
     const params = await getPromptParams(req);
     const prompt = generateTaskPrompt(params);
 
-    const tasks = await askGemini(prompt);
+    const tasksString = await askGemini(prompt);
+    const cleaned = extractJSONBlock(tasksString);
+    const tasks = JSON.parse(cleaned);
+
+   
+
     return res.status(200).json({ tasks });
   } catch (err) {
     console.error("Error generating tasks:", err.message);
