@@ -21,6 +21,8 @@ import DailyView from "./pages/tasks/daily/DailyView";
 import WeeklyView from "./pages/tasks/weekly/WeeklyView";
 import MonthView from "./pages/tasks/monthly/MonthView";
 import Profile from "./pages/profile/Profile";
+import Notifications from "./pages/notification/Notifications";
+
 function App() {
   const location = useLocation();
   const [expand, setExpand] = useState(false);
@@ -82,6 +84,7 @@ function App() {
                   element={<InviteAcceptancePage />}
                 />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/notifications" element={<Notifications />} />
               </Routes>
             </div>
           </main>

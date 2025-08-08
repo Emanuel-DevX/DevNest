@@ -1,7 +1,7 @@
 import fetcher from "@/lib/api";
 
-const { useState, useEffect } = require("react");
-const { default: NotificationCard } = require("./NotificationCard");
+import { useState, useEffect } from "react";
+import NotificationCard from "./NotificationCard";
 
 const Notifications = function () {
   const [notifications, setNotifications] = useState([]);
@@ -16,14 +16,19 @@ const Notifications = function () {
     };
     fetchNotifications();
   }, []);
+  console.log(notifications);
   return (
     <>
       <div>
         <header>Notifications</header>
 
-        <div>
+        <div className="flex flex-col gap-2 px-2">
           {notifications.map((notification) => (
-            <NotificationCard notification={notification} />
+            <NotificationCard
+              notification={notification}
+              onDismiss={() => {}}
+              onMarkAsRead={() => {}}
+            />
           ))}
         </div>
       </div>
