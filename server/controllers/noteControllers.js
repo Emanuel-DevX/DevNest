@@ -25,7 +25,7 @@ const createNote = async (req, res) => {
 const getProjectNotes = async (req, res) => {
   const projectId = req.params.projectId;
   try {
-    const notes = await Note.find({ projectId });
+    const notes = await Note.find({ projectId }).populate("author", "name email")
     return res.status(200).json(notes);
   } catch (err) {
     return res.status(500).json({
@@ -102,7 +102,7 @@ const deleteNote = async (req, res) => {
   }
   try {
     const note = await Note.findById(noteId);
-    if (note?.author.toString() !== userId / toString()) {
+    if (note?.author.toString() !== userId.toString()) {
       return res
         .status(403)
         .json({ message: "You are not the author of this note" });
