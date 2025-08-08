@@ -1,24 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import MarkdownViewer from "@/components/sample/MarkdownViewer";
 import { useSelector } from "react-redux";
 import fetcher from "@/lib/api";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 export default function NoteEditor({
-  initialNote = { title: "", content: "" },
   saving = false,
   showPreview = true,
-  mode = "create",
-  noteId = null,
+  mode,
 }) {
+  const { noteId } = useParams();
+  const { notes } = useOutletContext();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const projectList = useSelector((state) => state.project.projectList);
-  const [title, setTitle] = useState(initialNote.title || "");
-  const [content, setContent] = useState(initialNote.content || "");
   const [preview, setPreview] = useState(showPreview);
   const [selectedProject, setSelectedProject] = useState({});
   const { refresh } = useOutletContext();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (mode === "create") {
+      setTitle("");
+      setContent("");
+      setSelectedProject({});
+      return
+    }
+
+    const localNote = notes.find((n) => String(n._id) === String(noteId));
+    if (localNote) {
+      setTitle(localNote.title);
+      setContent(localNote.content);
+    }
+  }, [mode, noteId, notes]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -35,7 +50,7 @@ export default function NoteEditor({
     try {
       await fetcher(url, options);
       await refresh();
-       navigate(-1);
+      navigate(-1);
     } catch (err) {
       console.error("Could not create/update note", err.message);
     }
@@ -78,7 +93,7 @@ export default function NoteEditor({
               });
             }
           }}
-          className="bg-zinc-800 text-white p-2 rounded border border-zinc-700 outline-0 focus:ring-1 ring-teal-400"
+          className={`${mode === "edit" ? "hidden" : ""} bg-zinc-800 text-white p-2 rounded border border-zinc-700 outline-0 focus:ring-1 ring-teal-400`}
         >
           <option value="">Select Project</option>
           {projectList.map((project) => (

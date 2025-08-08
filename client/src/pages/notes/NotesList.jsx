@@ -3,14 +3,7 @@ import NoteCard from "./NoteCard";
 import { useMemo } from "react";
 
 const NotesList = function () {
-  const { projectId } = useParams();
-
-  const basePath = useMemo(
-    () => (projectId ? `/project/${projectId}/notes` : `/notes`),
-    [projectId]
-  );
-  const { refresh, notes } = useOutletContext();
-  console.log(notes);
+  const { refresh, notes, basePath } = useOutletContext();
   return (
     <>
       <div className="flex flex-col gap-2 md:flex-row w-full flex-wrap justify-center">

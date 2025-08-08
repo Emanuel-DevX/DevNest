@@ -5,9 +5,14 @@ import fetcher from "../../lib/api";
 import { Plus } from "lucide-react";
 
 export default function NotesLayout() {
-    const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState([]);
   const [error, setError] = useState(null);
+  const { projectId } = useParams();
 
+  const basePath = useMemo(
+    () => (projectId ? `/project/${projectId}/notes` : `/notes`),
+    [projectId]
+  );
 
   const fetchNotes = useCallback(async () => {
     try {
@@ -17,7 +22,7 @@ export default function NotesLayout() {
       setNotes(data || []);
     } catch (err) {
       setError(err?.message || "Failed to load notes");
-    } 
+    }
   }, []);
 
   useEffect(() => {
@@ -29,20 +34,23 @@ export default function NotesLayout() {
     () => ({
       notes,
       refresh: fetchNotes,
+      basePath
     }),
-    [notes, fetchNotes]
+    [notes, fetchNotes, basePath]
   );
 
   return (
     <div className=" space-y-4">
       <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-teal-400">My Notes</h1>
+        <Link to="/notes">
+          <h1 className="text-xl font-semibold text-teal-400">My Notes</h1>
+        </Link>
         <Link
           to={`/notes/new`}
           className="pl-2 pr-3 py-1 rounded bg-zinc-900 text-teal-400 font-bold flex items-center gap-1"
         >
-        <Plus className="h-5"/>
-           New
+          <Plus className="h-5" />
+          New
         </Link>
       </header>
 
