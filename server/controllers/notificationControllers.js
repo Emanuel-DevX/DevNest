@@ -28,4 +28,19 @@ async function notifyMany({
   return Notification.insertMany(notifications);
 }
 
-module.exports = {notifyMany};
+const getNotifications = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const notifications = await Notification.find({
+      recipientId: userId,
+    }).lean();
+    const sorted = notifications.sort((a, b) => b.createdAt - a.createdAt);
+    return res.status(200).json(sorted);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Could not fetch notifications", error: err.message });
+  }
+};
+
+module.exports = { notifyMany, getNotifications };
