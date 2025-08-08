@@ -2,7 +2,6 @@ const Task = require("../models/Task");
 const Sprint = require("../models/Sprint");
 const TaskSchedule = require("../models/TaskSchedule");
 
-
 //POST /projects/:projectId/tasks
 const addTask = async (req, res) => {
   const projectId = req.params.projectId;
@@ -152,8 +151,11 @@ const updateTaskInfo = async (req, res) => {
       .json({ message: "Project and Task IDs are required" });
   }
   try {
+    const actorId = req.user.id
     const { participants, dueDate, title, description, duration, actualTime } =
       req.body;
+    const task = await Task.findById(taskId).lean();
+    if (!task) return res.status(404).json({ message: "Task not found" });
     const updates = {};
     if (participants != null) updates.participants = participants;
     if (dueDate != null) updates.dueDate = new Date(dueDate);
@@ -162,7 +164,30 @@ const updateTaskInfo = async (req, res) => {
     if (duration != null) updates.duration = duration;
     if (actualTime != null) updates.actualTime = actualTime;
 
+    let newlyAssigned = [];
+    let existingParticipants = (task.participants || []).map(String);
+
+    if (participants != null) {
+      const after = participants.map(String);
+      newlyAssigned = after.filter((id) => !existingParticipants.includes(id));
+      existingParticipants = after;
+    }
+
+    // Update the task
     await Task.updateOne({ _id: taskId }, updates);
+
+    // Store info for middleware
+    res.locals.notificationData = {
+      actorId,
+      projectId,
+      taskId,
+      title: title ?? task.title,
+      newlyAssigned,
+      participantsChanged: participants != null,
+      participantsFinal: existingParticipants,
+    };
+
+    next();
     return res.status(200).json({ message: "Successfully updated task info" });
   } catch (err) {
     console.log(err.message);

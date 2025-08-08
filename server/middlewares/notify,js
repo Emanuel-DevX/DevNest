@@ -1,0 +1,57 @@
+const notifyMany = require("../controllers/notificationControllers");
+
+async function sendTaskUpdateNotifications(req, res) {
+  const data = res.locals.notificationData;
+  if (!data) return res.status(200).json({ message: "Successfully updated task info" });
+
+  const { actorId, projectId, taskId, title, newlyAssigned, participantsChanged, participantsFinal } = data;
+
+  try {
+    if (participantsChanged && newlyAssigned.length > 0) {
+      // Notify new assignees
+      await notifyMany({
+        recipientIds: newlyAssigned.filter(id => id !== actorId),
+        actorId,
+        projectId,
+        type: "TASK_ASSIGNED",
+        title: "You have been assigned to a task",
+        link: `/projects/${projectId}/tasks/${taskId}`,
+      });
+
+      // Notify others
+      const others = participantsFinal.filter(
+        id => id !== actorId && !newlyAssigned.includes(id)
+      );
+      if (others.length > 0) {
+        await notifyMany({
+          recipientIds: others,
+          actorId,
+          projectId,
+          type: "TASK_UPDATED",
+          title: "New member assigned to the task",
+          link: `/projects/${projectId}/tasks/${taskId}`,
+        });
+      }
+    } else {
+      // Any other change
+      const others = participantsFinal.filter(id => id !== actorId);
+      if (others.length > 0) {
+        await notifyMany({
+          recipientIds: others,
+          actorId,
+          projectId,
+          type: "TASK_UPDATED",
+          title: "Task info updated",
+          link: `/projects/${projectId}/tasks/${taskId}`,
+        });
+      }
+    }
+
+    return res.status(200).json({ message: "Successfully updated task info" });
+  } catch (err) {
+    console.error("Notification error:", err);
+    return res.status(200).json({ message: "Task updated, but notifications failed" });
+  }
+}
+
+module.exports = {sendTaskUpdateNotifications};
