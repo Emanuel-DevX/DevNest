@@ -48,14 +48,14 @@ export default function NotificationCard({
   const handleMarkAsRead = (e) => {
     e.stopPropagation();
     if (!isRead && onMarkAsRead) {
-      onMarkAsRead(notification.id);
+      onMarkAsRead(notification._id);
     }
   };
 
   const handleDismiss = (e) => {
     e.stopPropagation();
     if (onDismiss) {
-      onDismiss(notification.id);
+      onDismiss(notification._id);
     }
   };
 
