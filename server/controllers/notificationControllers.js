@@ -43,4 +43,30 @@ const getNotifications = async (req, res) => {
   }
 };
 
-module.exports = { notifyMany, getNotifications };
+const markNotificationAsRead = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const notificationId = req.params.id;
+
+    const notification = await Notification.findOneAndUpdate(
+      { _id: notificationId, recipientId: userId },
+      { readAt: new Date() },
+      { new: true }
+    );
+
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+
+    return res.status(200).json({
+      message: "Notification marked as read",
+      notification,
+    });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: err.message });
+  }
+};
+module.exports = { notifyMany, getNotifications, markNotificationAsRead };
