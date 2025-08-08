@@ -3,7 +3,11 @@ import { Eye, EyeOff } from "lucide-react";
 import MarkdownViewer from "@/components/MarkdownViewer";
 import { useSelector } from "react-redux";
 import fetcher from "@/lib/api";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 
 export default function NoteEditor({
   saving = false,
@@ -17,7 +21,7 @@ export default function NoteEditor({
   const projectList = useSelector((state) => state.project.projectList);
   const [preview, setPreview] = useState(showPreview);
   const [selectedProject, setSelectedProject] = useState({});
-  const { refresh } = useOutletContext();
+  const { refresh, basePath } = useOutletContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,10 +41,14 @@ export default function NoteEditor({
       );
       setSelectedProject(pro);
     }
-  }, [mode, noteId, notes]);
+  }, [mode, noteId, notes, projectList]);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (Object.keys(selectedProject).length === 0 || !title.trim()) {
+      return;
+    }
+
     let url = `/projects/${selectedProject._id}/notes`;
     const options = {
       body: JSON.stringify({ title, content }),
@@ -52,9 +60,9 @@ export default function NoteEditor({
       options.method = "POST";
     }
     try {
-      await fetcher(url, options);
+      const newNote = await fetcher(url, options);
       await refresh();
-      navigate(-1);
+      navigate(`${basePath}/${newNote.noteId}`, { replace: true });
     } catch (err) {
       console.error("Could not create/update note", err.message);
     }
