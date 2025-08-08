@@ -32,6 +32,10 @@ export default function NoteEditor({
     if (localNote) {
       setTitle(localNote.title);
       setContent(localNote.content);
+      const pro = projectList.find(
+        (p) => p._id.toString() === localNote.projectId.toString()
+      );
+      setSelectedProject(pro);
     }
   }, [mode, noteId, notes]);
 

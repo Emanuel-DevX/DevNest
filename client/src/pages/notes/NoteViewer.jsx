@@ -1,3 +1,4 @@
+import MarkdownViewer from "@/components/MarkdownViewer";
 import { Edit3 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useOutletContext, useParams, Link } from "react-router-dom";
@@ -27,6 +28,7 @@ const NoteViewer = function () {
             <span className="hidden md:block font-bold text-lg">Edit</span>
           </Link>
         </header>
+        <MarkdownViewer content={note.content} />
       </div>
     </>
   );
