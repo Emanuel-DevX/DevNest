@@ -59,7 +59,10 @@ const getNoteById = async (req, res) => {
 const getUserNotes = async (req, res) => {
   const userId = req.user.id;
   try {
-    const notes = await Note.find({ author: userId });
+    const notes = await Note.find({ author: userId }).populate(
+      "author",
+      "name email"
+    );
     return res.status(200).json(notes);
   } catch (err) {
     return res.status(500).json({
@@ -68,4 +71,31 @@ const getUserNotes = async (req, res) => {
     });
   }
 };
-module.exports = { createNote, getProjectNotes, getNoteById, getUserNotes };
+
+const updateNote = async (req, res) => {
+  const noteId = req.params.noteId;
+  try {
+    const { content, title } = req.body;
+    const updatedNote = await Note.updateOne(
+      { _id: noteId },
+      { title, content }
+    );
+    if (updatedNote.matchedCount === 0) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+    return res.status(200).json(updatedNote);
+  } catch (err) {
+    console.error(err.message);
+    return res
+      .status(500)
+      .json({ message: "Could not update note", error: err.message });
+  }
+};
+
+module.exports = {
+  createNote,
+  getProjectNotes,
+  getNoteById,
+  getUserNotes,
+  updateNote,
+};

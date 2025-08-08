@@ -21,6 +21,7 @@ const {
 } = require("../controllers/membershipController");
 
 const {
+  updateNote,
   getNoteById,
   createNote,
   getProjectNotes,
@@ -57,6 +58,7 @@ router.patch("/:projectId/members/:memberId", updateMember);
 
 router.get("/:projectId/notes", getProjectNotes);
 router.get("/:projectId/notes/:noteId", getNoteById);
+router.put("/:projectId/notes/:noteId", updateNote);
 router.post("/:projectId/notes", createNote);
 
 module.exports = router;
