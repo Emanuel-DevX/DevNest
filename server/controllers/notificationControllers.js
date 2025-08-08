@@ -69,4 +69,25 @@ const markNotificationAsRead = async (req, res) => {
       .json({ message: "Server error", error: err.message });
   }
 };
-module.exports = { notifyMany, getNotifications, markNotificationAsRead };
+
+const deleteNotification = async (req, res) => {
+  try {
+    const _id = req.params.id;
+    const deleted = await Notification.deleteOne({ _id });
+    if (deleted.deletedCount === 0) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+    return res.status(200).json(deleted);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Could not delete notification", error: err.message });
+  }
+};
+
+module.exports = {
+  notifyMany,
+  getNotifications,
+  markNotificationAsRead,
+  deleteNotification,
+};
