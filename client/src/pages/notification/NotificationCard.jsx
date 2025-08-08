@@ -1,14 +1,8 @@
 // components/NotificationCard.jsx
 import { Bell, CheckCircle, Info } from "lucide-react";
 
-export default function NotificationCard({
-  title,
-  body,
-  type,
-  readAt,
-  link,
-  onClick,
-}) {
+export default function NotificationCard({ notification, onClick }) {
+  const { title, body, type, readAt, link } = notification;
   const isRead = Boolean(readAt);
 
   const typeStyles = {
