@@ -69,6 +69,25 @@ const markNotificationAsRead = async (req, res) => {
       .json({ message: "Server error", error: err.message });
   }
 };
+const markAllUserNotificationsAsRead = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    await Notification.updateMany(
+      { recipientId: userId },
+      { readAt: new Date() }
+    );
+
+    return res.status(200).json({
+      message: "All notifications marked as read",
+    });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: err.message });
+  }
+};
 
 const deleteNotification = async (req, res) => {
   try {
@@ -90,4 +109,5 @@ module.exports = {
   getNotifications,
   markNotificationAsRead,
   deleteNotification,
+  markAllUserNotificationsAsRead,
 };
