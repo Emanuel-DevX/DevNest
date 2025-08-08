@@ -11,7 +11,6 @@ import NotesLayout from "./pages/notes/NotesLayout";
 import NotesList from "./pages/notes/NotesList";
 import NoteEditor from "./pages/notes/NoteEditor";
 import NoteViewer from "./pages/notes/NoteViewer";
-import NotesSample from "./pages/notes/NotesSample";
 import Project from "./pages/project/Project";
 import ProjectNotes from "./pages/project/notes/ProjectNotes";
 import ProjectTaskView from "./pages/project/projectTasks/ProjectTaskView";
@@ -61,7 +60,6 @@ function App() {
                     path=":noteId/edit"
                     element={<NoteEditor mode="edit" />}
                   />
-                  <Route path="sample" element={<NotesSample />} />
                 </Route>
                 <Route path="/project/:id" element={<Project />}>
                   <Route index element={<Navigate to="tasks" replace />} />
