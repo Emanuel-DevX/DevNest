@@ -3,8 +3,6 @@ import {
   LayoutDashboard,
   Notebook,
   CheckSquare,
-  Calendar,
-  Settings,
   ChevronsLeft,
   ChevronsRight,
   Bell,

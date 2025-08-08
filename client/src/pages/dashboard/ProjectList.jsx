@@ -5,7 +5,7 @@ import { Pin } from "lucide-react";
 import fetcher from "../../lib/api";
 
 import { useSelector, useDispatch } from "react-redux";
-import { updateProject } from "../../features/projectSlice";
+import { updateProject } from "../../app/features/projectSlice";
 
 const ProjectList = function () {
   const projectList = useSelector((state) => state.project.projectList);
