@@ -40,7 +40,7 @@ export default function NotesLayout() {
   );
 
   return (
-    <div className=" space-y-4">
+    <div className=" space-y-4 max-w-[21rem] md:max-w-none  px-1 w-full">
       <header className="flex items-center justify-between">
         <Link to="/notes">
           <h1 className="text-xl font-semibold text-teal-400">My Notes</h1>

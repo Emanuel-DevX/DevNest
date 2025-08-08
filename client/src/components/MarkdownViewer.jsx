@@ -33,8 +33,8 @@ const MarkdownViewer = ({
 
   const rehypePlugins = [
     rehypeHighlight,
-    rehypeSlug, // Adds IDs to headings
-    [rehypeAutolinkHeadings, { behavior: "wrap" }], // Makes headings clickable
+    // rehypeSlug, // Adds IDs to headings
+    // [rehypeAutolinkHeadings, { behavior: "wrap" }], // Makes headings clickable
     ...(enableMath ? [rehypeKatex] : []),
     ...(enableRawHtml ? [rehypeRaw] : []),
   ];
@@ -104,7 +104,7 @@ const MarkdownViewer = ({
         <a
           href={href}
           {...props}
-          className="!text-blue-400 hover:!text-blue-300 !no-underline hover:!underline inline-flex items-center gap-1"
+          className=" hover:!text-teal-300 text-teal-300 !no-underline hover:!underline inline-flex items-center gap-1"
           target={isExternal ? "_blank" : undefined}
           rel={isExternal ? "noopener noreferrer" : undefined}
           onClick={(e) => {
@@ -124,7 +124,7 @@ const MarkdownViewer = ({
       const bgClass = transparentBg ? "bg-black/20" : "bg-gray-800/30";
       return (
         <blockquote
-          className={`!border-l-4 !border-blue-500 !pl-4 !italic !text-gray-300 ${bgClass} !py-2 !my-4 rounded-r`}
+          className={`!border-l-4 !border-teal-500 !pl-4 !italic !text-gray-300 ${bgClass} !py-2 !my-4 rounded-r`}
           {...props}
         >
           {children}
@@ -180,7 +180,7 @@ const MarkdownViewer = ({
     ),
     h2: ({ children, ...props }) => (
       <h2
-        className="!text-3xl !font-bold !mb-4 !mt-8 !text-teal-300"
+        className="!text-3xl !font-bold !mb-4 !mt-8 !text-white"
         {...props}
       >
         {children}
@@ -188,7 +188,7 @@ const MarkdownViewer = ({
     ),
     h3: ({ children, ...props }) => (
       <h3
-        className="!text-2xl !font-bold !mb-3 !mt-6 !text-teal-200"
+        className="!text-2xl !font-bold !mb-3 !mt-6 !text-white"
         {...props}
       >
         {children}
@@ -280,15 +280,7 @@ const MarkdownViewer = ({
 
   return (
     <div className={`max-w-none text-gray-200 markdown-content ${className}`}>
-      <style jsx>{`
-        // .markdown-content {
-        //   /* Override any prose styles that might interfere */
-        // }
-        // .markdown-content * {
-        //   /* Force text color inheritance where needed */
-        //   color: inherit;
-        // }
-      `}</style>
+  
       <ReactMarkdown
         children={content}
         remarkPlugins={remarkPlugins}

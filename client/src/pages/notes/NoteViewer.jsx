@@ -28,7 +28,7 @@ const NoteViewer = function () {
             <span className="hidden md:block font-bold text-lg">Edit</span>
           </Link>
         </header>
-        <MarkdownViewer content={note.content} />
+        <MarkdownViewer className="" content={note.content} />
       </div>
     </>
   );
