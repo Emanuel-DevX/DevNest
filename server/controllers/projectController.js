@@ -2,6 +2,7 @@ const Project = require("../models/Project");
 const Sprint = require("../models/Sprint");
 const Membership = require("../models/Membership");
 const Task = require("../models/Task");
+const Note = require("../models/Note");
 
 const createProject = async (req, res) => {
   const userId = req.user.id;
@@ -81,13 +82,14 @@ const getProjectInfo = async (req, res) => {
         today <= new Date(sprint.endDate),
     }));
     const taskCount = await Task.countDocuments({ projectId });
+    const noteCount = await Note.countDocuments({ projectId });
 
     return res.status(200).json({
       ...project,
       members,
       sprints: sprintData,
-      taskCount: taskCount,
-      noteCount: 0,
+      taskCount,
+      noteCount,
     });
   } catch (err) {
     return res.status(500).json({

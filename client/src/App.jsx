@@ -7,9 +7,14 @@ import Footer from "./components/Footer";
 import AuthCallback from "./pages/AuthCallback";
 import SideNavbar from "./components/SideNavbar";
 import Tasks from "./pages/tasks/Tasks";
-import Project from "./pages/project/Project";
-import ProjectTaskView from "./pages/project/projectTasks/ProjectTaskView";
+import NotesLayout from "./pages/notes/NotesLayout";
 import NotesList from "./pages/notes/NotesList";
+import NoteEditor from "./pages/notes/NoteEditor";
+import NoteViewer from "./pages/notes/NoteViewer";
+import NotesSample from "./pages/notes/NotesSample";
+import Project from "./pages/project/Project";
+import ProjectNotes from "./pages/project/notes/ProjectNotes";
+import ProjectTaskView from "./pages/project/projectTasks/ProjectTaskView";
 import ProjectSettings from "./pages/project/settings/ProjectSettings";
 import SprintManagement from "./pages/project/sprint/SprintManagement";
 import InviteAcceptancePage from "./pages/invite/InviteAcceptance";
@@ -48,12 +53,30 @@ function App() {
                   <Route path="weekly" element={<WeeklyView />} />
                   <Route path="monthly" element={<MonthView />} />
                 </Route>
+                <Route path="/notes" element={<NotesLayout />}>
+                  <Route index element={<NotesList />} />
+                  <Route path="new" element={<NoteEditor mode="create" />} />
+                  <Route path=":noteId" element={<NoteViewer />} />
+                  <Route
+                    path=":noteId/edit"
+                    element={<NoteEditor mode="edit" />}
+                  />
+                  <Route path="sample" element={<NotesSample />} />
+                </Route>
                 <Route path="/project/:id" element={<Project />}>
                   <Route index element={<Navigate to="tasks" replace />} />
 
                   <Route path="tasks" element={<ProjectTaskView />} />
                   <Route path="sprints" element={<SprintManagement />} />
-                  <Route path="notes" element={<NotesList />} />
+                  <Route path="notes" element={<ProjectNotes />}>
+                    <Route index element={<NotesList />} />
+                    <Route path="new" element={<NoteEditor mode="create" />} />
+                    <Route path=":noteId" element={<NoteViewer />} />
+                    <Route
+                      path=":noteId/edit"
+                      element={<NoteEditor mode="edit" />}
+                    />
+                  </Route>
                   <Route path="settings" element={<ProjectSettings />} />
                 </Route>
                 <Route
