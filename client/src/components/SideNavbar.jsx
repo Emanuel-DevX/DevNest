@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setNotifications } from "../store/notificationSlice";
+import fetcher from "../lib/api";
 import {
   LayoutDashboard,
   Notebook,
@@ -17,7 +20,6 @@ import Toast from "./Toast";
 const SideNavbar = function ({ setExpand }) {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [hasUnread, setHasUnread] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [toast, setToast] = useState(false);
   const location = useLocation();
@@ -39,6 +41,17 @@ const SideNavbar = function ({ setExpand }) {
       window.removeEventListener("resize", handleResize); // clean up
     };
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetcher("/notifications");
+        dispatch(setNotifications(res.notifications || res));
+      } catch {}
+    })();
+  }, []);
+  const hasUnread = useSelector((state) => state.notification.unreadCount > 0);
+
   const menuItems = [
     {
       name: "Dashboard",

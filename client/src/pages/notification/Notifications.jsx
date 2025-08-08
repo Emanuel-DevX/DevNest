@@ -1,14 +1,16 @@
 import fetcher from "@/lib/api";
+import { setNotifications } from "@/app/features/notificationSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import NotificationCard from "./NotificationCard";
 
 const Notifications = function () {
-  const [notifications, setNotifications] = useState([]);
+  const dispatch = useDispatch();
   const fetchNotifications = async () => {
     try {
       const res = await fetcher("/notifications");
-      setNotifications(res);
+      dispatch(setNotifications(res.notifications || res));
     } catch (err) {
       console.error(err.message);
     }
@@ -16,9 +18,14 @@ const Notifications = function () {
   useEffect(() => {
     fetchNotifications();
   }, []);
+
+  const notifications = useSelector(
+    (state) => state.notification.notifications
+  );
+
   const markAsRead = async (id) => {
     try {
-      await fetcher(`/notifications/${id}/read`, { method: "PATCH", body: {} });
+      await fetcher(`/notifications/${id}/read`, { method: "PATCH" });
       fetchNotifications();
     } catch (err) {
       console.error(err.message);
