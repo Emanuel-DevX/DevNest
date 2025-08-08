@@ -1,4 +1,6 @@
+import NotesLayout from "@/pages/notes/NotesLayout";
+
 const ProjectNotes = function () {
-  return <>Project Notes</>;
+  return <NotesLayout />;
 };
 export default ProjectNotes;

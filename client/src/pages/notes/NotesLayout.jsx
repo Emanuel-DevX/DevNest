@@ -7,7 +7,7 @@ import { Plus } from "lucide-react";
 export default function NotesLayout() {
   const [notes, setNotes] = useState([]);
   const [error, setError] = useState(null);
-  const { projectId } = useParams();
+  const projectId = useParams().id;
 
   const basePath = useMemo(
     () => (projectId ? `/project/${projectId}/notes` : `/notes`),
@@ -17,7 +17,7 @@ export default function NotesLayout() {
   const fetchNotes = useCallback(async () => {
     try {
       setError(null);
-      const url = `/notes`;
+      const url = projectId ? `/projects/${projectId}/notes` : `/notes`;
       const data = await fetcher(url);
       setNotes(data || []);
     } catch (err) {
@@ -34,7 +34,7 @@ export default function NotesLayout() {
     () => ({
       notes,
       refresh: fetchNotes,
-      basePath
+      basePath,
     }),
     [notes, fetchNotes, basePath]
   );
@@ -42,11 +42,13 @@ export default function NotesLayout() {
   return (
     <div className=" space-y-4 max-w-[21rem] md:max-w-none  px-1 w-full">
       <header className="flex items-center justify-between">
-        <Link to="/notes">
-          <h1 className="text-xl font-semibold text-teal-400">My Notes</h1>
+        <Link to={basePath}>
+          <h1 className="text-xl font-semibold text-teal-400">
+            {projectId ? <>Project</> : <>My</>} Notes
+          </h1>
         </Link>
         <Link
-          to={`/notes/new`}
+          to={`${basePath}/new`}
           className="pl-2 pr-3 py-1 rounded bg-zinc-900 text-teal-400 font-bold flex items-center gap-1"
         >
           <Plus className="h-5" />

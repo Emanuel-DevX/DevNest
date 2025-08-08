@@ -3,18 +3,15 @@ import { Eye, EyeOff } from "lucide-react";
 import MarkdownViewer from "@/components/MarkdownViewer";
 import { useSelector } from "react-redux";
 import fetcher from "@/lib/api";
-import {
-  useNavigate,
-  useOutletContext,
-  useParams,
-} from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 export default function NoteEditor({
   saving = false,
   showPreview = true,
   mode,
 }) {
-  const { noteId } = useParams();
+  const { noteId, id } = useParams();
+  const projectId = id;
   const { notes } = useOutletContext();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -28,7 +25,15 @@ export default function NoteEditor({
     if (mode === "create") {
       setTitle("");
       setContent("");
-      setSelectedProject({});
+      if (projectId) {
+        const preselect = projectList.find(
+          (p) => String(p._id) === String(projectId)
+        );
+
+        setSelectedProject(preselect);
+      } else {
+        setSelectedProject({});
+      }
       return;
     }
 
