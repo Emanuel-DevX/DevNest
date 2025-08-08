@@ -1,4 +1,4 @@
-const notifyMany = require("../controllers/notificationControllers");
+const {notifyMany} = require("../controllers/notificationControllers");
 
 async function sendTaskUpdateNotifications(req, res) {
   const data = res.locals.notificationData;
@@ -15,7 +15,7 @@ async function sendTaskUpdateNotifications(req, res) {
         projectId,
         type: "TASK_ASSIGNED",
         title: "You have been assigned to a task",
-        link: `/projects/${projectId}/tasks/${taskId}`,
+        link: `/projects/${projectId}/tasks#${taskId}`,
       });
 
       // Notify others
@@ -29,7 +29,7 @@ async function sendTaskUpdateNotifications(req, res) {
           projectId,
           type: "TASK_UPDATED",
           title: "New member assigned to the task",
-          link: `/projects/${projectId}/tasks/${taskId}`,
+          link: `/project/${projectId}/tasks#${taskId}`,
         });
       }
     } else {
@@ -42,12 +42,11 @@ async function sendTaskUpdateNotifications(req, res) {
           projectId,
           type: "TASK_UPDATED",
           title: "Task info updated",
-          link: `/projects/${projectId}/tasks/${taskId}`,
+          link: `/project/${projectId}/tasks/#${taskId}`,
         });
       }
     }
 
-    return res.status(200).json({ message: "Successfully updated task info" });
   } catch (err) {
     console.error("Notification error:", err);
     return res.status(200).json({ message: "Task updated, but notifications failed" });

@@ -1,5 +1,5 @@
 const Notification = require("../models/Notification");
-const buildNotification = require("./buildNotification");
+const buildNotification = require("../lib/buildNotification");
 async function notifyMany({
   recipientIds,
   type,

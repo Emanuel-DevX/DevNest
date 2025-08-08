@@ -142,7 +142,7 @@ const updateTaskCompletion = async (req, res) => {
   }
 };
 
-const updateTaskInfo = async (req, res) => {
+const updateTaskInfo = async (req, res, next) => {
   const projectId = req.params.projectId;
   const taskId = req.params.taskId;
   if (!projectId || !taskId) {
@@ -151,7 +151,7 @@ const updateTaskInfo = async (req, res) => {
       .json({ message: "Project and Task IDs are required" });
   }
   try {
-    const actorId = req.user.id
+    const actorId = req.user.id;
     const { participants, dueDate, title, description, duration, actualTime } =
       req.body;
     const task = await Task.findById(taskId).lean();
@@ -187,7 +187,6 @@ const updateTaskInfo = async (req, res) => {
       participantsFinal: existingParticipants,
     };
 
-    next();
     return res.status(200).json({ message: "Successfully updated task info" });
   } catch (err) {
     console.log(err.message);
@@ -195,6 +194,8 @@ const updateTaskInfo = async (req, res) => {
       message: "Could not update task info",
       error: err.message,
     });
+  } finally {
+    next();
   }
 };
 
