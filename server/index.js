@@ -30,7 +30,7 @@ app.use(express.json());
 const allowedOrigins = [process.env.FRONTEND_URL, "https://pinghub.molla.dev"];
 app.use(
   cors({
-    function(origin, callback) {
+    origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true); // allow
       } else {
