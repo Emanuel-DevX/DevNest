@@ -18,6 +18,12 @@ export function logout() {
     window.location.href = "/";
   }
 }
+export function logoutAndLogin() {
+  localStorage.removeItem("devnest_token");
+  localStorage.removeItem("devnest_user");
+  window.location.replace(`${API_BASE}/auth/google`); 
+}
+
 
 // Handle auth callback (when backend redirects after OAuth)
 export function handleAuthCallbackFromURL() {
