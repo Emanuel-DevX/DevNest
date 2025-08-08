@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import MarkdownViewer from "@/components/sample/MarkdownViewer";
+import MarkdownViewer from "@/components/MarkdownViewer";
 import { useSelector } from "react-redux";
 import fetcher from "@/lib/api";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -25,7 +25,7 @@ export default function NoteEditor({
       setTitle("");
       setContent("");
       setSelectedProject({});
-      return
+      return;
     }
 
     const localNote = notes.find((n) => String(n._id) === String(noteId));

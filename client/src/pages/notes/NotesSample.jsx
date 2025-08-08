@@ -1,4 +1,4 @@
-import MarkdownViewer from "@/components/sample/MarkdownViewer";
+import MarkdownViewer from "@/components/MarkdownViewer";
 import NoteEditor from "@/components/sample/NoteEditor";
 import { useState } from "react";
 const exampleNote = `
