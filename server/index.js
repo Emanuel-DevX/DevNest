@@ -6,6 +6,7 @@ require("./auth/google"); // Load Google Strategy
 const connectDB = require("./db/connect");
 
 const verifyToken = require("./middlewares/verifyToken");
+const healthRoute = require("./routes/health");
 const authRoutes = require("./routes/auth");
 const projectRoutes = require("./routes/project");
 const dashboardRoutes = require("./routes/dashboard");
@@ -15,8 +16,6 @@ const aiRoutes = require("./routes/ai");
 const inviteRoutes = require("./routes/invites");
 const userRoutes = require("./routes/user");
 const noteRoutes = require("./routes/note");
-
-
 
 // const devRoutes = require("./routes/dev");
 
@@ -28,10 +27,23 @@ const API_URL = process.env.API_URL;
 connectDB();
 
 app.use(express.json());
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+const allowedOrigins = [process.env.FRONTEND_URL, "https://pinghub.molla.dev"];
+app.use(
+  cors({
+    function(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true); // allow
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(passport.initialize());
 
 app.use("/auth", authRoutes);
+app.use("/health", healthRoute);
 
 app.get("/", (req, res) => {
   res.send("Welcome to DevNest");
@@ -44,7 +56,7 @@ app.use("/sprints", sprintRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/ai", aiRoutes);
 app.use("/invites", inviteRoutes);
-app.use("/users", userRoutes)
+app.use("/users", userRoutes);
 app.use("/notes", noteRoutes);
 
 // app.use("/dev", devRoutes);
