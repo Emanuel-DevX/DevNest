@@ -1,12 +1,12 @@
 import fetcher from "@/lib/api";
 import { setNotifications } from "@/app/features/notificationSlice";
 import { useDispatch, useSelector } from "react-redux";
-
-import { useEffect } from "react";
 import NotificationCard from "./NotificationCard";
+import { useNavigate } from "react-router-dom";
 
 const Notifications = function () {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const fetchNotifications = async () => {
     try {
       const res = await fetcher("/notifications");
@@ -15,9 +15,6 @@ const Notifications = function () {
       console.error(err.message);
     }
   };
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
 
   const notifications = useSelector(
     (state) => state.notification.notifications
@@ -47,7 +44,15 @@ const Notifications = function () {
       console.error(err.message);
     }
   };
-  console.log(notifications);
+  const handleClick = async (notification) => {
+    await markAsRead(notification._id);
+    if (notification.link !== null) {
+      navigate(notification.link, { replace: true });
+    } else {
+      return;
+    }
+  };
+
   return (
     <>
       <div>
@@ -64,6 +69,8 @@ const Notifications = function () {
         <div className="flex flex-col gap-2 px-2">
           {notifications.map((notification) => (
             <NotificationCard
+              onClick={handleClick}
+              key={notification._id}
               notification={notification}
               onDismiss={discardNotification}
               onMarkAsRead={markAsRead}

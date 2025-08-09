@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setNotifications } from "../store/notificationSlice";
+import { setNotifications } from "@/app/features/notificationSlice";
 import fetcher from "../lib/api";
 import {
   LayoutDashboard,
@@ -23,6 +23,7 @@ const SideNavbar = function ({ setExpand }) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [toast, setToast] = useState(false);
   const location = useLocation();
+  const dispatch = useDispatch()
   const isActive = (path) => location.pathname.startsWith(path);
 
   useEffect(() => {

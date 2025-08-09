@@ -64,7 +64,7 @@ export default function NotificationCard({
       className={`relative flex items-start gap-3 p-4 rounded-xl border transition-all duration-300 cursor-pointer transform hover:scale-[1.005] hover:shadow-lg ${
         styles.card
       } ${isRead ? "opacity-70 hover:opacity-90" : "shadow-md"}`}
-      onClick={onClick}
+      onClick={()=>onClick(notification)}
     >
       {/* Unread indicator */}
       {!isRead && (
