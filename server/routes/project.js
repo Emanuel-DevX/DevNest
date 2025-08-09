@@ -27,7 +27,10 @@ const {
   getProjectNotes,
 } = require("../controllers/noteControllers");
 const checkProjectMembership = require("../middlewares/checkProjectMembership");
-const { sendTaskUpdateNotifications } = require("../middlewares/notify.js");
+const {
+  sendTaskUpdateNotifications,
+  sendProjectMemberRemovedNotifications,
+} = require("../middlewares/notify.js");
 
 const router = express.Router();
 
@@ -47,12 +50,20 @@ router.post("/:projectId/sprints", addSprint);
 //Task Routes
 router.post("/:projectId/tasks", addTask);
 router.get("/:projectId/tasks", getTasksByProject);
-router.patch("/:projectId/tasks/:taskId", updateTaskInfo, sendTaskUpdateNotifications);
+router.patch(
+  "/:projectId/tasks/:taskId",
+  updateTaskInfo,
+  sendTaskUpdateNotifications
+);
 router.delete("/:projectId/tasks/:taskId", deleteTask);
 
 // Membership Routes
 router.get("/:projectId/invite", getInviteToken);
-router.delete("/:projectId/members/:memberId", removeMember);
+router.delete(
+  "/:projectId/members/:memberId",
+  removeMember,
+  sendProjectMemberRemovedNotifications
+);
 router.patch("/:projectId/members/:memberId", updateMember);
 
 //Note Routes

@@ -88,13 +88,62 @@ async function sendProjectMembershipNotifications(req, res, next) {
   } catch (err) {
     console.error("Project membership notify error:", err);
     // swallow; don’t break the main response
+  } finally {
+    next();
   }
-  finally{
-    next()
+}
+
+async function sendProjectMemberRemovedNotifications(req, res, next) {
+  const data = res.locals.projectMemberRemovedData;
+  if (!data) return next();
+
+  const { actorId, projectId, removedMemberId, remainingMemberIds, reason } =
+    data;
+  // reason: "left" | "removed"
+
+  try {
+    // Tell the removed user (skip if they triggered it)
+    if (removedMemberId && String(removedMemberId) !== String(actorId)) {
+      await notifyMany({
+        recipientIds: [removedMemberId],
+        actorId,
+        projectId,
+        type: "PROJECT_MEMBER_REMOVED",
+        title:
+          reason === "left"
+            ? "You left a project"
+            : "You were removed from a project",
+        link: `/dashboard`, // project page won't exist anymore for them
+      });
+    }
+
+    // 2) Tell the rest of the team
+    const others = (remainingMemberIds || [])
+      .map(String)
+      .filter((id) => id !== String(actorId) && id !== String(removedMemberId));
+
+    if (others.length) {
+      await notifyMany({
+        recipientIds: others,
+        actorId,
+        projectId,
+        type: "PROJECT_MEMBER_REMOVED",
+        title:
+          reason === "left"
+            ? "A member left the project"
+            : "A member was removed from the project",
+        link: `/project/${projectId}/settings#members`,
+      });
+    }
+  } catch (err) {
+    console.error("Member removed notify error:", err);
+  } finally {
+    next();
   }
 }
 
 module.exports = {
   sendTaskUpdateNotifications,
   sendProjectMembershipNotifications,
+  sendProjectMemberRemovedNotifications,
 };
