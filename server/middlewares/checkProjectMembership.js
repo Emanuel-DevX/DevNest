@@ -14,7 +14,10 @@ const checkProjectMembership = async (req, res, next) => {
     if (!membership) {
       return res
         .status(403)
-        .json({ message: "Access denied. Not a project member." });
+        .json({
+          message: "Access denied. Not a project member.",
+          code: "NOT_PROJECT_MEMBER",
+        });
     }
 
     next();

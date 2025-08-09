@@ -1,5 +1,5 @@
 const BASE_URL = import.meta.env.VITE_PUBLIC_API_URL;
-import { getToken,  logoutAndLogin } from "./auth";
+import { getToken, logoutAndLogin } from "./auth";
 
 const fetcher = async (endpoint, options = {}) => {
   const token = getToken();
@@ -18,7 +18,11 @@ const fetcher = async (endpoint, options = {}) => {
       errorData.code === "TOKEN_INVALID"
     )
       logoutAndLogin();
-    throw new Error(errorData.message || "Fetch failed");
+    else if (errorData.code === "NOT_PROJECT_MEMBER") {
+      window.location.href = "/dashboard";
+    } else {
+      throw new Error(errorData.message || "Fetch failed");
+    }
   }
   return res.json();
 };
