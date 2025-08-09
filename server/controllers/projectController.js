@@ -104,10 +104,14 @@ const deleteProject = async (req, res, next) => {
   const actorId = req.user.id;
   if (!projectId) {
     return res
-      .status(401)
+      .status(400)
       .json({ message: "Project ID is required to delete a project" });
   }
   try {
+    const [members, project] = await Promise.all([
+      Membership.find({ projectId }).select("userId").lean(),
+      Project.findById(projectId).select("name").lean(),
+    ]);
     const deleted = await Project.deleteOne({ _id: projectId });
     if (deleted.deletedCount === 0) {
       return res
@@ -128,6 +132,7 @@ const deleteProject = async (req, res, next) => {
     };
     return res.status(200).json({ message: "Project successfully deleted" });
   } catch (err) {
+    console.error(err.message);
     return res
       .status(500)
       .json({ message: "Failed to delete project", error: err.message });

@@ -148,9 +148,7 @@ async function sendProjectDeletedNotifications(req, res, next) {
   const { actorId, projectId, memberIds, projectName } = data;
 
   try {
-    const recipients = (memberIds || [])
-      .map(String)
-      .filter((id) => id !== String(actorId));
+    const recipients = (memberIds || []).map(String);
 
     if (recipients.length) {
       await notifyMany({
