@@ -99,8 +99,9 @@ const getProjectInfo = async (req, res) => {
   }
 };
 
-const deleteProject = async (req, res) => {
+const deleteProject = async (req, res, next) => {
   const projectId = req.params.projectId;
+  const actorId = req.user.id;
   if (!projectId) {
     return res
       .status(401)
@@ -114,13 +115,24 @@ const deleteProject = async (req, res) => {
         .status(404)
         .json({ message: "Project not found or not owned by user" });
     }
-    await Membership.deleteMany({ projectId });
-    await Task.deleteMany({ projectId });
+    await Promise.all([
+      Membership.deleteMany({ projectId }),
+      Task.deleteMany({ projectId }),
+    ]);
+
+    res.locals.projectDeletedData = {
+      actorId,
+      projectId,
+      memberIds: members.map((m) => String(m.userId)),
+      projectName: project?.name || "",
+    };
     return res.status(200).json({ message: "Project successfully deleted" });
   } catch (err) {
     return res
       .status(500)
       .json({ message: "Failed to delete project", error: err.message });
+  } finally {
+    next();
   }
 };
 

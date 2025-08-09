@@ -141,9 +141,39 @@ async function sendProjectMemberRemovedNotifications(req, res, next) {
     next();
   }
 }
+async function sendProjectDeletedNotifications(req, res, next) {
+  const data = res.locals.projectDeletedData;
+  if (!data) return next();
+
+  const { actorId, projectId, memberIds, projectName } = data;
+
+  try {
+    const recipients = (memberIds || [])
+      .map(String)
+      .filter((id) => id !== String(actorId));
+
+    if (recipients.length) {
+      await notifyMany({
+        recipientIds: recipients,
+        actorId,
+        projectId,
+        type: "PROJECT_DELETED",
+        title: projectName
+          ? `Project deleted: “${projectName}”`
+          : "A project you were in was deleted",
+        link: "/dashboard", // safe landing page
+      });
+    }
+  } catch (err) {
+    console.error("Project deleted notify error:", err);
+  } finally {
+    next();
+  }
+}
 
 module.exports = {
   sendTaskUpdateNotifications,
   sendProjectMembershipNotifications,
   sendProjectMemberRemovedNotifications,
+  sendProjectDeletedNotifications,
 };

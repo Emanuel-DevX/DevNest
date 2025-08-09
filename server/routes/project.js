@@ -30,6 +30,7 @@ const checkProjectMembership = require("../middlewares/checkProjectMembership");
 const {
   sendTaskUpdateNotifications,
   sendProjectMemberRemovedNotifications,
+  sendProjectDeletedNotifications,
 } = require("../middlewares/notify.js");
 
 const router = express.Router();
@@ -41,7 +42,7 @@ router.get("/owned", getOwnedProjects);
 router.use("/:projectId", checkProjectMembership);
 
 router.get("/:projectId", getProjectInfo);
-router.delete("/:projectId", deleteProject);
+router.delete("/:projectId", deleteProject, sendProjectDeletedNotifications);
 router.put("/:projectId", updateProject);
 
 //Sprint Routes
