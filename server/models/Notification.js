@@ -20,7 +20,6 @@ const NotificationSchema = new mongoose.Schema(
       ref: "Project",
       index: true,
     },
- 
 
     // What happened
     type: {
@@ -30,7 +29,7 @@ const NotificationSchema = new mongoose.Schema(
         "TASK_ASSIGNED",
         "TASK_UPDATED",
         "NOTE_CREATED",
-        "NOTE_UPDATED",
+        "PROJECT_MEMBER_ADDED",
         "PROJECT_INVITE",
         "PROJECT_MEMBER_REMOVED",
       ],
@@ -39,12 +38,11 @@ const NotificationSchema = new mongoose.Schema(
 
     // Content
     title: { type: String, required: true },
-    body: { type: String }, // 
+    body: { type: String }, //
     link: { type: String }, // deep link to frontend route
 
     // Read state
     readAt: { type: Date, default: null, index: true },
-
   },
   { timestamps: true }
 );

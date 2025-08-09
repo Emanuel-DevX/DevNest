@@ -38,13 +38,14 @@ const getInviteInfo = async (req, res) => {
   return res.status(200).json(inviteInfo);
 };
 
-const acceptInvite = async (req, res) => {
+const acceptInvite = async (req, res, next) => {
   const token = req.params.token;
   const userId = req.user.id;
   const invite = await Invite.findOne({ token });
   if (!invite) return res.status(404).json({ error: "Invite not found" });
   if (invite.expiresAt < new Date())
     return res.status(410).json({ error: "Invite expired" });
+  const projectId = invite.project;
 
   // If already member:
   const exists = await Membership.findOne({
@@ -56,13 +57,34 @@ const acceptInvite = async (req, res) => {
       .status(200)
       .json({ message: "Already a member", projectId: exists.projectId });
 
-  await Membership.create({
-    projectId: invite.project,
-    userId: userId,
-    role: "member",
-  });
+  try {
+    await Membership.create({
+      projectId: invite.project,
+      userId: userId,
+      role: "member",
+    });
 
-  return res.status(201).json({ ok: true, projectId: invite.project });
+    const all = await Membership.find({ projectId }).select("userId").lean();
+    const currentMemberIds = all
+      .filter((m) => String(m.userId) !== String(userId))
+      .map((m) => String(m.userId));
+
+    res.locals.projectMembershipData = {
+      actorId: userId,
+      projectId,
+      newMemberId: userId,
+      currentMemberIds,
+    };
+
+    return res.status(201).json({ ok: true, projectId: invite.project });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Failed to add project membership" , error:err.message});
+  }
+  finally{
+    next()
+  }
 };
 
 const removeMember = async (req, res) => {
@@ -78,7 +100,7 @@ const removeMember = async (req, res) => {
   return res.status(200).json({ message: "Successfully removed member" });
 };
 const updateMember = async (req, res) => {
-  const {role} = req.body;
+  const { role } = req.body;
   const projectId = req.params.projectId;
   const memberId = req.params.memberId;
 
