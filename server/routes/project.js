@@ -6,6 +6,7 @@ const {
   deleteProject,
   updateProject,
   getOwnedProjects,
+  setProjectPinned,
 } = require("../controllers/projectController");
 const { addSprint } = require("../controllers/sprintController");
 const {
@@ -50,6 +51,7 @@ router.delete(
   sendProjectDeletedNotifications
 );
 router.put("/:projectId", isProjectAdmin, updateProject);
+router.patch("/:projectId", setProjectPinned);
 
 //Sprint Routes
 router.post("/:projectId/sprints", isProjectAdmin, addSprint);
