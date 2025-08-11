@@ -3,6 +3,7 @@ const Sprint = require("../models/Sprint");
 const Membership = require("../models/Membership");
 const Task = require("../models/Task");
 const Note = require("../models/Note");
+const TaskSchedule = require("../models/TaskSchedule");
 
 const getOverview = async (req, res) => {
   try {
@@ -23,20 +24,23 @@ const getOverview = async (req, res) => {
       completedTasks,
       tasksDueToday,
       tasksDueThisWeek,
-        totalNotes,
+      totalNotes,
     ] = await Promise.all([
       Membership.countDocuments({ userId }),
       Task.countDocuments({ participants: { $in: userId } }),
-      Task.countDocuments({ creator: userId, status: "completed" }),
       Task.countDocuments({
-        creator: userId,
-        dueDate: { $gte: today, $lte: endOfToday },
+        participants: userId,
+        status: "completed",
       }),
-      Task.countDocuments({
-        creator: userId,
-        dueDate: { $gt: endOfToday, $lte: oneWeekFromNow },
+      TaskSchedule.countDocuments({
+        userId,
+        scheduledAt: { $gte: today, $lte: endOfToday },
       }),
-        Note.countDocuments({ author: userId }),
+      TaskSchedule.countDocuments({
+        userId,
+        scheduledAt: { $gt: endOfToday, $lte: oneWeekFromNow },
+      }),
+      Note.countDocuments({ author: userId }),
     ]);
 
     const overview = {
@@ -45,7 +49,7 @@ const getOverview = async (req, res) => {
       completedTasks,
       tasksDueToday,
       tasksDueThisWeek,
-        totalNotes,
+      totalNotes,
     };
 
     return res.status(200).json(overview);
