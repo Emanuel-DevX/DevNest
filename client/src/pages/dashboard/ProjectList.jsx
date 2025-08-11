@@ -35,10 +35,10 @@ const ProjectList = function () {
 
 const ProjectCard = function ({ projectInfo, dispatch }) {
   const handlePin = async function (id, pinned) {
-    const endpoint = `/projects/${id}`;
+    const endpoint = `/projects/${id}/pin`;
     const options = {
       body: JSON.stringify({ pinned: !pinned }),
-      method: "PUT",
+      method: "PATCH",
     };
 
     try {

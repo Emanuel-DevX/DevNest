@@ -51,7 +51,7 @@ router.delete(
   sendProjectDeletedNotifications
 );
 router.put("/:projectId", isProjectAdmin, updateProject);
-router.patch("/:projectId", setProjectPinned);
+router.patch("/:projectId/pin", setProjectPinned);
 
 //Sprint Routes
 router.post("/:projectId/sprints", isProjectAdmin, addSprint);
