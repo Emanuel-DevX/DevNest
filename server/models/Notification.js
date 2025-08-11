@@ -33,6 +33,7 @@ const NotificationSchema = new mongoose.Schema(
         "PROJECT_INVITE",
         "PROJECT_MEMBER_REMOVED",
         "PROJECT_DELETED",
+        "WELCOME"
       ],
       index: true,
     },
