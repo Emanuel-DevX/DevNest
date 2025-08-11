@@ -20,7 +20,7 @@ const ProjectList = function () {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row w-full flex-wrap justify-around gap-4">
+      <div className="flex flex-col md:flex-row w-full flex-wrap mx-auto gap-4">
         {sortedProjects.map((project) => (
           <ProjectCard
             key={project._id}
@@ -63,7 +63,7 @@ const ProjectCard = function ({ projectInfo, dispatch }) {
   const pinned = projectInfo.pinned;
 
   return (
-    <div className="group relative lg:w-[32%] md:w[48%] mx-2 md:mx-0 ">
+    <div className="group relative lg:w-[32%] md:w-[48%] mx-2 md:mx-0 ">
       {/* Pin Button */}
       <button
         onClick={(e) => {
