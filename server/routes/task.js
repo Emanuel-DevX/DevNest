@@ -6,8 +6,9 @@ const {
   customizeTaskSchedule,
   getTasksByRange,
 } = require("../controllers/taskController");
+const removeSchedulesWithDeletedTask = require("../middlewares/removeSchedulesWithDeletedTask");
 
 router.patch("/:taskId/complete", updateTaskCompletion);
 router.put("/:taskId/schedule", customizeTaskSchedule);
-router.get("/range", getTasksByRange);
+router.get("/range", removeSchedulesWithDeletedTask, getTasksByRange);
 module.exports = router;
