@@ -1,3 +1,5 @@
+const User = require("../models/User");
+
 function currentPeriodUTC(d = new Date()) {
   const y = d.getUTCFullYear();
   const m = String(d.getUTCMonth() + 1).padStart(2, "0");
@@ -22,7 +24,5 @@ module.exports = async function ensureAiQuota(req, res, next) {
       .json({ message: "AI token cap reached", remaining: 0, cap: token.cap });
   }
 
-  // pass some context to downstream handlers
-  res.locals.aiQuota = { cap: token.cap, used: token.usage, remaining, period };
   next();
 };

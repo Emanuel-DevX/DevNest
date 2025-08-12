@@ -78,7 +78,6 @@ const consumeTokens = async (userId, usage) => {
       },
     },
   ]);
-  next();
 };
 
 const generateTasksFromAI = async (req, res) => {
@@ -88,9 +87,9 @@ const generateTasksFromAI = async (req, res) => {
     const params = await getPromptParams(req);
     const prompt = generateTaskPrompt(params);
 
-    const { tasksString, usage } = await askGemini(prompt);
+    const { text, usage } = await askGemini(prompt);
     await consumeTokens(userId, usage);
-    const cleaned = extractJSONBlock(tasksString);
+    const cleaned = extractJSONBlock(text);
     const tasksArr = JSON.parse(cleaned);
 
     const tasks = tasksArr.map((task) => ({
