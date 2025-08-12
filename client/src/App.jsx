@@ -22,6 +22,7 @@ import WeeklyView from "./pages/tasks/weekly/WeeklyView";
 import MonthView from "./pages/tasks/monthly/MonthView";
 import Profile from "./pages/profile/Profile";
 import Notifications from "./pages/notification/Notifications";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const location = useLocation();
@@ -85,6 +86,7 @@ function App() {
                 />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/notifications" element={<Notifications />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
           </main>
