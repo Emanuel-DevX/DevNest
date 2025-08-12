@@ -1,4 +1,5 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { login, isAuthenticated } from "@/lib/auth";
 import { useState } from "react";
 import Home from "./pages/home/Home";
 import Dashboard from "./pages/dashboard/Dasboard";
@@ -29,6 +30,11 @@ function App() {
   const [expand, setExpand] = useState(false);
   const publicPaths = ["/", "/auth/callback"];
   const isPublic = publicPaths.includes(location.pathname);
+
+  if (!isPublic && !isAuthenticated()) {
+    login(location.pathname + location.search + location.hash);
+    return null;
+  }
 
   return (
     <>
