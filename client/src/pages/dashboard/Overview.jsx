@@ -1,5 +1,6 @@
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { Link } from "react-router-dom";
 
 const Overview = ({ userData }) => {
   const username = userData?.user?.name
@@ -27,10 +28,17 @@ const Overview = ({ userData }) => {
       </p>
 
       <div className="flex flex-col md:flex-row items-center gap-4">
-        <div className="md:gap-4 gap-2 md:h-24 flex md:w-1/2 w-full">
+        <div className="md:gap-4 gap-2 flex md:w-1/2 w-full ">
+        <Link to={"/dashboard"} className="w-full md:h-24" >
+        
           <OverviewCard label="Projects" value={totalProjects} />
+        </Link>
+        <Link to={"/tasks/daily"} className="w-full">
           <OverviewCard label="Due Today" value={tasksDueToday} />
+        </Link>
+       <Link to={"/tasks/weekly"} className="w-full">
           <OverviewCard label="This Week" value={tasksDueThisWeek} />
+       </Link> 
         </div>
 
         <div className="md:w-36 flex flex-col gap-1 w-24  mx-auto">
@@ -56,7 +64,7 @@ const Overview = ({ userData }) => {
 };
 
 const OverviewCard = ({ label, value }) => (
-  <div className="bg-zinc-800 w-full md:p-3 p-2 rounded-lg flex flex-col justify-center items-center hover:ring-1 hover:ring-emerald-400 transition">
+  <div className="bg-zinc-800 w-full  md:h-24 md:p-3 p-2 rounded-lg flex flex-col justify-center items-center hover:ring-1 hover:ring-emerald-400 transition">
     <span className="text-sm text-zinc-400">{label}</span>
     <span className="text-xl  font-bold text-teal-300">{value}</span>
   </div>
