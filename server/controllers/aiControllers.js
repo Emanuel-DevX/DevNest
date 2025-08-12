@@ -3,6 +3,7 @@ const askGemini = require("../lib/gemini");
 const Project = require("../models/Project");
 const Sprint = require("../models/Sprint");
 const Task = require("../models/Task");
+const User = require("../models/User");
 
 const { extractJSONBlock } = require("../lib/utils");
 
@@ -65,6 +66,21 @@ const getPromptParams = async (req) => {
   };
 };
 
+const consumeTokens = async (userId, usage) => {
+  const used = usage?.totalTokenCount ?? 0;
+  if (!used) return;
+  await User.updateOne({ _id: userId }, [
+    {
+      $set: {
+        "token.usage": {
+          $min: [{ $add: ["$token.usage", used] }, "$token.cap"],
+        },
+      },
+    },
+  ]);
+  next();
+};
+
 const generateTasksFromAI = async (req, res) => {
   try {
     const projectId = req.body.projectId;
@@ -72,7 +88,8 @@ const generateTasksFromAI = async (req, res) => {
     const params = await getPromptParams(req);
     const prompt = generateTaskPrompt(params);
 
-    const tasksString = await askGemini(prompt);
+    const { tasksString, usage } = await askGemini(prompt);
+    await consumeTokens(userId, usage);
     const cleaned = extractJSONBlock(tasksString);
     const tasksArr = JSON.parse(cleaned);
 
@@ -84,12 +101,9 @@ const generateTasksFromAI = async (req, res) => {
       participants: [],
     }));
     const newTasks = await Task.insertMany(tasks);
-    console.log(newTasks.length, "tasks created")
-    console.log(newTasks)
 
     return res.status(200).json({ newTasks });
   } catch (err) {
-    console.error("Error generating tasks:", err.message);
     return res.status(500).json({ message: err.message || "Internal error" });
   }
 };
