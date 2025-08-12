@@ -6,6 +6,7 @@ const {
   deleteProject,
   updateProject,
   getOwnedProjects,
+  setProjectPinned,
 } = require("../controllers/projectController");
 const { addSprint } = require("../controllers/sprintController");
 const {
@@ -27,6 +28,12 @@ const {
   getProjectNotes,
 } = require("../controllers/noteControllers");
 const checkProjectMembership = require("../middlewares/checkProjectMembership");
+const {
+  sendTaskUpdateNotifications,
+  sendProjectMemberRemovedNotifications,
+  sendProjectDeletedNotifications,
+} = require("../middlewares/notify.js");
+const isProjectAdmin = require("../middlewares/isProjectAdmin.js");
 
 const router = express.Router();
 
@@ -37,21 +44,36 @@ router.get("/owned", getOwnedProjects);
 router.use("/:projectId", checkProjectMembership);
 
 router.get("/:projectId", getProjectInfo);
-router.delete("/:projectId", deleteProject);
-router.put("/:projectId", updateProject);
+router.delete(
+  "/:projectId",
+  isProjectAdmin,
+  deleteProject,
+  sendProjectDeletedNotifications
+);
+router.put("/:projectId", isProjectAdmin, updateProject);
+router.patch("/:projectId/pin", setProjectPinned);
 
 //Sprint Routes
-router.post("/:projectId/sprints", addSprint);
+router.post("/:projectId/sprints", isProjectAdmin, addSprint);
 
 //Task Routes
-router.post("/:projectId/tasks", addTask);
+router.post("/:projectId/tasks", isProjectAdmin, addTask);
 router.get("/:projectId/tasks", getTasksByProject);
-router.patch("/:projectId/tasks/:taskId", updateTaskInfo);
-router.delete("/:projectId/tasks/:taskId", deleteTask);
+router.patch(
+  "/:projectId/tasks/:taskId",
+  updateTaskInfo,
+  sendTaskUpdateNotifications
+);
+router.delete("/:projectId/tasks/:taskId", isProjectAdmin, deleteTask);
 
 // Membership Routes
 router.get("/:projectId/invite", getInviteToken);
-router.delete("/:projectId/members/:memberId", removeMember);
+router.delete(
+  "/:projectId/members/:memberId",
+  isProjectAdmin,
+  removeMember,
+  sendProjectMemberRemovedNotifications
+);
 router.patch("/:projectId/members/:memberId", updateMember);
 
 //Note Routes

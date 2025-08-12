@@ -5,7 +5,7 @@ import { Pin } from "lucide-react";
 import fetcher from "../../lib/api";
 
 import { useSelector, useDispatch } from "react-redux";
-import { updateProject } from "../../features/projectSlice";
+import { updateProject } from "../../app/features/projectSlice";
 
 const ProjectList = function () {
   const projectList = useSelector((state) => state.project.projectList);
@@ -20,7 +20,7 @@ const ProjectList = function () {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row w-full flex-wrap justify-around gap-4">
+      <div className="flex flex-col md:flex-row w-full flex-wrap mx-auto gap-4">
         {sortedProjects.map((project) => (
           <ProjectCard
             key={project._id}
@@ -35,10 +35,10 @@ const ProjectList = function () {
 
 const ProjectCard = function ({ projectInfo, dispatch }) {
   const handlePin = async function (id, pinned) {
-    const endpoint = `/projects/${id}`;
+    const endpoint = `/projects/${id}/pin`;
     const options = {
       body: JSON.stringify({ pinned: !pinned }),
-      method: "PUT",
+      method: "PATCH",
     };
 
     try {
@@ -63,7 +63,7 @@ const ProjectCard = function ({ projectInfo, dispatch }) {
   const pinned = projectInfo.pinned;
 
   return (
-    <div className="group relative lg:w-[32%] md:w[48%] mx-2 md:mx-0 ">
+    <div className="group relative lg:w-[32%] md:w-[48%] mx-2 md:mx-0 ">
       {/* Pin Button */}
       <button
         onClick={(e) => {

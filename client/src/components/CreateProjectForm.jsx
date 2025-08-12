@@ -2,7 +2,7 @@ import { useState } from "react";
 import Toast from "./Toast";
 import fetcher from "../lib/api";
 import { useDispatch } from "react-redux";
-import { setProjects } from "../features/projectSlice";
+import { setProjects } from "../app/features/projectSlice";
 
 const CreateProjectForm = function ({ onClose, onSuccess }) {
   const [name, setName] = useState("");

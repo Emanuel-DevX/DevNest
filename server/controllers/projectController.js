@@ -99,14 +99,19 @@ const getProjectInfo = async (req, res) => {
   }
 };
 
-const deleteProject = async (req, res) => {
+const deleteProject = async (req, res, next) => {
   const projectId = req.params.projectId;
+  const actorId = req.user.id;
   if (!projectId) {
     return res
-      .status(401)
+      .status(400)
       .json({ message: "Project ID is required to delete a project" });
   }
   try {
+    const [members, project] = await Promise.all([
+      Membership.find({ projectId }).select("userId").lean(),
+      Project.findById(projectId).select("name").lean(),
+    ]);
     const deleted = await Project.deleteOne({ _id: projectId });
     if (deleted.deletedCount === 0) {
       return res
@@ -114,13 +119,25 @@ const deleteProject = async (req, res) => {
         .status(404)
         .json({ message: "Project not found or not owned by user" });
     }
-    await Membership.deleteMany({ projectId });
-    await Task.deleteMany({ projectId });
+    await Promise.all([
+      Membership.deleteMany({ projectId }),
+      Task.deleteMany({ projectId }),
+    ]);
+
+    res.locals.projectDeletedData = {
+      actorId,
+      projectId,
+      memberIds: members.map((m) => String(m.userId)),
+      projectName: project?.name || "",
+    };
     return res.status(200).json({ message: "Project successfully deleted" });
   } catch (err) {
+    console.error(err.message);
     return res
       .status(500)
       .json({ message: "Failed to delete project", error: err.message });
+  } finally {
+    next();
   }
 };
 
@@ -133,23 +150,16 @@ const updateProject = async (req, res) => {
       .json({ message: "Project ID required to perform this operation" });
   }
   try {
-    const { pinned, name, description } = req.body;
+    const { name, description } = req.body;
     const updates = {};
-    if (pinned !== undefined && pinned !== null) {
-      await Membership.updateOne({ userId, projectId }, { pinned });
-    }
+
     if (name && name.trim().length > 3) {
       updates.name = name.trim();
     }
     if (description && description.trim().length > 3) {
       updates.description = description.trim();
     }
-    const member = await Membership.findOne({ projectId, userId });
-    if (member.role !== "owner" && member.role !== "admin") {
-      return res.status(403).json({
-        message: "You don't have proper authorization to update this project",
-      });
-    }
+
     await Project.updateOne({ _id: projectId }, updates);
     return res.status(200).json({ message: "Project info updated" });
   } catch (err) {
@@ -230,6 +240,31 @@ const getOwnedProjects = async (req, res) => {
     res.status(500).json({ error: "Could not fetch projects." });
   }
 };
+// PATCH /projects/:projectId/pin
+const setProjectPinned = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { projectId } = req.params;
+    const { pinned } = req.body; // boolean
+
+    if (typeof pinned !== "boolean")
+      return res.status(400).json({ message: "pinned must be boolean" });
+
+    const m = await Membership.findOneAndUpdate(
+      { userId, projectId },
+      { $set: { pinned } },
+      { new: true }
+    ).lean();
+
+    if (!m) return res.status(404).json({ message: "Membership not found" });
+
+    return res.status(200).json({ message: pinned ? "Pinned" : "Unpinned" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Failed to update pin", error: err.message });
+  }
+};
 
 module.exports = {
   createProject,
@@ -238,4 +273,5 @@ module.exports = {
   deleteProject,
   updateProject,
   getOwnedProjects,
+  setProjectPinned,
 };

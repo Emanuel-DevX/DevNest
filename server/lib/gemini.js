@@ -12,7 +12,8 @@ async function askGemini(prompt) {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    return text;
+    const usage = response.usageMetadata;
+    return { text, usage };
   } catch (err) {
     console.error("Gemini Error:", err.message);
     return null;

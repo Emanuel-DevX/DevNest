@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { getSortedProjects, setProjects } from "../features/projectSlice";
+import { getSortedProjects, setProjects } from "../app/features/projectSlice";
 import LetterIcon from "./LetterIcon";
 import { Link } from "react-router-dom";
 import fetcher from "../lib/api";

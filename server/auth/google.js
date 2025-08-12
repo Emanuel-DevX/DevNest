@@ -2,6 +2,7 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
 const { createGeneralProject } = require("../middlewares/signupGeneralProject");
+const {sendWelcome} = require("../lib/utils");
 require("dotenv").config();
 
 passport.use(
@@ -25,6 +26,9 @@ passport.use(
             image: profile.photos[0].value,
           });
           await createGeneralProject(user.id);
+          sendWelcome(user.id, user.name).catch((err) =>
+            console.error("Welcome notify failed:", err)
+          );
         }
 
         done(null, user); // pass user to session

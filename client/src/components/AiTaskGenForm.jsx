@@ -123,7 +123,7 @@ const AiTaskGenForm = function ({ onClose, onSuccess = () => {} }) {
       });
 
       // Let parent handle toast/refresh/close
-      onSuccess({ message: `Generated ${result.taskCount} tasks!` });
+      onSuccess({ message: `Generated ${result.length} tasks!` });
     } catch (e) {
       setToast({ type: "error", message: e?.message || "Generation failed." });
     } finally {

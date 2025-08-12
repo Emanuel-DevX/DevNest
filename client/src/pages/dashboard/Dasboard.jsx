@@ -7,7 +7,7 @@ import ProjectList from "./ProjectList";
 import CreateProjectForm from "../../components/CreateProjectForm";
 import Toast from "../../components/Toast";
 import { useSelector, useDispatch } from "react-redux";
-import { setProjects } from "../../features/projectSlice";
+import { setProjects } from "../../app/features/projectSlice";
 import { PlusCircle } from "lucide-react";
 
 export default function Dashboard() {

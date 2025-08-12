@@ -8,6 +8,7 @@ import GeneralSettings from "./General";
 import DangerZone from "./DangerZone";
 import { getCurrentUser } from "../../../lib/auth";
 import fetcher from "../../../lib/api";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 const isAdminRole = (role) => role === "owner" || role === "admin";
 
@@ -43,6 +44,8 @@ const ProjectSettings = function () {
   const { project, refreshProject } = useOutletContext();
   const navigate = useNavigate();
   const currentUserId = getCurrentUser().id;
+  const [confirmationWindowOpen, setConfirmationWindowOpen] = useState(false);
+  const [handleConfirmation, setHandleConfirmation] = useState(null);
 
   const handleSaveGeneral = async (patch) => {
     try {
@@ -77,6 +80,10 @@ const ProjectSettings = function () {
     } catch (err) {
       console.error(err);
     }
+  };
+  const askRemoveMember = (memberId) => {
+    setHandleConfirmation(() => async () => await handleRemoveMember(memberId));
+    setConfirmationWindowOpen(true);
   };
 
   const handleInvite = async () => {
@@ -113,48 +120,73 @@ const ProjectSettings = function () {
   const iAmAdmin = isAdminRole(me?.role ?? "member");
 
   return (
-    <div className="mx-auto max-w-6xl md:w-full w-[20rem] md:px-4 py-6 md:py-8 ">
-      {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Project settings</h1>
-          <p className="text-sm text-zinc-400">
-            Manage <span className="text-zinc-200">{project.name}</span>
-          </p>
+    <>
+      <div className="mx-auto max-w-6xl md:w-full w-[20rem] md:px-4 py-6 md:py-8 ">
+        {/* Header */}
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Project settings</h1>
+            <p className="text-sm text-zinc-400">
+              Manage <span className="text-zinc-200">{project.name}</span>
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-6">
+          {/* Sub‑nav */}
+          <div className="md:col-span-3 ">
+            <SettingsSubNav />
+          </div>
+
+          {/* Content */}
+          <div className="md:col-span-9 space-y-6">
+            <GeneralSettings project={project} onSave={handleSaveGeneral} />
+
+            <MembersSection
+              project={project}
+              currentUserId={currentUserId}
+              onChangeRole={handleChangeRole}
+              onRemove={askRemoveMember}
+            />
+
+            <InvitesSection
+              isAdmin={iAmAdmin}
+              onInvite={handleInvite}
+              inviteLink={inviteLink}
+            />
+
+            <DangerZone
+              isAdmin={iAmAdmin}
+              onDelete={() => {
+                setHandleConfirmation(() => handleDeleteProject);
+                setConfirmationWindowOpen(true);
+              }}
+              onLeave={() => {
+                setHandleConfirmation(() => handleLeaveProject);
+                setConfirmationWindowOpen(true);
+              }}
+            />
+          </div>
         </div>
       </div>
-
-      <div className="flex flex-col gap-6">
-        {/* Sub‑nav */}
-        <div className="md:col-span-3 ">
-          <SettingsSubNav />
-        </div>
-
-        {/* Content */}
-        <div className="md:col-span-9 space-y-6">
-          <GeneralSettings project={project} onSave={handleSaveGeneral} />
-
-          <MembersSection
-            project={project}
-            currentUserId={currentUserId}
-            onChangeRole={handleChangeRole}
-            onRemove={handleRemoveMember}
-          />
-
-          <InvitesSection
-            isAdmin={iAmAdmin}
-            onInvite={handleInvite}
-            inviteLink={inviteLink}
-          />
-
-          <DangerZone
-            isAdmin={iAmAdmin}
-            onDelete={handleDeleteProject}
-            onLeave={handleLeaveProject}
-          />
-        </div>
-      </div>
-    </div>
+      <ConfirmationModal
+        isOpen={confirmationWindowOpen}
+        onClose={() => {
+          setConfirmationWindowOpen(false);
+          setHandleConfirmation(null);
+        }}
+        onConfirm={async () => {
+          setConfirmationWindowOpen(false);
+          try {
+            if (typeof handleConfirmation === "function") {
+              await handleConfirmation();
+            }
+          } finally {
+            setHandleConfirmation(null);
+          }
+        }}
+      />
+    </>
   );
 };
 

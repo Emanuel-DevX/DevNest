@@ -1,4 +1,5 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { login, isAuthenticated } from "@/lib/auth";
 import { useState } from "react";
 import Home from "./pages/home/Home";
 import Dashboard from "./pages/dashboard/Dasboard";
@@ -21,11 +22,19 @@ import DailyView from "./pages/tasks/daily/DailyView";
 import WeeklyView from "./pages/tasks/weekly/WeeklyView";
 import MonthView from "./pages/tasks/monthly/MonthView";
 import Profile from "./pages/profile/Profile";
+import Notifications from "./pages/notification/Notifications";
+import NotFound from "./pages/NotFound";
+
 function App() {
   const location = useLocation();
   const [expand, setExpand] = useState(false);
   const publicPaths = ["/", "/auth/callback"];
   const isPublic = publicPaths.includes(location.pathname);
+
+  if (!isPublic && !isAuthenticated()) {
+    login(location.pathname + location.search + location.hash);
+    return null;
+  }
 
   return (
     <>
@@ -82,6 +91,8 @@ function App() {
                   element={<InviteAcceptancePage />}
                 />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
           </main>

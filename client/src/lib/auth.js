@@ -1,13 +1,22 @@
 const API_BASE = import.meta.env.VITE_PUBLIC_API_URL;
-// Login: redirect to backend OAuth
-export function login() {
-  if (isAuthenticated()) {
-    console.log("User authenticated?");
 
-    window.location.href = "/dashboard/";
-    return;
+// Login: redirect to backend OAuth
+export function login(redirectTo) {
+  console.log(redirectTo);
+  const target = redirectTo || "/dashboard";
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem("post_login_redirect", target);
+
+    if (isAuthenticated()) {
+      console.log("User authenticated?");
+
+      // window.location.href = "/dashboard/";
+      window.location.replace(target || "/dashboard");
+
+      return;
+    }
+    window.location.href = `${API_BASE}/auth/google`;
   }
-  window.location.href = `${API_BASE}/auth/google`;
 }
 
 // Logout: clear localStorage and go home
@@ -21,9 +30,8 @@ export function logout() {
 export function logoutAndLogin() {
   localStorage.removeItem("devnest_token");
   localStorage.removeItem("devnest_user");
-  window.location.replace(`${API_BASE}/auth/google`); 
+  window.location.replace(`${API_BASE}/auth/google`);
 }
-
 
 // Handle auth callback (when backend redirects after OAuth)
 export function handleAuthCallbackFromURL() {
@@ -33,7 +41,11 @@ export function handleAuthCallbackFromURL() {
   if (token && user) {
     localStorage.setItem("devnest_token", token);
     localStorage.setItem("devnest_user", user);
-    window.location.href = "/dashboard";
+
+    const target = sessionStorage.getItem("post_login_redirect");
+    // sessionStorage.removeItem("post_login_redirect");
+    window.location.replace(target ? target : "/dashboard");
+    // window.location.href = "/dashboard";
   } else {
     alert("Login failed.");
     window.location.href = "/";

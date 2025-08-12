@@ -1,3 +1,4 @@
+import ConfirmationModal from "@/components/ConfirmationModal";
 import MarkdownViewer from "@/components/MarkdownViewer";
 import fetcher from "@/lib/api";
 import { Edit3, Trash } from "lucide-react";
@@ -13,6 +14,7 @@ const NoteViewer = function () {
   const { refresh, notes, basePath } = useOutletContext();
   const { noteId } = useParams();
   const [note, setNote] = useState(null);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,10 +24,6 @@ const NoteViewer = function () {
     }
   }, [notes]);
   const handleDelete = async () => {
-    const confirm = window.confirm("Are you sure u wanna delete this note?");
-    if (!confirm) {
-      return;
-    }
     try {
       const url = `/notes/${noteId}`;
       await fetcher(url, { method: "DELETE" });
@@ -51,7 +49,10 @@ const NoteViewer = function () {
                 edit
               </span>
             </Link>
-            <button onClick={handleDelete} className="flex  items-center">
+            <button
+              onClick={() => setConfirmationModalOpen(true)}
+              className="flex  items-center"
+            >
               <Trash className="h-5 text-red-400" />
               <span className="hidden md:block font-bold text-red-400">
                 delete
@@ -61,6 +62,15 @@ const NoteViewer = function () {
         </header>
         <MarkdownViewer className="" content={note.content} />
       </div>
+      <ConfirmationModal
+        message="Are you sure u wanna delete this note?"
+        isOpen={confirmationModalOpen}
+        onConfirm={async () => {
+          await handleDelete();
+          setConfirmationModalOpen(false);
+        }}
+        onClose={() => setConfirmationModalOpen(false)}
+      />
     </>
   );
 };

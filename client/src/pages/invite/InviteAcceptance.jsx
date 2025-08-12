@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Users, Mail, Calendar, CheckCircle, XCircle } from "lucide-react";
 import fetcher from "../../lib/api";
+import { setProjects } from "@/app/features/projectSlice";
+import { useDispatch } from "react-redux";
 
 const InviteAcceptancePage = () => {
   const { token } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const [loading, setLoading] = useState(true);
   const [accepting, setAccepting] = useState(false);
@@ -41,6 +44,8 @@ const InviteAcceptancePage = () => {
       const res = await fetcher(`/invites/${token}/accept`, {
         method: "POST",
       });
+      const projects = await fetcher("/projects");
+      dispatch(setProjects(projects));
       navigate(`/project/${res.projectId}`);
     } catch (err) {
       setError(err.message);

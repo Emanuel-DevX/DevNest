@@ -5,9 +5,10 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/userController");
+const cleanUserInfo = require("../middlewares/cleanUserInfo");
 
 router.get("/:id", getUserById);
 router.patch("/:id", updateUser);
-router.delete("/:id", deleteUser);
+router.delete("/:id",cleanUserInfo, deleteUser);
 
 module.exports = router;
