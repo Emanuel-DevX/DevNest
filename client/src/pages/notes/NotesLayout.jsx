@@ -19,6 +19,9 @@ export default function NotesLayout() {
       setError(null);
       const url = projectId ? `/projects/${projectId}/notes` : `/notes`;
       const data = await fetcher(url);
+      data.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      );
       setNotes(data || []);
     } catch (err) {
       setError(err?.message || "Failed to load notes");

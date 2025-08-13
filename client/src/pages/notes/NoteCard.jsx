@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { formatDate } from "@/lib/date";
 
 export default function NoteCard({ note, basePath }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -51,7 +52,7 @@ export default function NoteCard({ note, basePath }) {
               `}
               />
               <span className="text-gray-500 group-hover:text-gray-400 transition-colors duration-200">
-                {new Date(note.updatedAt).toLocaleDateString()}
+                {formatDate(new Date(note.updatedAt)).toString() }
               </span>
             </div>
           </div>
