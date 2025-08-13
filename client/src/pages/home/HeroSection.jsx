@@ -14,7 +14,7 @@ import { isAuthenticated, login } from "../../lib/auth";
 export default function HeroSection() {
   const navigate = useNavigate();
   return (
-    <div className="relative h-[90vh]  overflow-hidden">
+    <div className="relative h-[90vh]  flex items-center justify-center ">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         {/* Floating Code Elements */}
@@ -31,7 +31,7 @@ export default function HeroSection() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center py-12 px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center p px-6 text-center">
         <div className="max-w-7xl mx-auto">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/10 border border-teal-500/20 rounded-full text-teal-400 text-sm font-medium mb-8 backdrop-blur-sm">
@@ -53,7 +53,7 @@ export default function HeroSection() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-md md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-md lg:text-xl 2xl:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
             Manage all your projects, notes, and ideas in one intelligent
             workspace.
             <span className="text-teal-400 font-semibold">DevNest</span> boosts
@@ -66,7 +66,7 @@ export default function HeroSection() {
           </p>
 
           {/* Feature Pills */}
-          <div className="flex flex-wrap justify-center gap-4 text-sm mb-12">
+          <div className="flex flex-wrap justify-center gap-4 text-sm 2xl:mb-12">
             {/* Feature Pills */}
             <div className="flex flex-wrap justify-center gap-2 text-xs mb-10">
               {[
@@ -138,12 +138,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-teal-400/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-teal-400 rounded-full mt-2 animate-pulse"></div>
-        </div>
-      </div>
+    
     </div>
   );
 }
