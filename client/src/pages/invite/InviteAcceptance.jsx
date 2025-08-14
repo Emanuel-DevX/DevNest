@@ -164,7 +164,7 @@ const InviteAcceptancePage = () => {
             <button
               onClick={handleAcceptInvite}
               disabled={accepting}
-              className="flex-1 px-4 py-2 text-sm font-medium bg-teal-600 hover:bg-teal-700 disabled:bg-blue-600/50 text-white rounded-md transition-colors flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2 text-sm font-medium bg-teal-600 hover:bg-teal-700 disabled:bg-teal-600/50 text-white rounded-md transition-colors flex items-center justify-center gap-2"
             >
               {accepting ? (
                 <>

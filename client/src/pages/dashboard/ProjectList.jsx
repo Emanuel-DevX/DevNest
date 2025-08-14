@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import LetterIcon from "../../components/LetterIcon";
 import { Link } from "react-router-dom";
 import { Pin } from "lucide-react";
@@ -6,10 +6,15 @@ import fetcher from "../../lib/api";
 
 import { useSelector, useDispatch } from "react-redux";
 import { updateProject } from "../../app/features/projectSlice";
+import fetchNotifications from "@/lib/utils";
 
 const ProjectList = function () {
   const projectList = useSelector((state) => state.project.projectList);
   const dispatch = useDispatch();
+  useEffect(() => {
+    const notify = async () => await fetchNotifications();
+    notify();
+  }, [projectList]);
 
   const sortedProjects = useMemo(() => {
     return [...projectList].sort((a, b) => {

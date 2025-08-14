@@ -3,6 +3,7 @@ import { setNotifications } from "@/app/features/notificationSlice";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationCard from "./NotificationCard";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Notifications = function () {
   const dispatch = useDispatch();
@@ -15,6 +16,9 @@ const Notifications = function () {
       console.error(err.message);
     }
   };
+  useEffect(()=>{
+    fetchNotifications()
+  }, [])
 
   const notifications = useSelector(
     (state) => state.notification.notifications

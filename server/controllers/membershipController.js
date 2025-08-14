@@ -68,10 +68,12 @@ const acceptInvite = async (req, res, next) => {
     const currentMemberIds = all
       .filter((m) => String(m.userId) !== String(userId))
       .map((m) => String(m.userId));
+    const project = await Project.findById(projectId).select("name");
 
     res.locals.projectMembershipData = {
       actorId: userId,
       projectId,
+      projectName: project?.name || "a project",
       newMemberId: userId,
       currentMemberIds,
     };
@@ -105,9 +107,11 @@ const removeMember = async (req, res, next) => {
       .select("userId")
       .lean();
     const remainingMemberIds = remaining.map((m) => String(m.userId));
+    const project = await Project.findById(projectId).select("name");
     res.locals.projectMemberRemovedData = {
       actorId,
       projectId,
+      projectName: project.name,
       removedMemberId: memberId,
       remainingMemberIds,
       reason: isSelf ? "left" : "removed",
@@ -123,6 +127,8 @@ const removeMember = async (req, res, next) => {
 
 const updateMember = async (req, res) => {
   const { role } = req.body;
+  if (!["admin", "member"].includes(role.toLowerCase()))
+    return res.status(400).json({ message: "Unsupported role" });
   const projectId = req.params.projectId;
   const memberId = req.params.memberId;
 

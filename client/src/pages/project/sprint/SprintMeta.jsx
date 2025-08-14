@@ -334,7 +334,7 @@ const CreateSprint = ({ onSave, onCancel }) => {
   };
 
   return (
-    <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 bg-slate-900/20">
+    <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 bg-zinc-800/20">
       <div className="flex items-center gap-2 mb-4">
         <Plus className="w-5 h-5 text-teal-400" />
         <h3 className="text-lg font-semibold text-white">Create New Sprint</h3>
@@ -418,7 +418,7 @@ const CreateSprint = ({ onSave, onCancel }) => {
         <button
           onClick={handleSave}
           disabled={!title || !startDate || !endDate}
-          className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-800 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
         >
           <Save className="w-4 h-4" />
           Create Sprint

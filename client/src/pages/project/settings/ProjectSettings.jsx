@@ -59,6 +59,7 @@ const ProjectSettings = function () {
   };
 
   const handleChangeRole = async (memberId, role) => {
+    if (!["admin", "member"].includes(role.toLowerCase())) return;
     try {
       const options = {
         body: JSON.stringify({ role }),

@@ -5,6 +5,7 @@ import { CreateSprint, ViewSprint, EditSprint } from "./SprintMeta";
 import fetcher from "../../../lib/api";
 import Toast from "../../../components/Toast";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import { getCurrentUser } from "@/lib/auth";
 
 const SprintManagement = () => {
   const { project, refreshProject } = useOutletContext();
@@ -13,6 +14,11 @@ const SprintManagement = () => {
   const [toast, setToast] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [toDeleteId, setToDeleteId] = useState(null);
+
+  const user = getCurrentUser();
+  const iAmAdmin = ["admin", "owner"].includes(
+    project?.members.filter((m) => m.userId === user.id)[0].role
+  );
 
   // Get current sprint
   const currentSprint = project.sprints?.find((sprint) => sprint.isCurrent);
@@ -97,8 +103,15 @@ const SprintManagement = () => {
           </div>
           {!showCreateForm && (
             <button
-              onClick={() => setShowCreateForm(true)}
-              className="px-4 py-2 w-36 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors"
+              onClick={() => {
+                if (iAmAdmin) setShowCreateForm(true);
+              }}
+              title={
+                iAmAdmin
+                  ? ""
+                  : "Only project admins and owner can create sprints"
+              }
+              className={`px-4 py-2 w-36   text-white rounded-lg transition-colors ${!iAmAdmin ? "bg-zinc-900" : "bg-teal-600 hover:bg-teal-700"}`}
             >
               Create Sprint
             </button>
