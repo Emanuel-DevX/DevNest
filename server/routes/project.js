@@ -34,6 +34,7 @@ const {
   sendProjectDeletedNotifications,
 } = require("../middlewares/notify.js");
 const isProjectAdmin = require("../middlewares/isProjectAdmin.js");
+const isProjectAdminOrSelf = require("../middlewares/isProjectAdminOrSelf.js");
 
 const router = express.Router();
 
@@ -70,7 +71,7 @@ router.delete("/:projectId/tasks/:taskId", isProjectAdmin, deleteTask);
 router.get("/:projectId/invite", getInviteToken);
 router.delete(
   "/:projectId/members/:memberId",
-  isProjectAdmin,
+  isProjectAdminOrSelf,
   removeMember,
   sendProjectMemberRemovedNotifications
 );
