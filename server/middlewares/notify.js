@@ -67,7 +67,7 @@ async function sendProjectMembershipNotifications(req, res, next) {
   const data = res.locals.projectMembershipData;
   if (!data) return next(); // no-op if nothing to do
 
-  const { actorId, projectId, newMemberId, currentMemberIds } = data;
+  const { actorId, projectId, newMemberId, currentMemberIds, projectName } = data;
 
   try {
     // Notify the rest of the team that someone joined
@@ -81,8 +81,8 @@ async function sendProjectMembershipNotifications(req, res, next) {
         actorId,
         projectId,
         type: "PROJECT_MEMBER_ADDED",
-        title: "New member joined the project",
-        link: `/project/${projectId}/settings#members`,
+        title: `New member joined ${projectName}`,
+        link: `/project/${projectId}/settings/#members`,
       });
     }
   } catch (err) {
@@ -97,8 +97,14 @@ async function sendProjectMemberRemovedNotifications(req, res, next) {
   const data = res.locals.projectMemberRemovedData;
   if (!data) return next();
 
-  const { actorId, projectId, removedMemberId, remainingMemberIds, reason } =
-    data;
+  const {
+    actorId,
+    projectId,
+    removedMemberId,
+    remainingMemberIds,
+    reason,
+    projectName,
+  } = data;
   // reason: "left" | "removed"
 
   try {
@@ -112,7 +118,9 @@ async function sendProjectMemberRemovedNotifications(req, res, next) {
         title:
           reason === "left"
             ? "You left a project"
-            : "You were removed from a project",
+            : `You were removed from ${
+                projectName ? projectName : "a project"
+              }`,
         link: `/dashboard`, // project page won't exist anymore for them
       });
     }
@@ -130,8 +138,8 @@ async function sendProjectMemberRemovedNotifications(req, res, next) {
         type: "PROJECT_MEMBER_REMOVED",
         title:
           reason === "left"
-            ? "A member left the project"
-            : "A member was removed from the project",
+            ? `A member left ${projectName}`
+            : `A member was removed from t${projectName}`,
         link: `/project/${projectId}/settings#members`,
       });
     }
