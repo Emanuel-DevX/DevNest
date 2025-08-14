@@ -12,6 +12,7 @@ export default function Navbar() {
       <div className="flex items-center">
         <a href="/">
           <div className="text-2xl flex items-baseline">
+            <img src="../../public/logo-bird.png" className="w-8 rounded-full  self-center" alt="" />
             <span
               className={"font-orbitron  font-bold text-teal-400 tracking-wide"}
             >
