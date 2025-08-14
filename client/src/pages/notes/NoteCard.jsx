@@ -34,7 +34,7 @@ export default function NoteCard({ note, basePath }) {
 
         {/* Content */}
         <div className="relative z-10">
-          <h3 className="text-lg font-semibold text-white mb-2 transition-colors duration-200 group-hover:text-blue-100">
+          <h3 className="text-lg font-semibold text-nowrap truncate text-white mb-2 transition-colors duration-200 group-hover:text-blue-100">
             {note.title || "Untitled"}
           </h3>
 
@@ -52,12 +52,11 @@ export default function NoteCard({ note, basePath }) {
               `}
               />
               <span className="text-gray-500 group-hover:text-gray-400 transition-colors duration-200">
-                {formatDate(new Date(note.updatedAt)).toString() }
+                {formatDate(new Date(note.updatedAt)).toString()}
               </span>
             </div>
           </div>
         </div>
-
       </div>
     </Link>
   );

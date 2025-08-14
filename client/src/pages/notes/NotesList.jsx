@@ -6,12 +6,9 @@ const NotesList = function () {
   const { refresh, notes, basePath } = useOutletContext();
   return (
     <>
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-1 mx-auto ">
+      <div className="flex flex-col md:flex-row gap-1 mx-auto flex-wrap ">
         {notes.map((note) => (
-          <div
-            key={note._id}
-            className="break-inside-avoid w-full"
-          >
+          <div key={note._id} className="md:w-[48%] lg:w-[32%] w-full">
             <NoteCard basePath={basePath} note={note} />
           </div>
         ))}
