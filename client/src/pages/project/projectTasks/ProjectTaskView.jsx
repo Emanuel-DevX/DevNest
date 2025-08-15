@@ -72,7 +72,7 @@ const ProjectTaskView = function () {
         {/* Header */}
         <div className="mb-1 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Task Management</h1>
+            <h1 className="text-2xl font-bold">Tasks</h1>
           </div>
           <button
             onClick={() => {

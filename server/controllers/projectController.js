@@ -53,7 +53,9 @@ const getAllProjects = async (req, res) => {
     });
   }
 };
-
+function toDateOnly(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
 const getProjectInfo = async (req, res) => {
   const projectId = req.params.projectId;
   if (!projectId) {
@@ -74,12 +76,12 @@ const getProjectInfo = async (req, res) => {
       userId: member.userId._id,
     }));
     const sprints = await Sprint.find({ projectId });
-    const today = new Date();
+    const today = toDateOnly(new Date());
     const sprintData = sprints.map((sprint) => ({
       ...sprint.toObject(),
       isCurrent:
-        new Date(sprint.startDate) <= today &&
-        today <= new Date(sprint.endDate),
+        toDateOnly(new Date(sprint.startDate)) <= today &&
+        today <= toDateOnly(new Date(sprint.endDate)),
     }));
     const taskCount = await Task.countDocuments({ projectId });
     const noteCount = await Note.countDocuments({ projectId });
