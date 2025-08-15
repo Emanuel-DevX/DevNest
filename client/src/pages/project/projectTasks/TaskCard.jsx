@@ -74,7 +74,7 @@ export default function TaskCard({
                 onClick={() => setShowMenu(false)}
                 className="fixed inset-0 min-w-screen min-h-screen -top-120 -left-100 z-40 cursor-default"
               ></button>
-              <div className="absolute right-4 top-1  w-40 bg-zinc-800 border border-gray-600 rounded-md shadow-lg z-100 ">
+              <div className="absolute right-4 top-1  w-40 bg-zinc-800 border border-gray-600 rounded-md shadow-lg z-49 ">
                 <button
                   onClick={() => {
                     setShowAssignModal(true);

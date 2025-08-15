@@ -13,9 +13,12 @@ import {
   TrashIcon,
   Edit2,
 } from "lucide-react";
-import { formatSavedDate, formatDateToShort, toLocalMidnight } from "@/lib/date";
+import {
+  formatSavedDate,
+  formatDateToShort,
+  toLocalMidnight,
+} from "@/lib/date";
 import DarkDatePicker from "@/components/DatePicker";
-
 
 // View Sprint Component
 const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
@@ -49,10 +52,10 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
   };
   if (!sprintData || !sprintData._id) {
     return (
-      <div className="py-4">
+      <div className="">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-1">
               <h3 className="text-lg font-medium text-white">
                 No sprint selected
               </h3>
@@ -67,7 +70,7 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
   }
 
   return (
-    <div className="py-4 ">
+    <div className="py-4  ">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
@@ -171,7 +174,9 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
 
 const EditSprint = ({ sprintData, onSave, onCancel }) => {
   const [title, setTitle] = useState(sprintData.title);
-  const [startDate, setStartDate] = useState(toLocalMidnight(sprintData.startDate));
+  const [startDate, setStartDate] = useState(
+    toLocalMidnight(sprintData.startDate)
+  );
   const [endDate, setEndDate] = useState(toLocalMidnight(sprintData.endDate));
   const [description, setDescription] = useState(sprintData.description || "");
   const [features, setFeatures] = useState(sprintData.features || [""]);
@@ -199,7 +204,8 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
     };
     onSave(updatedData);
   };
-  
+  const today = toLocalMidnight(new Date());
+  const minDate = startDate > today ? startDate : today;
 
   return (
     <div className="py-4 border-b border-slate-700/50 bg-slate-800/20 rounded-lg p-4 -mx-4">
@@ -237,7 +243,7 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
               type="date"
               value={endDate}
               onChange={(date) => setEndDate(date)}
-              minDate={startDate}
+              minDate={minDate}
               className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
             />
           </div>
@@ -323,7 +329,6 @@ const CreateSprint = ({ onSave, onCancel }) => {
     };
     onSave(sprintData);
   };
-
 
   return (
     <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 bg-zinc-800/20">

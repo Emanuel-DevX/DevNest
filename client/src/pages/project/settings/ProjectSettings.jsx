@@ -124,7 +124,7 @@ const ProjectSettings = function () {
 
   return (
     <>
-      <div className="mx-auto max-w-6xl md:w-full w-[20rem] md:px-4 py-6 md:py-8 ">
+      <div className="mx-auto max-w-7xl md:w-full w-[20rem]   ">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
