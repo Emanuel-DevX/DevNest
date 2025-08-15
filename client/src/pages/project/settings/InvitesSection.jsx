@@ -32,7 +32,7 @@ function InvitesSection({ isAdmin, onInvite, inviteLink }) {
       id="invites"
       title="Invites"
       icon={LinkIcon}
-      description="Invite people by email or share an invite link."
+      description="Invite people by sharing an invite link."
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>

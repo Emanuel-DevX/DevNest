@@ -110,7 +110,7 @@ export default function NoteEditor({
               });
             }
           }}
-          className={`${mode === "edit" ? "hidden" : ""} bg-zinc-800 text-white p-2 rounded border border-zinc-700 outline-0 focus:ring-1 ring-teal-400`}
+          className={`${mode === "edit" ? "hidden-" : ""} bg-zinc-800 text-white p-2 rounded border border-zinc-700 outline-0 focus:ring-1 ring-teal-400`}
         >
           <option value="">Select Project</option>
           {projectList.map((project) => (
