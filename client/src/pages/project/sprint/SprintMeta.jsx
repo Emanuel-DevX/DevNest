@@ -45,10 +45,7 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
   }, [showMenu]);
 
   const isActive = () => {
-    const now = new Date();
-    const start = new Date(sprintData.startDate);
-    const end = new Date(sprintData.endDate);
-    return now >= start && now <= end;
+return sprintData?.isCurrent === true
   };
   if (!sprintData || !sprintData._id) {
     return (

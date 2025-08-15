@@ -4,7 +4,7 @@ import TaskCard from "./TaskCard";
 import { AlertTriangle, CheckCircle, ChevronDown, Clock } from "lucide-react";
 import Toast from "../../../components/Toast";
 import { getCurrentUser } from "../../../lib/auth";
-import { toLocalDateOnly, toLocalDateOnlyUTC } from "@/lib/date";
+import { toLocalDateOnly, toLocalDateOnlyUTC, toLocalMidnight } from "@/lib/date";
 
 const currentUser = getCurrentUser();
 const TaskList = function ({
@@ -24,7 +24,7 @@ const TaskList = function ({
 
   const [toast, setToast] = useState(null);
   useEffect(() => {
-    const today = toLocalDateOnly(new Date());
+    const today = toLocalMidnight(toLocalDateOnly(new Date()));
 
     const done = tasks.filter((task) => task.completed === true);
     const pending = tasks.filter(
