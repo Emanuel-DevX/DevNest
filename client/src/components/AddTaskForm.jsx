@@ -3,11 +3,12 @@ import Toast from "./Toast";
 import DarkDatePicker from "./DatePicker";
 import { ChevronDown } from "lucide-react";
 import fetcher from "../lib/api";
+import { toLocalMidnight } from "@/lib/date";
 const AddTaskForm = function ({ onClose, onSuccess, currentProject, date }) {
   const [toast, setToast] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState(date ? new Date(date) : new Date());
+  const [dueDate, setDueDate] = useState(date ? toLocalMidnight(date) : toLocalMidnight(new Date()));
   const [duration, setDuration] = useState("");
   const [projectId, setProjectId] = useState("");
   const [projectName, setProjectName] = useState("");
@@ -94,7 +95,7 @@ const AddTaskForm = function ({ onClose, onSuccess, currentProject, date }) {
           <DarkDatePicker
             type="date"
             value={dueDate}
-            minDate={new Date().toISOString().split("T")[0]}
+            minDate={new Date()}
             onChange={(d) => setDueDate(d)}
             className="w-full p-2 rounded-md bg-gray-800 text-gray-100 border border-gray-300 focus:outline-none focus:ring focus:ring-teal-500 focus:border-teal-500 transition"
           />

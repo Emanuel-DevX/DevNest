@@ -230,3 +230,20 @@ export function formatSavedDate(dateInput, locale = "en-US") {
     day: "numeric",
   });
 }
+export function formatDateToShort(dateString) {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+export function toUtcMidnight(dateInput) {
+  const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+  // Create a UTC midnight for the local year/month/day of d
+  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+}
+export function toLocalMidnight(dateString) {
+  const date = new Date(dateString);
+  // Create a new Date set to local midnight of that day
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}

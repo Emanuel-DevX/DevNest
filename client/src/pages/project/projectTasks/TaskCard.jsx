@@ -74,7 +74,7 @@ export default function TaskCard({
                 onClick={() => setShowMenu(false)}
                 className="fixed inset-0 min-w-screen min-h-screen -top-120 -left-100 z-40 cursor-default"
               ></button>
-              <div className="absolute right-3 top-4  w-40 bg-zinc-800 border border-gray-600 rounded-md shadow-lg z-50">
+              <div className="absolute right-4 top-1  w-40 bg-zinc-800 border border-gray-600 rounded-md shadow-lg z-100 ">
                 <button
                   onClick={() => {
                     setShowAssignModal(true);
@@ -107,7 +107,7 @@ export default function TaskCard({
                     setShowDeleteModal(true);
                     setShowMenu(false);
                   }}
-                  className="w-full px-4 py-1 text-left text-sm text-red-400 hover:bg-zinc-700"
+                  className="w-full px-4 pb-1 text-left text-sm text-red-400 hover:bg-zinc-700"
                 >
                   Delete Task
                 </button>
@@ -221,8 +221,9 @@ export default function TaskCard({
         <PushDueDateModal
           currentDueDate={task.dueDate}
           onPush={(newDate) => {
-            setShowDeleteModal(false);
+            setShowPushModal(false);
             handlePushDueDate(newDate);
+            console.log(newDate)
           }}
           onClose={() => setShowPushModal(false)}
         />

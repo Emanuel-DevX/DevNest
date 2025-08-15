@@ -13,9 +13,9 @@ import {
   TrashIcon,
   Edit2,
 } from "lucide-react";
-import { formatSavedDate } from "@/lib/date";
+import { formatSavedDate, formatDateToShort, toLocalMidnight } from "@/lib/date";
 import DarkDatePicker from "@/components/DatePicker";
-import DatePicker from "react-datepicker";
+
 
 // View Sprint Component
 const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
@@ -40,7 +40,6 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu]);
-
 
   const isActive = () => {
     const now = new Date();
@@ -86,8 +85,8 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               <span>
-                {formatSavedDate(sprintData.startDate)} –{" "}
-                {formatSavedDate(sprintData.endDate)}
+                {formatDateToShort(sprintData.startDate)} –{" "}
+                {formatDateToShort(sprintData.endDate)}
               </span>
             </div>
             {sprintData.features?.length > 0 && (
@@ -172,8 +171,8 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
 
 const EditSprint = ({ sprintData, onSave, onCancel }) => {
   const [title, setTitle] = useState(sprintData.title);
-  const [startDate, setStartDate] = useState(sprintData.startDate);
-  const [endDate, setEndDate] = useState(sprintData.endDate);
+  const [startDate, setStartDate] = useState(toLocalMidnight(sprintData.startDate));
+  const [endDate, setEndDate] = useState(toLocalMidnight(sprintData.endDate));
   const [description, setDescription] = useState(sprintData.description || "");
   const [features, setFeatures] = useState(sprintData.features || [""]);
 
@@ -200,6 +199,7 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
     };
     onSave(updatedData);
   };
+  
 
   return (
     <div className="py-4 border-b border-slate-700/50 bg-slate-800/20 rounded-lg p-4 -mx-4">
@@ -223,7 +223,7 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
               Start Date
             </label>
             <DarkDatePicker
-              value={formatSavedDate(startDate)}
+              value={startDate}
               onChange={(date) => setStartDate(date)}
               minDate={new Date()}
               className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
@@ -235,9 +235,9 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
             </label>
             <DarkDatePicker
               type="date"
-              value={formatSavedDate(endDate)}
+              value={endDate}
               onChange={(date) => setEndDate(date)}
-              minDate={formatSavedDate(startDate)}
+              minDate={startDate}
               className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
             />
           </div>
@@ -323,12 +323,7 @@ const CreateSprint = ({ onSave, onCancel }) => {
     };
     onSave(sprintData);
   };
-  const toDateInputValue = (date = new Date()) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+
 
   return (
     <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 bg-zinc-800/20">
