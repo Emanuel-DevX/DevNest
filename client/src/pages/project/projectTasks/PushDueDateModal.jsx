@@ -2,12 +2,11 @@
 import { useState } from "react";
 import { X, CalendarDays } from "lucide-react";
 import DarkDatePicker from "../../../components/DatePicker";
+import { toLocalMidnight } from "@/lib/date";
 
 export default function PushDueDateModal({ currentDueDate, onPush, onClose }) {
-  const [newDate, setNewDate] = useState(() => {
-    const iso = new Date().toISOString();
-    return iso.slice(0, iso.indexOf("T"));
-  });
+  
+  const [newDate, setNewDate] = useState(new Date(toLocalMidnight(currentDueDate)));
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -29,7 +28,7 @@ export default function PushDueDateModal({ currentDueDate, onPush, onClose }) {
         <DarkDatePicker
           type="date"
           value={newDate}
-          minDate={new Date().toISOString().split("T")[0]}
+          minDate={new Date()}
           onChange={(d) => setNewDate(d)}
           className="w-full p-2 rounded-md bg-gray-800 text-gray-100 border border-gray-600"
         />

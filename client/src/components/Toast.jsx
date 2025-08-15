@@ -19,7 +19,7 @@ const Toast = ({ message, type = "success", onClose }) => {
   return (
     <div className="fixed bottom-6 inset-x-0 z-50 flex justify-end px-4 2xl:justify-center">
       <div
-        className={`w-full max-w-sm 2xl:max-w-md border p-4 rounded-md shadow-lg text-white ${bgColor}`}
+        className={` max-w-sm 2xl:max-w-md border p-4 rounded-md shadow-lg text-white ${bgColor}`}
       >
         <div className="flex justify-between items-center">
           <span>{message}</span>

@@ -29,23 +29,15 @@ const getPromptParams = async (req) => {
     throw new Error("Project or sprint not found");
   }
 
-  const sprintStartDate = new Date(sprint.startDate);
-  const sprintEndDate = new Date(sprint.endDate);
-  const sprintStart = sprintStartDate.toISOString().split("T")[0];
-  const sprintEnd = sprintEndDate.toISOString().split("T")[0];
+  const sprintStart = new Date(sprint.startDate);
+  const sprintEnd = new Date(sprint.endDate);
 
-  // Due date is 1 day before sprint ends
-  const due = new Date(sprintEndDate);
-  due.setDate(due.getDate() - 1);
-  const dueDate = due.toISOString().split("T")[0];
-
-  const totalDays =
-    (sprintEndDate - sprintStartDate) / (1000 * 60 * 60 * 24) + 1;
+  const totalDays = (sprintEnd - sprintStart) / (1000 * 60 * 60 * 24) + 1;
 
   const workingDays = includeWeekends
     ? totalDays
     : Array.from({ length: totalDays }).filter((_, i) => {
-        const date = new Date(sprintStartDate);
+        const date = new Date(sprintStart);
         date.setDate(date.getDate() + i);
         const day = date.getDay();
         return day !== 0 && day !== 6;
@@ -57,7 +49,6 @@ const getPromptParams = async (req) => {
     sprintGoals: goals,
     sprintStart,
     sprintEnd,
-    dueDate,
     coreFeatures: project.coreFeatures || [],
     completedFeatures: project.completedFeatures || [],
     contributors,
@@ -82,7 +73,7 @@ const consumeTokens = async (userId, usage) => {
 
 const generateTasksFromAI = async (req, res) => {
   try {
-    const projectId = req.body.projectId;
+    const { projectId, sprintId } = req.body;
     const userId = req.user.id;
     const params = await getPromptParams(req);
     const prompt = generateTaskPrompt(params);
@@ -91,10 +82,11 @@ const generateTasksFromAI = async (req, res) => {
     await consumeTokens(userId, usage);
     const cleaned = extractJSONBlock(text);
     const tasksArr = JSON.parse(cleaned);
-
+    const dueDate = (await Sprint.findById(sprintId).select("endDate").lean())
+      .endDate;
     const tasks = tasksArr.map((task) => ({
       ...task,
-      dueDate: new Date(task.dueDate),
+      dueDate,
       projectId,
       creator: userId,
       participants: [],

@@ -14,9 +14,11 @@ async function sendTaskUpdateNotifications(req, res) {
     participantsChanged,
     participantsFinal,
   } = data;
-
+  const newAssignees = (newlyAssigned || [])
+    .map(String)
+    .filter((id) => id !== String(actorId));
   try {
-    if (participantsChanged && newlyAssigned.length > 0) {
+    if (participantsChanged && newAssignees.length > 0) {
       // Notify new assignees
       await notifyMany({
         recipientIds: newlyAssigned.filter((id) => id !== actorId),
@@ -29,7 +31,7 @@ async function sendTaskUpdateNotifications(req, res) {
 
       // Notify others
       const others = participantsFinal.filter(
-        (id) => id !== actorId && !newlyAssigned.includes(id)
+        (id) => id !== actorId && !newAssignees.includes(id)
       );
       if (others.length > 0) {
         await notifyMany({
@@ -57,9 +59,6 @@ async function sendTaskUpdateNotifications(req, res) {
     }
   } catch (err) {
     console.error("Notification error:", err);
-    return res
-      .status(200)
-      .json({ message: "Task updated, but notifications failed" });
   }
 }
 
@@ -67,7 +66,8 @@ async function sendProjectMembershipNotifications(req, res, next) {
   const data = res.locals.projectMembershipData;
   if (!data) return next(); // no-op if nothing to do
 
-  const { actorId, projectId, newMemberId, currentMemberIds, projectName } = data;
+  const { actorId, projectId, newMemberId, currentMemberIds, projectName } =
+    data;
 
   try {
     // Notify the rest of the team that someone joined

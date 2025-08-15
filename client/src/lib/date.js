@@ -204,3 +204,46 @@ export const getCalendarData = (currentDate) => {
 
   return calendarDays;
 };
+
+//To display the UTC date directly when we only care about dates
+export function formatSavedDate(dateInput, locale = "en-US") {
+  if (!dateInput) return "";
+  const dateString =
+    dateInput instanceof Date ? dateInput.toISOString() : String(dateInput);
+  // If the date has time part (ISO string with "T")
+  if (dateString.includes("T")) {
+    // Add 12h to prevent timezone shift for midnight UTC
+    const safeDate = new Date(
+      dateString.replace("T00:00:00.000Z", "T12:00:00.000Z")
+    );
+    return safeDate.toLocaleDateString(locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  // If it's plain YYYY-MM-DD format
+  return new Date(dateString + "T12:00:00Z").toLocaleDateString(locale, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+export function formatDateToShort(dateString) {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+export function toUtcMidnight(dateInput) {
+  const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+  // Create a UTC midnight for the local year/month/day of d
+  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+}
+export function toLocalMidnight(dateString) {
+  const date = new Date(dateString);
+  // Create a new Date set to local midnight of that day
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}

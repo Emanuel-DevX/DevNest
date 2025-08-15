@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 export default function DarkDatePicker({
   value,
   onChange,
-  placeholder = "Select date...",
+  placeholder = "Select date",
   ...props
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,10 +36,10 @@ export default function DarkDatePicker({
         onClickOutside={() => setIsOpen(false)}
         showPopperArrow={false}
         placeholderText={placeholder}
-        calendarClassName="!bg-zinc-900 !text-white !border-gray-600 !shadow-2xl !rounded-lg"
+        calendarClassName="!bg-zinc-900 !text-white !border-gray-600/0 !shadow-2xl !rounded-lg"
         dayClassName={(date) =>
           "hover:!bg-teal-600 hover:!text-white !transition-all !duration-200 !rounded-md !mx-1 !font-medium !text-white " +
-          "focus:!bg-teal-600 focus:!text-white active:!scale-95"
+          "focus:!bg-teal-600 focus:!text-white active:!scale-95 "
         }
         weekDayClassName={() => "!text-teal-300 !font-semibold !text-xs"}
         monthClassName={() =>

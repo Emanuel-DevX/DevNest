@@ -25,7 +25,10 @@ const createNote = async (req, res) => {
 const getProjectNotes = async (req, res) => {
   const projectId = req.params.projectId;
   try {
-    const notes = await Note.find({ projectId }).populate("author", "name email")
+    const notes = await Note.find({ projectId }).populate(
+      "author",
+      "name email"
+    );
     return res.status(200).json(notes);
   } catch (err) {
     return res.status(500).json({
@@ -74,14 +77,20 @@ const getUserNotes = async (req, res) => {
 };
 
 const updateNote = async (req, res) => {
-  const noteId = req.params.noteId;
+  const { noteId, projectId } = req.params;
+  const userId = String(req.user.id);
+
   try {
     const { content, title } = req.body;
-    const updatedNote = await Note.updateOne(
-      { _id: noteId },
-      { title, content },
-      { new: true }
-    );
+    const updates = { title, content };
+    if (
+      userId ===
+      String((await Note.findById(noteId).select("author").lean()).author)
+    )
+      updates.projectId = projectId;
+    const updatedNote = await Note.updateOne({ _id: noteId }, updates, {
+      new: true,
+    });
     if (updatedNote.matchedCount === 0) {
       return res.status(404).json({ message: "Note not found" });
     }

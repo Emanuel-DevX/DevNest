@@ -8,7 +8,6 @@ function generateTaskPrompt({
   completedFeatures = [],
   contributors = 1,
   hoursPerContributor = 5,
-  dueDate = "",
 } = {}) {
   const totalHours = contributors * hoursPerContributor;
 
@@ -33,7 +32,7 @@ ${coreFeatures.join(", ")}
 ${completedFeatures.join(", ")}
 
 📅 Sprint Duration:
-From ${sprintStart} to ${sprintEnd} (Use ${dueDate} as the final due date for each task)
+From ${sprintStart} to ${sprintEnd}
 
 👥 Team Info:
 ${contributors} contributor(s), ${hoursPerContributor} hours per member (total available time: ${totalHours} hours)
@@ -47,7 +46,6 @@ ${contributors} contributor(s), ${hoursPerContributor} hours per member (total a
     "title": "string (3–100 chars, required)",
     "description": "string (optional, keep it concise)",
     "duration": number (estimated time in minutes, required, e.g., 60),
-    "dueDate": "ISO string (must be set to ${dueDate})",
     "completed": false,
     "status": "pending"
   },

@@ -13,6 +13,12 @@ import {
   TrashIcon,
   Edit2,
 } from "lucide-react";
+import {
+  formatSavedDate,
+  formatDateToShort,
+  toLocalMidnight,
+} from "@/lib/date";
+import DarkDatePicker from "@/components/DatePicker";
 
 // View Sprint Component
 const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
@@ -38,14 +44,6 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
     };
   }, [showMenu]);
 
-  const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
   const isActive = () => {
     const now = new Date();
     const start = new Date(sprintData.startDate);
@@ -54,10 +52,10 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
   };
   if (!sprintData || !sprintData._id) {
     return (
-      <div className="py-4">
+      <div className="">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-1">
               <h3 className="text-lg font-medium text-white">
                 No sprint selected
               </h3>
@@ -72,7 +70,7 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
   }
 
   return (
-    <div className="py-4 ">
+    <div className="py-4  ">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
@@ -90,8 +88,8 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               <span>
-                {formatDate(sprintData.startDate)} –{" "}
-                {formatDate(sprintData.endDate)}
+                {formatDateToShort(sprintData.startDate)} –{" "}
+                {formatDateToShort(sprintData.endDate)}
               </span>
             </div>
             {sprintData.features?.length > 0 && (
@@ -177,11 +175,9 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
 const EditSprint = ({ sprintData, onSave, onCancel }) => {
   const [title, setTitle] = useState(sprintData.title);
   const [startDate, setStartDate] = useState(
-    new Date(sprintData.startDate).toISOString().split("T")[0]
+    toLocalMidnight(sprintData.startDate)
   );
-  const [endDate, setEndDate] = useState(
-    new Date(sprintData.endDate).toISOString().split("T")[0]
-  );
+  const [endDate, setEndDate] = useState(toLocalMidnight(sprintData.endDate));
   const [description, setDescription] = useState(sprintData.description || "");
   const [features, setFeatures] = useState(sprintData.features || [""]);
 
@@ -208,6 +204,8 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
     };
     onSave(updatedData);
   };
+  const today = toLocalMidnight(new Date());
+  const minDate = startDate > today ? startDate : today;
 
   return (
     <div className="py-4 border-b border-slate-700/50 bg-slate-800/20 rounded-lg p-4 -mx-4">
@@ -218,32 +216,6 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors text-lg font-medium"
         />
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs text-slate-400 mb-1">
-              Start Date
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-slate-400 mb-1">
-              End Date
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              min={startDate}
-              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
-            />
-          </div>
-        </div>
-
         <textarea
           placeholder="Sprint description..."
           value={description}
@@ -251,6 +223,31 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
           rows={2}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-colors resize-none"
         />
+        <div className="flex gap-3">
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">
+              Start Date
+            </label>
+            <DarkDatePicker
+              value={startDate}
+              onChange={(date) => setStartDate(date)}
+              minDate={new Date()}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">
+              End Date
+            </label>
+            <DarkDatePicker
+              type="date"
+              value={endDate}
+              onChange={(date) => setEndDate(date)}
+              minDate={minDate}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
 
         <div>
           <label className="block text-xs text-slate-400 mb-2">
@@ -348,33 +345,6 @@ const CreateSprint = ({ onSave, onCancel }) => {
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-colors"
         />
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs text-slate-400 mb-1">
-              Start Date
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              min={new Date().toISOString().split("T")[0]}
-              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-slate-400 mb-1">
-              End Date
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              min={startDate}
-              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
-            />
-          </div>
-        </div>
-
         <textarea
           placeholder="Sprint description (optional)..."
           value={description}
@@ -382,6 +352,33 @@ const CreateSprint = ({ onSave, onCancel }) => {
           rows={2}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-colors resize-none"
         />
+        <div className="flex gap-3 flex-row">
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">
+              Start Date
+            </label>
+
+            <DarkDatePicker
+              type="date"
+              value={startDate}
+              onChange={(date) => setStartDate(date)}
+              minDate={new Date()}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">
+              End Date
+            </label>
+            <DarkDatePicker
+              type="date"
+              value={endDate}
+              onChange={(date) => setEndDate(date)}
+              minDate={startDate}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
 
         <div>
           <label className="block text-xs text-slate-400 mb-2">
