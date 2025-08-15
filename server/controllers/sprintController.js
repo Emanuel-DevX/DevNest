@@ -61,6 +61,8 @@ const updateSprint = async (req, res) => {
         message: "Sprint end date must be in future of start date",
       });
     }
+    
+
     // Check for overlapping sprints in the same project (excluding self)
     const overlapping = await Sprint.findOne({
       _id: { $ne: sprintId },

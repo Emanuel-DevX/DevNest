@@ -9,6 +9,7 @@ const sprintSchema = new mongoose.Schema(
       maxlength: 20,
       trim: true,
     },
+    description: { type: String },
     startDate: Date,
     endDate: Date,
     projectId: {
