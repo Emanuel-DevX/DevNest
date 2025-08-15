@@ -13,6 +13,9 @@ import {
   TrashIcon,
   Edit2,
 } from "lucide-react";
+import { formatSavedDate } from "@/lib/date";
+import DarkDatePicker from "@/components/DatePicker";
+import DatePicker from "react-datepicker";
 
 // View Sprint Component
 const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
@@ -38,13 +41,6 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
     };
   }, [showMenu]);
 
-  const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
 
   const isActive = () => {
     const now = new Date();
@@ -90,8 +86,8 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               <span>
-                {formatDate(sprintData.startDate)} –{" "}
-                {formatDate(sprintData.endDate)}
+                {formatSavedDate(sprintData.startDate)} –{" "}
+                {formatSavedDate(sprintData.endDate)}
               </span>
             </div>
             {sprintData.features?.length > 0 && (
@@ -176,12 +172,8 @@ const ViewSprint = ({ sprintData, onEdit, onDelete, viewOnly }) => {
 
 const EditSprint = ({ sprintData, onSave, onCancel }) => {
   const [title, setTitle] = useState(sprintData.title);
-  const [startDate, setStartDate] = useState(
-    new Date(sprintData.startDate).toISOString().split("T")[0]
-  );
-  const [endDate, setEndDate] = useState(
-    new Date(sprintData.endDate).toISOString().split("T")[0]
-  );
+  const [startDate, setStartDate] = useState(sprintData.startDate);
+  const [endDate, setEndDate] = useState(sprintData.endDate);
   const [description, setDescription] = useState(sprintData.description || "");
   const [features, setFeatures] = useState(sprintData.features || [""]);
 
@@ -218,32 +210,6 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors text-lg font-medium"
         />
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs text-slate-400 mb-1">
-              Start Date
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-slate-400 mb-1">
-              End Date
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              min={startDate}
-              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
-            />
-          </div>
-        </div>
-
         <textarea
           placeholder="Sprint description..."
           value={description}
@@ -251,6 +217,31 @@ const EditSprint = ({ sprintData, onSave, onCancel }) => {
           rows={2}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-colors resize-none"
         />
+        <div className="flex gap-3">
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">
+              Start Date
+            </label>
+            <DarkDatePicker
+              value={formatSavedDate(startDate)}
+              onChange={(date) => setStartDate(date)}
+              minDate={new Date()}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">
+              End Date
+            </label>
+            <DarkDatePicker
+              type="date"
+              value={formatSavedDate(endDate)}
+              onChange={(date) => setEndDate(date)}
+              minDate={formatSavedDate(startDate)}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
 
         <div>
           <label className="block text-xs text-slate-400 mb-2">
@@ -332,6 +323,12 @@ const CreateSprint = ({ onSave, onCancel }) => {
     };
     onSave(sprintData);
   };
+  const toDateInputValue = (date = new Date()) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   return (
     <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 bg-zinc-800/20">
@@ -348,33 +345,6 @@ const CreateSprint = ({ onSave, onCancel }) => {
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-colors"
         />
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs text-slate-400 mb-1">
-              Start Date
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              min={new Date().toISOString().split("T")[0]}
-              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-slate-400 mb-1">
-              End Date
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              min={startDate}
-              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
-            />
-          </div>
-        </div>
-
         <textarea
           placeholder="Sprint description (optional)..."
           value={description}
@@ -382,6 +352,33 @@ const CreateSprint = ({ onSave, onCancel }) => {
           rows={2}
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-colors resize-none"
         />
+        <div className="flex gap-3 flex-row">
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">
+              Start Date
+            </label>
+
+            <DarkDatePicker
+              type="date"
+              value={startDate}
+              onChange={(date) => setStartDate(date)}
+              minDate={new Date()}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-slate-400 mb-1">
+              End Date
+            </label>
+            <DarkDatePicker
+              type="date"
+              value={endDate}
+              onChange={(date) => setEndDate(date)}
+              minDate={startDate}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-teal-400 focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
 
         <div>
           <label className="block text-xs text-slate-400 mb-2">

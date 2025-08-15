@@ -204,3 +204,29 @@ export const getCalendarData = (currentDate) => {
 
   return calendarDays;
 };
+
+//To display the UTC date directly when we only care about dates
+export function formatSavedDate(dateInput, locale = "en-US") {
+  if (!dateInput) return "";
+  const dateString =
+    dateInput instanceof Date ? dateInput.toISOString() : String(dateInput);
+  // If the date has time part (ISO string with "T")
+  if (dateString.includes("T")) {
+    // Add 12h to prevent timezone shift for midnight UTC
+    const safeDate = new Date(
+      dateString.replace("T00:00:00.000Z", "T12:00:00.000Z")
+    );
+    return safeDate.toLocaleDateString(locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  // If it's plain YYYY-MM-DD format
+  return new Date(dateString + "T12:00:00Z").toLocaleDateString(locale, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
