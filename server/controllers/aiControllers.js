@@ -42,14 +42,17 @@ const getPromptParams = async (req) => {
         const day = date.getDay();
         return day !== 0 && day !== 6;
       }).length;
-
+  const allGoals = [
+    ...(Array.isArray(goals) ? goals : [goals]),
+    ...(sprint.features || []),
+  ].join(", ");
   return {
     projectName: project.name,
     projectDescription: project.description || "",
-    sprintGoals: goals,
+    sprintGoals: allGoals,
+    sprintDescription: sprint.title || "" + " " + sprint.description || "",
     sprintStart,
     sprintEnd,
-    coreFeatures: project.coreFeatures || [],
     completedFeatures: project.completedFeatures || [],
     contributors,
     hoursPerContributor: workingDays * hoursPerDay,
