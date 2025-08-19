@@ -179,18 +179,12 @@ const MarkdownViewer = ({
       </h1>
     ),
     h2: ({ children, ...props }) => (
-      <h2
-        className="!text-3xl !font-bold !mb-4 !mt-8 !text-white"
-        {...props}
-      >
+      <h2 className="!text-3xl !font-bold !mb-4 !mt-8 !text-white" {...props}>
         {children}
       </h2>
     ),
     h3: ({ children, ...props }) => (
-      <h3
-        className="!text-2xl !font-bold !mb-3 !mt-6 !text-white"
-        {...props}
-      >
+      <h3 className="!text-2xl !font-bold !mb-3 !mt-6 !text-white" {...props}>
         {children}
       </h3>
     ),
@@ -280,7 +274,6 @@ const MarkdownViewer = ({
 
   return (
     <div className={`max-w-none text-gray-200 markdown-content ${className}`}>
-  
       <ReactMarkdown
         children={content}
         remarkPlugins={remarkPlugins}
