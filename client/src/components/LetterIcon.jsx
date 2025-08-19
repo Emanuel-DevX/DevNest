@@ -5,7 +5,7 @@ const LetterIcon = ({ letter, size = "md" }) => {
   const colors = [
     "border-slate-400 text-slate-600",
     "border-gray-400 text-gray-600",
-    "border-zinc-400 text-zinc-600",
+    "border-zinc-500 text-zinc-400",
     "border-stone-400 text-stone-600",
     "border-red-300 text-red-500",
     "border-orange-300 text-orange-500",
@@ -24,6 +24,11 @@ const LetterIcon = ({ letter, size = "md" }) => {
     "border-fuchsia-300 text-fuchsia-500",
     "border-pink-300 text-pink-500",
     "border-rose-300 text-rose-500",
+    "border-neutral-400 text-neutral-600",
+    "border-stone-300 text-stone-500",
+    "border-yellow-400 text-yellow-600",
+    "border-green-400 text-green-600",
+    "border-blue-400 text-blue-600",
   ];
 
   const sizeClasses = {
@@ -35,7 +40,7 @@ const LetterIcon = ({ letter, size = "md" }) => {
 
   // Get consistent color based on letter
   const char = letter.toUpperCase();
-  const colorIndex = char.charCodeAt(0) % colors.length;
+  const colorIndex = (char.charCodeAt(0) - 65) % colors.length;
   const colorClass = colors[colorIndex];
   const sizeClass = sizeClasses[size];
 

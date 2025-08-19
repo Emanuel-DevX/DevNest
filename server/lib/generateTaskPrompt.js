@@ -1,10 +1,10 @@
 function generateTaskPrompt({
   projectName = "",
   projectDescription = "",
+  sprintDescription,
   sprintGoals = "",
   sprintStart = "",
   sprintEnd = "",
-  coreFeatures = [],
   completedFeatures = [],
   contributors = 1,
   hoursPerContributor = 5,
@@ -22,11 +22,12 @@ ${projectName}
 📜 Project Description:
 ${projectDescription}
 
+📜 Sprint Description:
+${sprintDescription}
+
 🎯 Sprint Goals:
 ${sprintGoals}
 
-🧩 Core Features to Build:
-${coreFeatures.join(", ")}
 
 ✅ Already Completed Features:
 ${completedFeatures.join(", ")}
